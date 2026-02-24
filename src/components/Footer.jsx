@@ -17,8 +17,9 @@ export function Footer() {
       { label: 'Portfolio', path: '/portfolio' },
     ],
     'Explore': [
+      { label: 'Gallery', path: '/gallery' },
+      { label: 'Partners', path: '/partners' },
       { label: 'Universities', path: '/universities' },
-      { label: 'Success Stories', path: '/portfolio' },
       { label: 'Collaborate', path: '/collaborate' },
     ],
     'Connect': [

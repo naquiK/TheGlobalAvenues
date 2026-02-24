@@ -214,7 +214,7 @@ export default function ServicesPage() {
       </section>
 
       {/* Package Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8">
+      {/* <section className="py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <motion.div
             className="text-center mb-16"
@@ -312,7 +312,7 @@ export default function ServicesPage() {
             ))}
           </motion.div>
         </div>
-      </section>
+      </section> */}
     </div>
   );
 }

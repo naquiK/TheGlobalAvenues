@@ -1,26 +1,70 @@
 import { motion } from 'framer-motion';
-import { Users, Target, Zap, Globe, Heart, Award } from 'lucide-react';
+import { Users, Target, Zap, Globe, Heart, Award, CheckCircle, Lightbulb, Shield } from 'lucide-react';
 
 export default function AboutPage() {
   const values = [
-    { icon: Target, title: 'Our Mission', description: 'Empowering students to achieve their academic dreams globally' },
-    { icon: Users, title: 'Our Team', description: 'Expert counselors with 15+ years of experience' },
-    { icon: Globe, title: 'Global Reach', description: 'Connected with 500+ universities worldwide' },
-    { icon: Heart, title: 'Student Centric', description: 'Every decision guided by student success' },
+    { icon: Target, title: 'Our Mission', description: 'Uphold integrity, transparency, motivation, and unwavering dedication, ensuring open communication and tailored services for every student.' },
+    { icon: Globe, title: 'Our Vision', description: 'Consistently enhance our role as trusted partner for universities through strong relationships, collaborative efforts, and innovative strategies.' },
+    { icon: Heart, title: 'Student Centric', description: 'Every decision guided by student success and long-term impact in the global education landscape.' },
+    { icon: Shield, title: 'Quality Assurance', description: 'ICEF accredited organization with transparent processes and professional ethical standards.' },
   ];
 
   const team = [
-    { name: 'Manmohan Kumar', role: 'Founder & CEO', image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop' },
-    { name: 'Priya Sharma', role: 'Director, Admissions', image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&h=200&fit=crop' },
-    { name: 'Rajesh Singh', role: 'Director, Programs', image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&h=200&fit=crop' },
-    { name: 'Anjali Patel', role: 'Career Counselor', image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop' },
+    { 
+      name: 'Neetu Verma Gupta', 
+      role: 'Director', 
+      image: '/team/neetu-verma-gupta.jpg',
+      bio: 'Visionary leader with extensive experience in international education partnerships and institutional development'
+    },
+    { 
+      name: 'Deepshikha Chauhan', 
+      role: 'International Recruitment Head', 
+      image: '/team/deepshikha-chauhan.jpg',
+      bio: 'Strategic recruitment expert overseeing international student placements and university partnerships'
+    },
+    { 
+      name: 'Bhawna', 
+      role: 'International Recruitment', 
+      image: '/team/bhawna.jpg',
+      bio: 'Dedicated recruitment specialist focused on student counseling and placement success'
+    },
+    { 
+      name: 'Shabana Azmi', 
+      role: 'International Recruitment', 
+      image: '/team/shabana-azmi.jpg',
+      bio: 'Experienced recruitment professional with strong focus on student mobility and university relations'
+    },
+    { 
+      name: 'Vaamika Sinha', 
+      role: 'International Recruitment', 
+      image: '/team/vaamika-sinha.jpg',
+      bio: 'Passionate recruitment specialist committed to bridging educational opportunities for students'
+    },
+    { 
+      name: 'Naman Sharma', 
+      role: 'Marketing & Promotions', 
+      image: '/team/naman-sharma.jpg',
+      bio: 'Creative marketing professional driving brand presence and institutional visibility in key markets'
+    },
+    { 
+      name: 'Ambar Johar', 
+      role: 'Admissions Coordinator', 
+      image: '/team/ambar-johar.jpg',
+      bio: 'Efficient coordinator ensuring smooth application processing and student onboarding'
+    },
+    { 
+      name: 'Suraj Kumar Soni', 
+      role: 'Admissions Coordinator', 
+      image: '/team/suraj-kumar-soni.jpg',
+      bio: 'Dedicated professional managing admissions workflows and student documentation'
+    },
   ];
 
   const stats = [
-    { number: '5000+', label: 'Students Guided' },
-    { number: '98%', label: 'Success Rate' },
-    { number: '500+', label: 'Partner Universities' },
-    { number: '50+', label: 'Countries Covered' },
+    { number: '1000+', label: 'Years of Experience' },
+    { number: '210+', label: 'Partner Universities' },
+    { number: '15+', label: 'Active Channel Partners' },
+    { number: '3000k+', label: 'Students Recruited' },
   ];
 
   const containerVariants = {
@@ -52,15 +96,23 @@ export default function AboutPage() {
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.1 }}
           >
-            Who We Are
+            Empowering Global Education
           </motion.h1>
           <motion.p
-            className="text-xl text-muted-foreground max-w-3xl mx-auto"
+            className="text-xl text-muted-foreground max-w-3xl mx-auto mb-6"
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.2 }}
           >
-            The Global Avenues is a leading education consultancy dedicated to turning dreams into reality for thousands of students worldwide.
+            The Global Avenues is a trusted name in the international education industry. We specialize in partnering with institutions seeking to establish and grow their presence in the Indian subcontinent, building their brand from the ground up and positioning them as recognized names in the region.
+          </motion.p>
+          <motion.p
+            className="text-lg text-muted-foreground max-w-3xl mx-auto"
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.6, delay: 0.3 }}
+          >
+            Our core mission is to create impactful collaborations that connect Indian institutions, students, and parents with leading global education opportunities. We facilitate student admissions, foster university partnerships, and drive student mobility with a strong emphasis on transparency, innovation, and long-term impact.
           </motion.p>
         </div>
       </motion.section>
@@ -155,7 +207,7 @@ export default function AboutPage() {
           </motion.div>
 
           <motion.div
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8"
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
             variants={containerVariants}
             initial="hidden"
             whileInView="visible"
@@ -164,23 +216,25 @@ export default function AboutPage() {
             {team.map((member, index) => (
               <motion.div
                 key={index}
-                className="bg-background border border-border/50 rounded-xl overflow-hidden hover:border-primary/50 transition-all"
+                className="bg-background border border-border/50 rounded-xl overflow-hidden hover:border-primary/50 transition-all hover:shadow-xl group"
                 variants={itemVariants}
                 whileHover={{ translateY: -8 }}
                 transition={{ duration: 0.3 }}
               >
-                <div className="relative h-48 overflow-hidden">
+                <div className="relative h-48 overflow-hidden bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center">
                   <motion.img
                     src={member.image}
                     alt={member.name}
                     className="w-full h-full object-cover"
-                    whileHover={{ scale: 1.1 }}
+                    whileHover={{ scale: 1.05 }}
                     transition={{ duration: 0.4 }}
                   />
+                  <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 </div>
                 <div className="p-6 text-center">
                   <h4 className="text-lg font-bold text-foreground mb-1">{member.name}</h4>
-                  <p className="text-primary font-semibold text-sm">{member.role}</p>
+                  <p className="text-primary font-semibold text-sm mb-3">{member.role}</p>
+                  <p className="text-muted-foreground text-sm leading-relaxed">{member.bio}</p>
                 </div>
               </motion.div>
             ))}
@@ -188,8 +242,8 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Timeline Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8">
+      {/* Accreditation Section */}
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-muted/20">
         <div className="max-w-4xl mx-auto">
           <motion.div
             className="text-center mb-16"
@@ -198,44 +252,60 @@ export default function AboutPage() {
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            <h2 className="text-4xl font-bold mb-4">Our Journey</h2>
-            <p className="text-muted-foreground text-lg">From humble beginnings to becoming an industry leader</p>
+            <h2 className="text-4xl font-bold mb-4">Accreditation & Memberships</h2>
+            <p className="text-muted-foreground text-lg">Industry Recognition & Professional Partnerships</p>
           </motion.div>
 
-          <motion.div
-            className="space-y-8"
-            variants={containerVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-          >
-            {[
-              { year: '2010', title: 'Founded', description: 'Started with a vision to help students achieve global education dreams' },
-              { year: '2015', title: 'Expansion', description: 'Opened offices in 5 major cities across South Asia' },
-              { year: '2018', title: 'Recognition', description: 'Awarded Best Education Consultancy by Global Education Awards' },
-              { year: '2023', title: 'Global Reach', description: 'Serving 50+ countries with 5000+ successful placements' },
-            ].map((milestone, index) => (
-              <motion.div
-                key={index}
-                className="flex gap-6 items-center"
-                variants={itemVariants}
-              >
-                <div className="flex-shrink-0">
-                  <motion.div
-                    className="w-16 h-16 bg-primary/10 border-2 border-primary rounded-full flex items-center justify-center"
-                    whileHover={{ scale: 1.1 }}
-                    transition={{ duration: 0.3 }}
-                  >
-                    <span className="font-bold text-primary">{milestone.year}</span>
-                  </motion.div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {/* ICEF */}
+            <motion.div
+              className="bg-background border border-border rounded-xl p-8 hover:border-primary/50 transition-all"
+              initial={{ y: 20, opacity: 0 }}
+              whileInView={{ y: 0, opacity: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+            >
+              <div className="flex items-start gap-4">
+                <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                  <CheckCircle className="w-6 h-6 text-primary" />
                 </div>
-                <div className="flex-grow bg-muted/30 border border-border/50 rounded-lg p-6">
-                  <h4 className="text-xl font-bold text-foreground mb-2">{milestone.title}</h4>
-                  <p className="text-muted-foreground">{milestone.description}</p>
+                <div className="flex-1">
+                  <h4 className="text-xl font-bold text-foreground mb-2">ICEF Accreditation</h4>
+                  <p className="text-muted-foreground">ICEF's industry-leading quality assurance processes are recognized worldwide as a benchmark for education agencies. This accreditation affirms The Global Avenues has been thoroughly screened and accredited for its quality work, professional approach, and strong ethical standards in recruiting international students.</p>
                 </div>
-              </motion.div>
-            ))}
-          </motion.div>
+              </div>
+            </motion.div>
+
+            {/* NET24 & EAIE */}
+            <motion.div
+              className="bg-background border border-border rounded-xl p-8 hover:border-secondary/50 transition-all"
+              initial={{ y: 20, opacity: 0 }}
+              whileInView={{ y: 0, opacity: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.1 }}
+            >
+              <div className="space-y-6">
+                <div className="flex items-start gap-4">
+                  <div className="w-12 h-12 rounded-lg bg-secondary/10 flex items-center justify-center flex-shrink-0">
+                    <Lightbulb className="w-6 h-6 text-secondary" />
+                  </div>
+                  <div className="flex-1">
+                    <h4 className="font-bold text-foreground mb-1">NET24 Member</h4>
+                    <p className="text-sm text-muted-foreground">Connects educational institutions with reputable student recruitment agencies through advanced platform and B2B events.</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-4">
+                  <div className="w-12 h-12 rounded-lg bg-accent/10 flex items-center justify-center flex-shrink-0">
+                    <Award className="w-6 h-6 text-accent" />
+                  </div>
+                  <div className="flex-1">
+                    <h4 className="font-bold text-foreground mb-1">EAIE Member</h4>
+                    <p className="text-sm text-muted-foreground">European Association for International Education - member-led, non-profit organization promoting international higher education.</p>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </div>
         </div>
       </section>
     </div>

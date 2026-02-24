@@ -15,7 +15,9 @@ export function Header() {
   const mainMenuItems = [
     { label: 'Home', path: '/' },
     { label: 'Who We Are', path: '/about' },
-    { label: 'Gallery', path: '/services' },
+    { label: 'Services', path: '/services' },
+    { label: 'Gallery', path: '/gallery' },
+    { label: 'Partners', path: '/partners' },
   ];
 
   const isActive = (path) => location.pathname === path;
@@ -54,11 +56,10 @@ export function Header() {
               <Link
                 key={item.label}
                 to={item.path}
-                className={`px-4 py-2 text-sm font-medium transition-colors duration-300 rounded-md ${
-                  isActive(item.path)
+                className={`px-4 py-2 text-sm font-medium transition-colors duration-300 rounded-md ${isActive(item.path)
                     ? 'text-primary border-b-2 border-primary'
                     : 'text-foreground hover:text-primary'
-                }`}
+                  }`}
               >
                 {item.label}
               </Link>
@@ -68,32 +69,55 @@ export function Header() {
             <div className="relative group">
               <button
                 onMouseEnter={() => setOpenDropdown('portfolio')}
-                className="px-4 py-2 text-sm font-medium text-foreground hover:text-primary transition-colors flex items-center gap-1 rounded-md group-hover:bg-primary/10"
+                className="px-4 py-2 text-sm font-medium text-foreground hover:text-primary transition-colors flex items-center gap-2 rounded-md hover:bg-primary/5"
               >
                 Portfolio
-                <ChevronDown className="w-4 h-4 group-hover:rotate-180 transition-transform" />
+                <ChevronDown className="w-4 h-4 group-hover:rotate-180 transition-transform duration-300" />
               </button>
-              
+
               {(openDropdown === 'portfolio') && (
-                <div 
-                  className="absolute left-0 mt-0 w-72 bg-background border border-border rounded-lg shadow-2xl animate-fade-in-down origin-top"
+                <div
+                  className="absolute left-0 mt-2 w-96 bg-background border border-border rounded-xl shadow-xl animate-fade-in-down origin-top overflow-hidden"
                   onMouseEnter={() => setOpenDropdown('portfolio')}
                   onMouseLeave={() => setOpenDropdown(null)}
                 >
-                  <div className="bg-primary text-white px-4 py-3 font-semibold rounded-t-lg">
-                    Our University Partners
+                  {/* Header with gradient */}
+                  <div className="bg-gradient-to-r from-primary to-secondary text-white px-6 py-4">
+                    <h3 className="text-lg font-bold">Our Universities</h3>
+                    <p className="text-sm text-white/80 mt-1">Explore 9+ partner institutions worldwide</p>
                   </div>
-                  <div className="space-y-1 p-2 max-h-96 overflow-y-auto">
-                    {portfolioData.map((portfolio) => (
-                      <Link
-                        key={portfolio.id}
-                        to={`/portfolio/${portfolio.id}`}
-                        className="block px-4 py-3 text-sm text-foreground hover:bg-primary/10 rounded-md transition-colors border-l-2 border-transparent hover:border-primary hover:pl-3"
-                      >
-                        <div className="font-medium">{portfolio.title}</div>
-                        <div className="text-muted-foreground text-xs">{portfolio.country}</div>
-                      </Link>
-                    ))}
+
+                  {/* Grid Layout */}
+                  <div className="p-4 max-h-96 overflow-y-auto">
+                    <div className="grid grid-cols-1 gap-2">
+                      {portfolioData.map((portfolio) => (
+                        <Link
+                          key={portfolio.id}
+                          to={`/portfolio/${portfolio.id}`}
+                          className="group/item p-3 rounded-lg hover:bg-primary/10 transition-all duration-300 border border-transparent hover:border-primary/30"
+                        >
+                          <div className="flex items-start justify-between">
+                            <div className="flex-1">
+                              <h4 className="font-semibold text-foreground group-hover/item:text-primary transition-colors">{portfolio.title}</h4>
+                              <p className="text-xs text-muted-foreground mt-1">{portfolio.country}</p>
+                              <p className="text-xs text-accent mt-1 font-medium">{portfolio.studentsPlaced}+ Students</p>
+                            </div>
+                            <div className="text-right ml-2">
+                              <span className="inline-block px-2 py-1 bg-primary/10 text-primary text-xs rounded font-medium">
+                                {portfolio.programs} Programs
+                              </span>
+                            </div>
+                          </div>
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Footer Link */}
+                  <div className="border-t border-border px-6 py-3 bg-muted/20">
+                    <Link to="/portfolio" className="text-sm font-medium text-primary hover:text-secondary transition-colors">
+                      View All Universities →
+                    </Link>
                   </div>
                 </div>
               )}
@@ -103,31 +127,52 @@ export function Header() {
             <div className="relative group">
               <button
                 onMouseEnter={() => setOpenDropdown('partners')}
-                className="px-4 py-2 text-sm font-medium text-foreground hover:text-primary transition-colors flex items-center gap-1 rounded-md group-hover:bg-primary/10"
+                className="px-4 py-2 text-sm font-medium text-foreground hover:text-secondary transition-colors flex items-center gap-2 rounded-md hover:bg-secondary/5"
               >
                 Partners
-                <ChevronDown className="w-4 h-4 group-hover:rotate-180 transition-transform" />
+                <ChevronDown className="w-4 h-4 group-hover:rotate-180 transition-transform duration-300" />
               </button>
-              
+
               {(openDropdown === 'partners') && (
-                <div 
-                  className="absolute left-0 mt-0 w-64 bg-background border border-border rounded-lg shadow-2xl animate-fade-in-down origin-top"
+                <div
+                  className="absolute right-0 mt-2 w-80 bg-background border border-border rounded-xl shadow-xl animate-fade-in-down origin-top"
                   onMouseEnter={() => setOpenDropdown('partners')}
                   onMouseLeave={() => setOpenDropdown(null)}
                 >
-                  <div className="bg-secondary text-white px-4 py-3 font-semibold rounded-t-lg">
-                    Our Partners
+                  {/* Header with gradient */}
+                  <div className="bg-gradient-to-r from-secondary to-primary text-white px-6 py-4">
+                    <h3 className="text-lg font-bold">Our Partnerships</h3>
+                    <p className="text-sm text-white/80 mt-1">Strategic collaborations & memberships</p>
                   </div>
-                  <div className="space-y-1 p-2">
-                    {partnerCompanies.map((partner) => (
-                      <div
-                        key={partner.id}
-                        className="px-4 py-3 text-sm text-foreground hover:bg-secondary/10 rounded-md transition-colors border-l-2 border-transparent hover:border-secondary cursor-pointer group"
-                      >
-                        <div className="font-medium group-hover:text-secondary">{partner.name}</div>
-                        <div className="text-muted-foreground text-xs">{partner.type}</div>
-                      </div>
-                    ))}
+
+                  {/* Partners Grid */}
+                  <div className="p-4 max-h-80 overflow-y-auto">
+                    <div className="space-y-3">
+                      {partnerCompanies.map((partner) => (
+                        <div
+                          key={partner.id}
+                          className="p-4 rounded-lg bg-gradient-to-br from-secondary/5 to-primary/5 border border-secondary/20 hover:border-secondary/50 transition-all duration-300 cursor-pointer group/partner"
+                        >
+                          <div className="flex items-start gap-3">
+                            <div className="w-8 h-8 rounded-lg bg-secondary/20 flex items-center justify-center flex-shrink-0 group-hover/partner:bg-secondary/30 transition-colors">
+                              <span className="text-lg text-secondary">🤝</span>
+                            </div>
+                            <div className="flex-1">
+                              <h4 className="font-semibold text-foreground group-hover/partner:text-secondary transition-colors">{partner.name}</h4>
+                              <p className="text-xs text-muted-foreground mt-1">{partner.type}</p>
+                              <p className="text-xs text-muted-foreground mt-1">{partner.description}</p>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Footer */}
+                  <div className="border-t border-border px-6 py-3 bg-muted/20">
+                    <p className="text-xs text-muted-foreground">
+                      ICEF Accredited | NET24 Member | EAIE Member
+                    </p>
                   </div>
                 </div>
               )}
@@ -175,11 +220,10 @@ export function Header() {
               <Link
                 key={item.label}
                 to={item.path}
-                className={`block px-4 py-2 rounded-lg transition-colors text-sm ${
-                  isActive(item.path)
+                className={`block px-4 py-2 rounded-lg transition-colors text-sm ${isActive(item.path)
                     ? 'bg-primary text-primary-foreground'
                     : 'text-foreground hover:bg-muted'
-                }`}
+                  }`}
                 onClick={() => setIsMenuOpen(false)}
               >
                 {item.label}

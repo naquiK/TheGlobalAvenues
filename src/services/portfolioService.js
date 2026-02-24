@@ -5,11 +5,7 @@
 import { portfolioData, getPortfolioById as getMockPortfolioById, categories } from '../data/portfolioData';
 
 // API Configuration - Change this to your backend URL when ready
-// Avoid direct `process` access in the browser. Prefer Vite `import.meta.env` and
-// fall back to `process.env` only if it's defined at runtime (safe typeof check).
-const API_BASE_URL = (typeof process !== 'undefined' && process.env && process.env.REACT_APP_API_URL)
-  || import.meta.env.VITE_API_URL
-  || 'http://localhost:3000/api';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
 const USE_MOCK_DATA = true; // Set to false when backend is ready
 
 /**

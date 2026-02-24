@@ -13,6 +13,8 @@ import AboutPage from './pages/AboutPage';
 import ServicesPage from './pages/ServicesPage';
 import CollaboratePage from './pages/CollaboratePage';
 import UniversitiesPage from './pages/UniversitiesPage';
+import GalleryPage from './pages/GalleryPage';
+import PartnersPage from './pages/PartnersPage';
 
 function App() {
   return (
@@ -28,6 +30,8 @@ function App() {
             <Route path="/services" element={<ServicesPage />} />
             <Route path="/collaborate" element={<CollaboratePage />} />
             <Route path="/universities" element={<UniversitiesPage />} />
+            <Route path="/gallery" element={<GalleryPage />} />
+            <Route path="/partners" element={<PartnersPage />} />
           </Routes>
         </main>
         <Footer />

@@ -1,5 +1,5 @@
 import { useScrollAnimation } from '../hooks/useScrollAnimation';
-import { Building2, Megaphone, Users, BarChart3, Settings, Handshake, ArrowRight } from 'lucide-react';
+import { Building2, Megaphone, Users, BarChart3, Settings, Handshake, ArrowRight, Briefcase } from 'lucide-react';
 
 const services = [
   {
@@ -40,6 +40,15 @@ const services = [
   },
 ];
 
+const endToEndSupport = [
+  { title: 'Institutional Support', description: 'Complete strategic guidance for universities establishing presence in South Asia' },
+  { title: 'Student Recruitment', description: 'Comprehensive student recruitment and admission processing' },
+  { title: 'Visa & Immigration', description: 'Expert assistance with visa applications and immigration requirements' },
+  { title: 'Career Guidance', description: 'Professional counseling and career path planning for students' },
+  { title: 'Quality Assurance', description: 'Transparent processes with ICEF accreditation and industry standards' },
+  { title: 'Continuous Support', description: 'Ongoing support throughout the entire student journey' },
+];
+
 export function Services() {
   const [ref, isVisible] = useScrollAnimation();
 
@@ -69,7 +78,7 @@ export function Services() {
         </div>
 
         {/* Services Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-20">
           {services.map((service, index) => {
             const Icon = service.icon;
             const [cardRef, cardIsVisible] = useScrollAnimation();
@@ -104,6 +113,44 @@ export function Services() {
               </div>
             );
           })}
+        </div>
+
+        {/* End-to-End Support Section */}
+        <div className="mt-24 pt-20 border-t border-border">
+          <div
+            ref={ref}
+            className={`text-center mb-16 transition-all duration-1000 ${
+              isVisible ? 'animate-fade-in-up' : 'opacity-0 translate-y-[30px]'
+            }`}
+          >
+            <div className="inline-block px-4 py-2 bg-accent/10 text-accent rounded-full text-sm font-semibold mb-4">
+              🌍 Offering End-to-End Support
+            </div>
+            <h3 className="text-4xl lg:text-5xl font-bold text-foreground mb-4">
+              Complete Educational Solutions
+            </h3>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              From institutional representation to student success, we provide comprehensive support at every stage of the international education journey.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {endToEndSupport.map((item, index) => (
+              <div
+                key={index}
+                className="p-8 bg-gradient-to-br from-primary/5 to-secondary/5 border border-border rounded-2xl hover:border-accent hover:shadow-lg transition-all duration-500 hover:-translate-y-2 animate-fade-in-up"
+                style={{ animationDelay: `${index * 100}ms` }}
+              >
+                <div className="flex items-start gap-3 mb-4">
+                  <div className="flex-shrink-0 w-10 h-10 bg-accent/20 rounded-lg flex items-center justify-center">
+                    <Briefcase className="w-5 h-5 text-accent" />
+                  </div>
+                </div>
+                <h4 className="text-xl font-bold text-foreground mb-2">{item.title}</h4>
+                <p className="text-muted-foreground">{item.description}</p>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </section>
