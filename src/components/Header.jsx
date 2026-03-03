@@ -18,7 +18,7 @@ export function Header() {
     { label: 'Home', path: '/' },
     { label: 'Who We Are', path: '/about' },
     { label: 'Services', path: '/services' },
-    { label: 'News & Vlog', path: '/news-vlog' },
+    { label: 'News & Blog', path: '/news-blog' },
     { label: 'Partners', path: '/partners' },
     { label: 'Gallery', path: '/gallery' },
   ];
@@ -162,9 +162,7 @@ export function Header() {
         {isMenuOpen && (
           <nav className="md:hidden pb-4 space-y-2 animate-fade-in-down">
             {/* show logo at top of mobile menu for branding */}
-            <div className="flex justify-center py-2">
-              <img src={logo} alt="Logo" className="h-10 w-auto" />
-            </div>
+
             {mainMenuItems.map((item) => (
               <Link
                 key={item.label}

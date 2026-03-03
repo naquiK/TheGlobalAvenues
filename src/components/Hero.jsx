@@ -125,7 +125,7 @@ export function Hero() {
             <div className="p-4 bg-muted/50 rounded-lg backdrop-blur hover:bg-muted transition-colors">
               <div className="flex items-center gap-3 mb-2">
                 <Users className="w-5 h-5 text-primary" />
-                <span className="text-2xl font-bold text-foreground">{isVisible ? <CountUpNumber target={3000} /> : 0}+</span>
+                <span className="text-2xl font-bold text-foreground">{isVisible ? <CountUpNumber target={5000} /> : 0}+</span>
               </div>
               <p className="text-sm text-muted-foreground">Students Placed</p>
             </div>

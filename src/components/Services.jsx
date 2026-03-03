@@ -94,6 +94,7 @@ const UniversitySolutionsModal = ({ isOpen, onClose }) => {
                 <span>Strategic partnerships and collaboration opportunities</span>
               </li>
             </ul>
+            
           </div>
 
           <button onClick={onClose} className="w-full px-6 py-3 bg-primary text-primary-foreground rounded-lg font-semibold hover:bg-secondary transition-all duration-300">
@@ -374,12 +375,7 @@ export function Services() {
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
               From institutional representation to student success, we provide comprehensive support at every stage of the international education journey.
             </p>
-            <button
-              onClick={handleEducationalClick}
-              className="mt-6 px-6 py-2 bg-accent text-white rounded-lg hover:bg-accent/90 transition-all duration-300 font-medium text-sm"
-            >
-              Learn More
-            </button>
+     
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -397,7 +393,12 @@ export function Services() {
                 </div>
                 <h4 className="text-xl font-bold text-foreground mb-2 group-hover:text-accent transition-colors">{item.title}</h4>
                 <p className="text-muted-foreground">{item.description}</p>
+                  <div className="flex mt-10 items-center text-primary font-semibold group-hover:gap-2 transition-all">
+                  Learn more
+                  <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-2 transition-transform" />
+                </div>
               </div>
+              
             ))}
           </div>
         </div>
