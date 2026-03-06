@@ -1,78 +1,133 @@
 import { useScrollAnimation } from '../hooks/useScrollAnimation';
-import { ChevronUp } from 'lucide-react';
+import { ChevronUp, Mail, Phone, MapPin, Facebook, Linkedin, Twitter } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 
 export function Footer() {
   const [ref, isVisible] = useScrollAnimation();
+  const [email, setEmail] = useState('');
+  const [subscribeStatus, setSubscribeStatus] = useState('');
+  const [isDarkMode, setIsDarkMode] = useState(false);
+
+  useEffect(() => {
+    const isDark = document.documentElement.classList.contains('dark');
+    setIsDarkMode(isDark);
+    
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.attributeName === 'class') {
+          const isDark = document.documentElement.classList.contains('dark');
+          setIsDarkMode(isDark);
+        }
+      });
+    });
+    
+    observer.observe(document.documentElement, { attributes: true });
+    return () => observer.disconnect();
+  }, []);
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const handleSubscribe = (e) => {
+    e.preventDefault();
+    if (email) {
+      setSubscribeStatus('success');
+      setEmail('');
+      setTimeout(() => setSubscribeStatus(''), 3000);
+    }
+  };
+
   const links = {
-    'Quick Links': [
-      { label: 'Home', path: '/' },
-      { label: 'About Us', path: '/about' },
-      { label: 'Services', path: '/services' },
-      { label: 'Portfolio', path: '/portfolio' },
-    ],
     'Explore': [
+      { label: 'Home', path: '/' },
+      { label: 'Who We Are', path: '/about' },
+      { label: 'Educational Pathways', path: '/education-program' },
+      { label: 'Universities', path: '/universities' },
+    ],
+    'Services': [
+      { label: 'Explore Pathways', path: '/services' },
+      { label: 'Student Guidance', path: '/services' },
+      { label: 'University Recruitment', path: '/services' },
+      { label: 'Visa Assistance', path: '/services' },
+    ],
+    'Resources': [
+      { label: 'Blog', path: '/news-blog' },
       { label: 'Gallery', path: '/gallery' },
       { label: 'Partners', path: '/partners' },
-      { label: 'Universities', path: '/universities' },
-      { label: 'Collaborate', path: '/collaborate' },
-    ],
-    'Connect': [
-      { label: 'Contact Us', path: '/collaborate' },
-      { label: 'Privacy Policy', external: true, href: '#' },
-      { label: 'Terms of Service', external: true, href: '#' },
     ],
   };
 
   return (
-    <footer className="bg-background border-t border-border relative">
+    <footer className={`relative transition-colors duration-300 border-t ${
+      isDarkMode 
+        ? 'bg-slate-950 border-slate-800' 
+        : 'bg-white border-gray-200'
+    }`}>
       {/* Newsletter Section */}
-      <div className="bg-gradient-to-r from-primary/10 via-secondary/10 to-accent/10 border-b border-border">
-        <div className="max-w-7xl mx-auto px-4 py-12">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+      <div className={`${isDarkMode ? 'bg-gradient-to-r from-slate-800 to-slate-900' : 'bg-gradient-to-r from-blue-600 to-blue-700'} text-white`}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-8 items-center">
             <div>
-              <h3 className="text-2xl font-bold text-foreground mb-2">Stay Updated</h3>
-              <p className="text-muted-foreground">Subscribe to get the latest updates on university programs and opportunities.</p>
+              <h3 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-2 sm:mb-3">Stay Updated</h3>
+              <p className={`text-sm sm:text-base ${isDarkMode ? 'text-slate-300' : 'text-blue-100'}`}>Subscribe to get the latest updates on universities and programs.</p>
             </div>
-            <form className="flex gap-2" onSubmit={(e) => e.preventDefault()}>
+            <form className="flex flex-col sm:flex-row gap-2 sm:gap-3" onSubmit={handleSubscribe}>
               <input
                 type="email"
                 placeholder="Enter your email"
-                className="flex-1 px-4 py-3 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className={`flex-1 px-3 sm:px-4 py-2 sm:py-3 rounded-lg text-sm ${isDarkMode ? 'bg-slate-700 text-white placeholder-slate-400 focus:ring-blue-500' : 'bg-white text-gray-900 placeholder-gray-500 focus:ring-white'} focus:outline-none focus:ring-2`}
+                required
               />
-              <button className="px-6 py-3 bg-primary text-primary-foreground rounded-lg font-semibold hover:bg-secondary transition-all duration-300">
+              <button 
+                type="submit"
+                className={`px-4 sm:px-6 py-2 sm:py-3 rounded-lg font-semibold transition-all duration-300 text-sm sm:text-base ${isDarkMode ? 'bg-blue-600 text-white hover:bg-blue-700' : 'bg-white text-blue-600 hover:bg-blue-50'}`}
+              >
                 Subscribe
               </button>
             </form>
+            {subscribeStatus === 'success' && (
+              <p className={`col-span-1 sm:col-span-2 text-sm ${isDarkMode ? 'text-slate-300' : 'text-blue-100'}`}>✓ Thank you for subscribing!</p>
+            )}
           </div>
         </div>
       </div>
 
-      {/* Main Footer */}
-      <div className="max-w-7xl mx-auto px-4 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 mb-12">
-          {/* Brand */}
+      {/* Main Footer Content */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 sm:gap-8 lg:gap-6 mb-8 sm:mb-12">
+          {/* Brand Section */}
           <div
             ref={ref}
             className={`lg:col-span-1 transition-all duration-1000 ${
-              isVisible ? 'animate-fade-in-up' : 'opacity-0 translate-y-[30px]'
+              isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
             }`}
           >
-            <div className="flex items-center gap-3 mb-4">
+            <div className="mb-3">
               <img 
                 src="https://theglobalavenues.com/wp-content/uploads/2024/04/Transparent_png-e1722253623779-1536x398.png"
                 alt="The Global Avenues Logo"
-                className="h-12 w-auto"
+                className="h-8 sm:h-10 w-auto"
               />
             </div>
-            <p className="text-sm text-muted-foreground leading-relaxed">
-              Your trusted partner for international education and student recruitment across South Asia.
+            <p className={`text-xs sm:text-sm leading-relaxed mb-3 ${isDarkMode ? 'text-slate-400' : 'text-gray-600'}`}>
+              Connecting students with world-class universities.
             </p>
+            {/* Social Links */}
+            <div className="flex gap-2">
+              <a href="#" className={`p-1.5 sm:p-2 rounded-full transition-all ${isDarkMode ? 'bg-slate-800 text-slate-400 hover:bg-blue-600 hover:text-white' : 'bg-gray-100 text-gray-600 hover:bg-blue-600 hover:text-white'}`}>
+                <Facebook className="w-3 h-3 sm:w-4 sm:h-4" />
+              </a>
+              <a href="#" className={`p-1.5 sm:p-2 rounded-full transition-all ${isDarkMode ? 'bg-slate-800 text-slate-400 hover:bg-blue-600 hover:text-white' : 'bg-gray-100 text-gray-600 hover:bg-blue-600 hover:text-white'}`}>
+                <Linkedin className="w-3 h-3 sm:w-4 sm:h-4" />
+              </a>
+              <a href="#" className={`p-1.5 sm:p-2 rounded-full transition-all ${isDarkMode ? 'bg-slate-800 text-slate-400 hover:bg-blue-600 hover:text-white' : 'bg-gray-100 text-gray-600 hover:bg-blue-600 hover:text-white'}`}>
+                <Twitter className="w-3 h-3 sm:w-4 sm:h-4" />
+              </a>
+            </div>
           </div>
 
           {/* Link Sections */}
@@ -80,20 +135,26 @@ export function Footer() {
             <div
               key={title}
               className={`transition-all duration-1000 ${
-                isVisible ? 'animate-fade-in-up' : 'opacity-0 translate-y-[30px]'
+                isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
               }`}
-              style={{ transitionDelay: `${(index + 1) * 100}ms` }}
+              style={{ transitionDelay: `${(index + 1) * 75}ms` }}
             >
-              <h4 className="font-semibold text-foreground mb-4">{title}</h4>
-              <ul className="space-y-2">
+              <h4 className={`font-semibold mb-3 sm:mb-4 text-xs sm:text-sm lg:text-base ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>{title}</h4>
+              <ul className="space-y-1.5 sm:space-y-2">
                 {items.map((item) => (
                   <li key={item.label}>
                     {item.external ? (
-                      <a href={item.href} className="text-sm text-muted-foreground hover:text-primary transition-colors duration-300">
+                      <a 
+                        href={item.href} 
+                        className={`text-xs sm:text-sm transition-colors duration-300 ${isDarkMode ? 'text-slate-400 hover:text-blue-400' : 'text-gray-600 hover:text-blue-600'}`}
+                      >
                         {item.label}
                       </a>
                     ) : (
-                      <Link to={item.path} className="text-sm text-muted-foreground hover:text-primary transition-colors duration-300">
+                      <Link 
+                        to={item.path} 
+                        className={`text-xs sm:text-sm transition-colors duration-300 ${isDarkMode ? 'text-slate-400 hover:text-blue-400' : 'text-gray-600 hover:text-blue-600'}`}
+                      >
                         {item.label}
                       </Link>
                     )}
@@ -104,20 +165,47 @@ export function Footer() {
           ))}
         </div>
 
-        {/* Divider */}
-        <div className="border-t border-border my-8"></div>
+        {/* Contact Info */}
+        <div className={`hidden sm:grid sm:grid-cols-3 gap-4 sm:gap-6 mb-8 py-6 sm:py-8 border-t border-b transition-colors duration-300 ${isDarkMode ? 'border-slate-800' : 'border-gray-200'}`}>
+          <div className="flex items-start gap-2 sm:gap-3">
+            <Mail className={`w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0 mt-0.5 ${isDarkMode ? 'text-blue-400' : 'text-blue-600'}`} />
+            <div>
+              <p className={`text-xs sm:text-sm font-semibold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Email</p>
+              <a href="mailto:info@globalaveneus.com" className={`text-xs sm:text-sm ${isDarkMode ? 'text-slate-400 hover:text-blue-400' : 'text-gray-600 hover:text-blue-600'}`}>
+                info@globalaveneus.com
+              </a>
+            </div>
+          </div>
+          <div className="flex items-start gap-2 sm:gap-3">
+            <Phone className={`w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0 mt-0.5 ${isDarkMode ? 'text-blue-400' : 'text-blue-600'}`} />
+            <div>
+              <p className={`text-xs sm:text-sm font-semibold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Phone</p>
+              <a href="tel:+1234567890" className={`text-xs sm:text-sm ${isDarkMode ? 'text-slate-400 hover:text-blue-400' : 'text-gray-600 hover:text-blue-600'}`}>
+                +1 (234) 567-890
+              </a>
+            </div>
+          </div>
+          <div className="flex items-start gap-2 sm:gap-3">
+            <MapPin className={`w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0 mt-0.5 ${isDarkMode ? 'text-blue-400' : 'text-blue-600'}`} />
+            <div>
+              <p className={`text-xs sm:text-sm font-semibold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Location</p>
+              <p className={`text-xs sm:text-sm ${isDarkMode ? 'text-slate-400' : 'text-gray-600'}`}>South Asia Office</p>
+            </div>
+          </div>
+        </div>
 
         {/* Bottom Section */}
-        <div className="flex flex-col md:flex-row justify-between items-center gap-6">
-          <p className="text-sm text-muted-foreground text-center md:text-left">
-            © 2024 The Global Avenues. All rights reserved. | Enabling Global Education Excellence
+        <div className="flex flex-col-reverse sm:flex-row justify-between items-center gap-3 sm:gap-6 pt-4 sm:pt-6">
+          <p className={`text-xs sm:text-sm text-center sm:text-left ${isDarkMode ? 'text-slate-500' : 'text-gray-500'}`}>
+            © 2024 The Global Avenues. All rights reserved.
           </p>
 
           <button
             onClick={scrollToTop}
-            className="p-3 bg-primary text-primary-foreground rounded-full hover:bg-secondary transition-all duration-300 transform hover:scale-110 shadow-lg"
+            className={`p-2 sm:p-3 rounded-full transition-all duration-300 transform hover:scale-110 ${isDarkMode ? 'bg-blue-600 text-white hover:bg-blue-700' : 'bg-blue-600 text-white hover:bg-blue-700'} shadow-lg`}
+            aria-label="Scroll to top"
           >
-            <ChevronUp className="w-5 h-5" />
+            <ChevronUp className="w-4 h-4 sm:w-5 sm:h-5" />
           </button>
         </div>
       </div>
