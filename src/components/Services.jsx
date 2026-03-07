@@ -344,28 +344,39 @@ export function Services() {
       <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-primary/10 rounded-full blur-3xl -z-10"></div>
 
       <div className="max-w-7xl mx-auto w-full">
-        {/* Header */}
+        {/* Header with Image */}
         <div
           ref={headerRef}
-          className={`text-center mb-16 transition-all duration-1000 ${
+          className={`grid grid-cols-1 lg:grid-cols-2 gap-8 items-center mb-16 transition-all duration-1000 ${
             headerIsVisible ? 'animate-fade-in-up' : 'opacity-0 translate-y-[30px]'
           }`}
         >
-          <div className="inline-block px-4 py-2 bg-primary/10 text-primary rounded-full text-sm font-semibold mb-4">
-            🎯 What We Offer
+          <div className="text-center lg:text-left">
+            <div className="inline-block px-4 py-2 bg-primary/10 text-primary rounded-full text-sm font-semibold mb-4">
+              🎯 What We Offer
+            </div>
+            <h2 className="text-4xl lg:text-5xl font-bold text-foreground mb-4">
+              Comprehensive University Solutions
+            </h2>
+            <p className="text-lg text-muted-foreground mb-6">
+              We provide end-to-end support to help higher education institutions expand their reach and recruit top-tier international students.
+            </p>
+            <button
+              onClick={handleUniversityClick}
+              className="px-6 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-secondary transition-all duration-300 font-medium text-sm"
+            >
+              Learn More
+            </button>
           </div>
-          <h2 className="text-4xl lg:text-5xl font-bold text-foreground mb-4">
-            Comprehensive University Solutions
-          </h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            We provide end-to-end support to help higher education institutions expand their reach and recruit top-tier international students.
-          </p>
-          <button
-            onClick={handleUniversityClick}
-            className="mt-6 px-6 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-secondary transition-all duration-300 font-medium text-sm"
-          >
-            Learn More
-          </button>
+
+          {/* Image */}
+          <div className="hidden lg:block rounded-2xl overflow-hidden shadow-lg">
+            <img 
+              src="https://images.unsplash.com/photo-1552664730-d307ca884978?w=600&h=500&fit=crop&q=80"
+              alt="Educational services"
+              className="w-full h-96 object-cover hover:scale-105 transition-transform duration-300"
+            />
+          </div>
         </div>
 
         {/* Services Grid */}

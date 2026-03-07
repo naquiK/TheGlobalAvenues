@@ -2,8 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, Sun, Moon, ChevronDown } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
-import { portfolioData, categories, partnerCompanies } from '../data/portfolioData';
-
+import { portfolioData } from '../data/portfolioData';
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -12,19 +11,17 @@ export function Header() {
   const { isDark, toggleTheme } = useTheme();
   const location = useLocation();
   const dropdownRef = useRef(null);
-  const logo = 'https://theglobalavenues.com/wp-content/uploads/2024/04/Transparent_png-e1722253623779-1536x398.png';
+
+  const logo =
+    'https://theglobalavenues.com/wp-content/uploads/2024/04/Transparent_png-e1722253623779-1536x398.png';
 
   const mainMenuItems = [
     { label: 'Home', path: '/' },
     { label: 'Who We Are', path: '/about' },
-    // { label: 'Services', path: '/services' },
-    { label: 'News & Blog', path: '/news-blog' },
-    { label: 'Gallery', path: '/gallery' },
   ];
 
   const isActive = (path) => location.pathname === path;
 
-  // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -40,7 +37,8 @@ export function Header() {
     <header className="fixed top-0 w-full bg-background/80 backdrop-blur-md border-b border-border z-50 animate-fade-in-down">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
-          {/* Logo: keeps aspect ratio and avoids shrinking on smaller screens */}
+
+          {/* Logo */}
           <div className="flex-shrink-0">
             <Link to="/" className="hover:opacity-80 transition-opacity">
               <img src={logo} alt="Logo" className="h-12 md:h-16 w-auto" />
@@ -49,94 +47,21 @@ export function Header() {
 
           {/* Desktop Menu */}
           <nav className="hidden md:flex gap-1" ref={dropdownRef}>
+            
+            {/* Home + Who we are */}
             {mainMenuItems.map((item) => (
               <Link
                 key={item.label}
                 to={item.path}
-                className={`px-4 py-2 text-sm font-medium transition-colors duration-300 rounded-md ${isActive(item.path)
-                  ? 'text-primary border-b-2 border-primary'
-                  : 'text-foreground hover:text-primary'
-                  }`}
+                className={`px-4 py-2 text-sm font-medium transition-colors duration-300 rounded-md ${
+                  isActive(item.path)
+                    ? 'text-primary border-b-2 border-primary'
+                    : 'text-foreground hover:text-primary'
+                }`}
               >
                 {item.label}
               </Link>
             ))}
-
-            {/* What We Offer Dropdown */}
-            <div className="relative group">
-              <button
-                onMouseEnter={() => setOpenDropdown('offer')}
-                className="px-4 py-2 text-sm font-medium text-foreground hover:text-primary transition-colors flex items-center gap-2 rounded-md hover:bg-primary/5"
-              >
-                Offerings
-                <ChevronDown className="w-4 h-4 group-hover:rotate-180 transition-transform duration-300" />
-              </button>
-
-              {(openDropdown === 'offer') && (
-                <div
-                  className="absolute left-0 mt-2 w-80 bg-background border border-border rounded-xl shadow-xl animate-fade-in-down origin-top overflow-hidden"
-                  onMouseEnter={() => setOpenDropdown('offer')}
-                  onMouseLeave={() => setOpenDropdown(null)}
-                >
-                  {/* Header with gradient */}
-                  <div className="bg-gradient-to-r from-primary to-secondary text-white px-6 py-4">
-                    <h3 className="text-lg font-bold">Programs</h3>
-                    <p className="text-sm text-white/80 mt-1">Explore our educational pathways</p>
-                  </div>
-
-                  {/* Program Links */}
-                  <div className="p-4 max-h-96 overflow-y-auto space-y-1">
-                    <Link
-                      to="/what-we-offer"
-                      className="block p-3 rounded-lg hover:bg-primary/10 transition-colors border border-transparent hover:border-primary/30"
-                    >
-                      <h4 className="font-semibold text-foreground hover:text-primary">All Programs</h4>
-                      <p className="text-xs text-muted-foreground mt-1">View all educational offerings</p>
-                    </Link>
-
-                    <div className="border-t border-border pt-2 mt-2">
-                      <Link
-                        to="/education-program/fulltime-degree/undergraduate"
-                        className="block p-3 rounded-lg hover:bg-blue-500/10 transition-colors"
-                      >
-                        <h4 className="font-semibold text-foreground text-sm">Full Time Degree</h4>
-                      </Link>
-                      <Link
-                        to="/education-program/online-program/undergraduate"
-                        className="block p-3 rounded-lg hover:bg-purple-500/10 transition-colors"
-                      >
-                        <h4 className="font-semibold text-foreground text-sm">Online Program</h4>
-                      </Link>
-                      <Link
-                        to="/education-program/vocational-courses/undergraduate"
-                        className="block p-3 rounded-lg hover:bg-green-500/10 transition-colors"
-                      >
-                        <h4 className="font-semibold text-foreground text-sm">Vocational Courses</h4>
-                      </Link>
-                      <Link
-                        to="/education-program/internship-abroad/undergraduate"
-                        className="block p-3 rounded-lg hover:bg-orange-500/10 transition-colors"
-                      >
-                        <h4 className="font-semibold text-foreground text-sm">Internship Abroad</h4>
-                      </Link>
-                      <Link
-                        to="/education-program/summer-winter-school/undergraduate"
-                        className="block p-3 rounded-lg hover:bg-pink-500/10 transition-colors"
-                      >
-                        <h4 className="font-semibold text-foreground text-sm">Summer/Winter School</h4>
-                      </Link>
-                    </div>
-                  </div>
-
-                  {/* Footer Link */}
-                  <div className="border-t border-border px-6 py-3 bg-muted/20">
-                    <Link to="/what-we-offer" className="text-sm font-medium text-primary hover:text-secondary transition-colors">
-                      Learn More →
-                    </Link>
-                  </div>
-                </div>
-              )}
-            </div>
 
             {/* Portfolio Dropdown */}
             <div className="relative group">
@@ -148,47 +73,39 @@ export function Header() {
                 <ChevronDown className="w-4 h-4 group-hover:rotate-180 transition-transform duration-300" />
               </button>
 
-              {(openDropdown === 'portfolio') && (
+              {openDropdown === 'portfolio' && (
                 <div
-                  className="absolute left-0 mt-2 w-96 bg-background border border-border rounded-xl shadow-xl animate-fade-in-down origin-top overflow-hidden"
+                  className="absolute left-0 mt-2 w-96 bg-background border border-border rounded-xl shadow-xl animate-fade-in-down"
                   onMouseEnter={() => setOpenDropdown('portfolio')}
                   onMouseLeave={() => setOpenDropdown(null)}
                 >
-                  {/* Header with gradient */}
                   <div className="bg-gradient-to-r from-primary to-secondary text-white px-6 py-4">
                     <h3 className="text-lg font-bold">Our Universities</h3>
-                    <p className="text-sm text-white/80 mt-1">Explore 9+ partner institutions worldwide</p>
+                    <p className="text-sm text-white/80">
+                      Explore partner institutions worldwide
+                    </p>
                   </div>
 
-                  {/* Grid Layout */}
                   <div className="p-4 max-h-96 overflow-y-auto">
-                    <div className="grid grid-cols-1 gap-2">
-                      {portfolioData.map((portfolio) => (
-                        <Link
-                          key={portfolio.id}
-                          to={`/portfolio/${portfolio.id}`}
-                          className="group/item p-3 rounded-lg hover:bg-primary/10 transition-all duration-300 border border-transparent hover:border-primary/30"
-                        >
-                          <div className="flex items-start justify-between">
-                            <div className="flex-1">
-                              <h4 className="font-semibold text-foreground group-hover/item:text-primary transition-colors">{portfolio.title}</h4>
-                              <p className="text-xs text-muted-foreground mt-1">{portfolio.country}</p>
-                              <p className="text-xs text-accent mt-1 font-medium">{portfolio.studentsPlaced}+ Students</p>
-                            </div>
-                            <div className="text-right ml-2">
-                              <span className="inline-block px-2 py-1 bg-primary/10 text-primary text-xs rounded font-medium">
-                                {portfolio.programs} Programs
-                              </span>
-                            </div>
-                          </div>
-                        </Link>
-                      ))}
-                    </div>
+                    {portfolioData.map((portfolio) => (
+                      <Link
+                        key={portfolio.id}
+                        to={`/portfolio/${portfolio.id}`}
+                        className="block p-3 rounded-lg hover:bg-primary/10 transition-all"
+                      >
+                        <h4 className="font-semibold">{portfolio.title}</h4>
+                        <p className="text-xs text-muted-foreground">
+                          {portfolio.country}
+                        </p>
+                      </Link>
+                    ))}
                   </div>
 
-                  {/* Footer Link */}
                   <div className="border-t border-border px-6 py-3 bg-muted/20">
-                    <Link to="/portfolio" className="text-sm font-medium text-primary hover:text-secondary transition-colors">
+                    <Link
+                      to="/portfolio"
+                      className="text-sm font-medium text-primary"
+                    >
                       View All Universities →
                     </Link>
                   </div>
@@ -196,14 +113,77 @@ export function Header() {
               )}
             </div>
 
+            {/* Offerings Dropdown */}
+            <div className="relative group">
+              <button
+                onMouseEnter={() => setOpenDropdown('offer')}
+                className="px-4 py-2 text-sm font-medium text-foreground hover:text-primary flex items-center gap-2 rounded-md hover:bg-primary/5"
+              >
+                Offerings
+                <ChevronDown className="w-4 h-4 group-hover:rotate-180 transition-transform duration-300" />
+              </button>
 
+              {openDropdown === 'offer' && (
+                <div
+                  className="absolute left-0 mt-2 w-80 bg-background border border-border rounded-xl shadow-xl"
+                  onMouseEnter={() => setOpenDropdown('offer')}
+                  onMouseLeave={() => setOpenDropdown(null)}
+                >
+                  <div className="bg-gradient-to-r from-primary to-secondary text-white px-6 py-4">
+                    <h3 className="text-lg font-bold">Programs</h3>
+                  </div>
+
+                  <div className="p-4 space-y-2">
+                    <Link to="/what-we-offer" className="block p-2 hover:bg-muted rounded">
+                      All Programs
+                    </Link>
+                    <Link to="/education-program/fulltime-degree/undergraduate" className="block p-2 hover:bg-muted rounded">
+                      Full Time Degree
+                    </Link>
+                    <Link to="/education-program/online-program/undergraduate" className="block p-2 hover:bg-muted rounded">
+                      Online Program
+                    </Link>
+                    <Link to="/education-program/vocational-courses/undergraduate" className="block p-2 hover:bg-muted rounded">
+                      Vocational Courses
+                    </Link>
+                    <Link to="/education-program/internship-abroad/undergraduate" className="block p-2 hover:bg-muted rounded">
+                      Internship Abroad
+                    </Link>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* News Blog */}
+            <Link
+              to="/news-blog"
+              className={`px-4 py-2 text-sm font-medium rounded-md ${
+                isActive('/news-blog')
+                  ? 'text-primary border-b-2 border-primary'
+                  : 'text-foreground hover:text-primary'
+              }`}
+            >
+              News & Blog
+            </Link>
+
+            {/* Gallery */}
+            <Link
+              to="/gallery"
+              className={`px-4 py-2 text-sm font-medium rounded-md ${
+                isActive('/gallery')
+                  ? 'text-primary border-b-2 border-primary'
+                  : 'text-foreground hover:text-primary'
+              }`}
+            >
+              Gallery
+            </Link>
           </nav>
 
-          {/* Right Actions */}
+          {/* Right Side */}
           <div className="flex items-center gap-4">
             <button
               onClick={toggleTheme}
-              className="p-2 hover:bg-muted rounded-lg transition-colors duration-300"
+              className="p-2 hover:bg-muted rounded-lg"
             >
               {isDark ? (
                 <Sun className="w-5 h-5 text-accent" />
@@ -214,7 +194,7 @@ export function Header() {
 
             <Link
               to="/collaborate"
-              className="hidden sm:inline-block px-6 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-secondary transition-all duration-300 transform hover:scale-105 font-medium text-sm"
+              className="hidden sm:inline-block px-6 py-2 bg-primary text-white rounded-lg hover:bg-secondary transition"
             >
               Connect Now
             </Link>
@@ -222,144 +202,22 @@ export function Header() {
             {/* Mobile Menu Button */}
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="md:hidden p-2 hover:bg-muted rounded-lg transition-colors"
+              className="md:hidden p-2 hover:bg-muted rounded-lg"
             >
-              {isMenuOpen ? (
-                <X className="w-5 h-5" />
-              ) : (
-                <Menu className="w-5 h-5" />
-              )}
+              {isMenuOpen ? <X /> : <Menu />}
             </button>
           </div>
         </div>
 
         {/* Mobile Menu */}
         {isMenuOpen && (
-          <nav className="md:hidden pb-4 space-y-2 animate-fade-in-down">
-            {/* show logo at top of mobile menu for branding */}
-
-            {mainMenuItems.map((item) => (
-              <Link
-                key={item.label}
-                to={item.path}
-                className={`block px-4 py-2 rounded-lg transition-colors text-sm ${isActive(item.path)
-                  ? 'bg-primary text-primary-foreground'
-                  : 'text-foreground hover:bg-muted'
-                  }`}
-                onClick={() => setIsMenuOpen(false)}
-              >
-                {item.label}
-              </Link>
-            ))}
-
-            {/* Mobile Offerings Dropdown */}
-            <button
-              onClick={() => setOpenMobileDropdown(openMobileDropdown === 'offer' ? null : 'offer')}
-              className="w-full text-left px-4 py-2 rounded-lg text-foreground hover:bg-muted transition-colors flex items-center justify-between text-sm"
-            >
-              Offerings
-              <ChevronDown className={`w-4 h-4 transition-transform ${openMobileDropdown === 'offer' ? 'rotate-180' : ''}`} />
-            </button>
-            {openMobileDropdown === 'offer' && (
-              <div className="pl-4 space-y-1">
-                <Link
-                  to="/what-we-offer"
-                  className="block px-4 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-primary/10 rounded-md transition-colors font-medium"
-                  onClick={() => {
-                    setIsMenuOpen(false);
-                    setOpenMobileDropdown(null);
-                  }}
-                >
-                  All Programs
-                </Link>
-                <Link
-                  to="/education-program/fulltime-degree/undergraduate"
-                  className="block px-4 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-primary/10 rounded-md transition-colors"
-                  onClick={() => {
-                    setIsMenuOpen(false);
-                    setOpenMobileDropdown(null);
-                  }}
-                >
-                  Full Time Degree
-                </Link>
-                <Link
-                  to="/education-program/online-program/undergraduate"
-                  className="block px-4 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-primary/10 rounded-md transition-colors"
-                  onClick={() => {
-                    setIsMenuOpen(false);
-                    setOpenMobileDropdown(null);
-                  }}
-                >
-                  Online Program
-                </Link>
-                <Link
-                  to="/education-program/vocational-courses/undergraduate"
-                  className="block px-4 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-primary/10 rounded-md transition-colors"
-                  onClick={() => {
-                    setIsMenuOpen(false);
-                    setOpenMobileDropdown(null);
-                  }}
-                >
-                  Vocational Courses
-                </Link>
-                <Link
-                  to="/education-program/internship-abroad/undergraduate"
-                  className="block px-4 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-primary/10 rounded-md transition-colors"
-                  onClick={() => {
-                    setIsMenuOpen(false);
-                    setOpenMobileDropdown(null);
-                  }}
-                >
-                  Internship Abroad
-                </Link>
-                <Link
-                  to="/education-program/summer-winter-school/undergraduate"
-                  className="block px-4 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-primary/10 rounded-md transition-colors"
-                  onClick={() => {
-                    setIsMenuOpen(false);
-                    setOpenMobileDropdown(null);
-                  }}
-                >
-                  Summer/Winter School
-                </Link>
-              </div>
-            )}
-
-            {/* Mobile Our Portfolio Dropdown */}
-            <button
-              onClick={() => setOpenMobileDropdown(openMobileDropdown === 'portfolio' ? null : 'portfolio')}
-              className="w-full text-left px-4 py-2 rounded-lg text-foreground hover:bg-muted transition-colors flex items-center justify-between text-sm"
-            >
-              Our Portfolio
-              <ChevronDown className={`w-4 h-4 transition-transform ${openMobileDropdown === 'portfolio' ? 'rotate-180' : ''}`} />
-            </button>
-            {openMobileDropdown === 'portfolio' && (
-              <div className="pl-4 space-y-1">
-                {portfolioData.map((portfolio) => (
-                  <Link
-                    key={portfolio.id}
-                    to={`/portfolio/${portfolio.id}`}
-                    className="block px-4 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-primary/10 rounded-md transition-colors"
-                    onClick={() => {
-                      setIsMenuOpen(false);
-                      setOpenMobileDropdown(null);
-                    }}
-                  >
-                    {portfolio.title}
-                  </Link>
-                ))}
-              </div>
-            )}
-
-
-
-            <Link
-              to="/collaborate"
-              className="block px-4 py-2 bg-primary text-primary-foreground rounded-lg text-center font-medium text-sm"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Connect Now
-            </Link>
+          <nav className="md:hidden pb-4 space-y-2">
+            <Link to="/" className="block px-4 py-2">Home</Link>
+            <Link to="/about" className="block px-4 py-2">Who We Are</Link>
+            <Link to="/portfolio" className="block px-4 py-2">Our Portfolio</Link>
+            <Link to="/what-we-offer" className="block px-4 py-2">Offerings</Link>
+            <Link to="/news-blog" className="block px-4 py-2">News & Blog</Link>
+            <Link to="/gallery" className="block px-4 py-2">Gallery</Link>
           </nav>
         )}
       </div>
