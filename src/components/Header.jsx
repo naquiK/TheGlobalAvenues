@@ -209,17 +209,153 @@ export function Header() {
           </div>
         </div>
 
-        {/* Mobile Menu */}
-        {isMenuOpen && (
-          <nav className="md:hidden pb-4 space-y-2">
-            <Link to="/" className="block px-4 py-2">Home</Link>
-            <Link to="/about" className="block px-4 py-2">Who We Are</Link>
-            <Link to="/portfolio" className="block px-4 py-2">Our Portfolio</Link>
-            <Link to="/what-we-offer" className="block px-4 py-2">Offerings</Link>
-            <Link to="/news-blog" className="block px-4 py-2">News & Blog</Link>
-            <Link to="/gallery" className="block px-4 py-2">Gallery</Link>
-          </nav>
-        )}
+    {/* Mobile Menu */}
+{isMenuOpen && (
+  <nav className="md:hidden pb-4 space-y-2 animate-fade-in-down">
+
+    {/* Home */}
+    <Link
+      to="/"
+      className="block px-4 py-2 rounded-lg hover:bg-muted"
+      onClick={() => setIsMenuOpen(false)}
+    >
+      Home
+    </Link>
+
+    {/* Who We Are */}
+    <Link
+      to="/about"
+      className="block px-4 py-2 rounded-lg hover:bg-muted"
+      onClick={() => setIsMenuOpen(false)}
+    >
+      Who We Are
+    </Link>
+
+    {/* Portfolio Dropdown */}
+    <button
+      onClick={() =>
+        setOpenMobileDropdown(
+          openMobileDropdown === "portfolio" ? null : "portfolio"
+        )
+      }
+      className="w-full text-left px-4 py-2 rounded-lg flex justify-between items-center hover:bg-muted"
+    >
+      Our Portfolio
+      <ChevronDown
+        className={`w-4 h-4 transition-transform ${
+          openMobileDropdown === "portfolio" ? "rotate-180" : ""
+        }`}
+      />
+    </button>
+
+    {openMobileDropdown === "portfolio" && (
+      <div className="pl-4 space-y-1">
+        {portfolioData.map((portfolio) => (
+          <Link
+            key={portfolio.id}
+            to={`/portfolio/${portfolio.id}`}
+            className="block px-4 py-2 text-sm hover:bg-primary/10 rounded"
+            onClick={() => {
+              setIsMenuOpen(false);
+              setOpenMobileDropdown(null);
+            }}
+          >
+            {portfolio.title}
+          </Link>
+        ))}
+      </div>
+    )}
+
+    {/* Offerings Dropdown */}
+    <button
+      onClick={() =>
+        setOpenMobileDropdown(
+          openMobileDropdown === "offer" ? null : "offer"
+        )
+      }
+      className="w-full text-left px-4 py-2 rounded-lg flex justify-between items-center hover:bg-muted"
+    >
+      Offerings
+      <ChevronDown
+        className={`w-4 h-4 transition-transform ${
+          openMobileDropdown === "offer" ? "rotate-180" : ""
+        }`}
+      />
+    </button>
+
+    {openMobileDropdown === "offer" && (
+      <div className="pl-4 space-y-1">
+        <Link
+          to="/what-we-offer"
+          className="block px-4 py-2 text-sm hover:bg-primary/10 rounded"
+          onClick={() => setIsMenuOpen(false)}
+        >
+          All Programs
+        </Link>
+
+        <Link
+          to="/education-program/fulltime-degree/undergraduate"
+          className="block px-4 py-2 text-sm hover:bg-primary/10 rounded"
+          onClick={() => setIsMenuOpen(false)}
+        >
+          Full Time Degree
+        </Link>
+
+        <Link
+          to="/education-program/online-program/undergraduate"
+          className="block px-4 py-2 text-sm hover:bg-primary/10 rounded"
+          onClick={() => setIsMenuOpen(false)}
+        >
+          Online Program
+        </Link>
+
+        <Link
+          to="/education-program/vocational-courses/undergraduate"
+          className="block px-4 py-2 text-sm hover:bg-primary/10 rounded"
+          onClick={() => setIsMenuOpen(false)}
+        >
+          Vocational Courses
+        </Link>
+
+        <Link
+          to="/education-program/internship-abroad/undergraduate"
+          className="block px-4 py-2 text-sm hover:bg-primary/10 rounded"
+          onClick={() => setIsMenuOpen(false)}
+        >
+          Internship Abroad
+        </Link>
+      </div>
+    )}
+
+    {/* News Blog */}
+    <Link
+      to="/news-blog"
+      className="block px-4 py-2 rounded-lg hover:bg-muted"
+      onClick={() => setIsMenuOpen(false)}
+    >
+      News & Blog
+    </Link>
+
+    {/* Gallery */}
+    <Link
+      to="/gallery"
+      className="block px-4 py-2 rounded-lg hover:bg-muted"
+      onClick={() => setIsMenuOpen(false)}
+    >
+      Gallery
+    </Link>
+
+    {/* Button */}
+    <Link
+      to="/collaborate"
+      className="block px-4 py-2 bg-primary text-white rounded-lg text-center"
+      onClick={() => setIsMenuOpen(false)}
+    >
+      Connect Now
+    </Link>
+
+  </nav>
+)}
       </div>
     </header>
   );
