@@ -2,7 +2,7 @@ import { motion } from 'framer-motion';
 import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Users, Award, Building2, Globe, Clock, BookOpen } from 'lucide-react';
-import { educationPrograms, getProgramById, getDegreeDetails } from '../data/educationProgramsData';
+import { getProgramById, getDegreeDetails } from '../data/educationProgramsData';
 
 export default function EducationProgramPage() {
   const { programType, degreeLevel } = useParams();
