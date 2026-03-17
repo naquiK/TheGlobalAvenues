@@ -3,13 +3,14 @@ import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Globe, Search, TrendingUp, Users } from 'lucide-react';
 import { portfolioData } from '../data/portfolioData';
-import { SITE_CONFIG } from '../config';
+import { useSettings } from '../context/SettingsContext';
 
 const countries = ['all', ...new Set(portfolioData.map((item) => item.country))];
 
 export default function UniversitiesPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCountry, setSelectedCountry] = useState('all');
+  const { siteConfig } = useSettings();
 
   const filtered = portfolioData.filter((university) => {
     const query = searchQuery.toLowerCase();
@@ -20,9 +21,9 @@ export default function UniversitiesPage() {
   });
 
   const stats = [
-    { icon: Globe, label: 'Partner Universities', value: SITE_CONFIG.stats.partnerUniversities },
-    { icon: Users, label: 'Students Recruited', value: SITE_CONFIG.stats.studentsRecruited },
-    { icon: TrendingUp, label: 'Visa Success Rate', value: SITE_CONFIG.stats.visaSuccessRate },
+    { icon: Globe, label: 'Partner Universities', value: siteConfig.stats.partnerUniversities },
+    { icon: Users, label: 'Students Recruited', value: siteConfig.stats.studentsRecruited },
+    { icon: TrendingUp, label: 'Visa Success Rate', value: siteConfig.stats.visaSuccessRate },
   ];
 
   const containerVariants = {
@@ -175,7 +176,7 @@ export default function UniversitiesPage() {
                     </div>
 
                     <Link
-                      to={`/portfolio/${university.id}`}
+                      to={`/portfolio/${university.slug || university.id}`}
                       className="inline-flex items-center gap-2 font-semibold text-primary transition-colors duration-300 hover:text-secondary"
                     >
                       View profile

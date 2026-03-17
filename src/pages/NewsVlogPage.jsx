@@ -1,18 +1,9 @@
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { ArrowRight, Calendar, Flame, Play, User } from 'lucide-react';
-import { getFeaturedNewsItems, newsItems } from '../data/newsData';
-
-const categories = [
-  'all',
-  'Partnership',
-  'Success Story',
-  'Visa Updates',
-  'Exam Prep',
-  'Scholarship',
-  'Campus Life',
-];
+import { getBlogList } from '../services/contentApi';
+import { resolveMediaUrl } from '../services/apiClient';
 
 const getCardImage = (item) => item.thumbnail || item.image;
 
@@ -20,14 +11,64 @@ export default function NewsVlogPage() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('all');
   const [selectedCategory, setSelectedCategory] = useState('all');
+  const [newsItems, setNewsItems] = useState([]);
+  const [categories, setCategories] = useState(['all']);
+  const [isLoading, setIsLoading] = useState(true);
+  const [errorMessage, setErrorMessage] = useState('');
 
-  const filteredItems = newsItems.filter((item) => {
-    const matchesTab = activeTab === 'all' || item.type === activeTab;
-    const matchesCategory = selectedCategory === 'all' || item.category === selectedCategory;
-    return matchesTab && matchesCategory;
-  });
+  useEffect(() => {
+    const controller = new AbortController();
 
-  const featuredItems = getFeaturedNewsItems();
+    const loadBlog = async () => {
+      setIsLoading(true);
+      setErrorMessage('');
+
+      try {
+        const data = await getBlogList({ signal: controller.signal });
+        const mapped = (data || []).map((item) => ({
+          id: item.id,
+          slug: item.slug || String(item.id),
+          type: 'blog',
+          title: item.title,
+          excerpt: item.excerpt || item.summary || 'Read the full story and insights from our team.',
+          image: resolveMediaUrl(item.featured_image),
+          thumbnail: resolveMediaUrl(item.featured_image),
+          author: item.author || 'The Global Avenues',
+          date: item.created_at,
+          readTime: item.read_time || '5 min read',
+          category: item.category || 'General',
+          views: item.views ? Number(item.views) : 0,
+        }));
+
+        const uniqueCategories = Array.from(
+          new Set(mapped.map((item) => item.category).filter(Boolean))
+        );
+
+        setNewsItems(mapped);
+        setCategories(['all', ...uniqueCategories]);
+      } catch (error) {
+        if (error.name !== 'AbortError') {
+          setErrorMessage(error.message || 'Unable to load news and blog content');
+        }
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadBlog();
+
+    return () => controller.abort();
+  }, []);
+
+  const filteredItems = useMemo(() => {
+    return newsItems.filter((item) => {
+      const matchesTab = activeTab === 'all' || item.type === activeTab;
+      const matchesCategory = selectedCategory === 'all' || item.category === selectedCategory;
+      return matchesTab && matchesCategory;
+    });
+  }, [newsItems, activeTab, selectedCategory]);
+
+  const featuredItems = useMemo(() => newsItems.slice(0, 2), [newsItems]);
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -99,7 +140,7 @@ export default function NewsVlogPage() {
                   className="group cursor-pointer overflow-hidden rounded-2xl border border-border bg-background transition-all duration-300 hover:border-primary/50 hover:shadow-xl"
                   variants={itemVariants}
                   whileHover={{ translateY: -8 }}
-                  onClick={() => navigate(`/news/${item.id}`)}
+                  onClick={() => navigate(`/news/${item.slug}`)}
                 >
                   <div className="relative h-64 overflow-hidden bg-gradient-to-br from-primary/20 to-secondary/20">
                     {item.type === 'blog' && (
@@ -121,11 +162,11 @@ export default function NewsVlogPage() {
                       <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
                         {item.category}
                       </span>
-                      {item.type === 'blog' && (
-                        <span className="rounded-full bg-accent/10 px-3 py-1 text-xs font-semibold text-accent">
-                          {item.duration}
-                        </span>
-                      )}
+                        {item.type === 'blog' && (
+                          <span className="rounded-full bg-accent/10 px-3 py-1 text-xs font-semibold text-accent">
+                            {item.readTime}
+                          </span>
+                        )}
                     </div>
 
                     <h3 className="mb-3 line-clamp-2 text-xl font-bold transition-colors group-hover:text-primary">
@@ -137,7 +178,7 @@ export default function NewsVlogPage() {
                       <div className="flex flex-wrap items-center gap-4 text-xs text-muted-foreground">
                         <div className="flex items-center gap-1">
                           <Calendar className="h-4 w-4" />
-                          {new Date(item.date).toLocaleDateString()}
+                          {item.date ? new Date(item.date).toLocaleDateString() : '—'}
                         </div>
                         <div className="flex items-center gap-1">
                           <User className="h-4 w-4" />
@@ -164,7 +205,7 @@ export default function NewsVlogPage() {
           >
             <h3 className="mb-4 text-sm font-semibold uppercase text-muted-foreground">Type</h3>
             <div className="flex flex-wrap gap-3">
-              {['all', 'news', 'blog'].map((tab) => (
+              {['all', 'blog'].map((tab) => (
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab)}
@@ -210,61 +251,7 @@ export default function NewsVlogPage() {
 
       <section className="px-4 py-16 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-7xl">
-          {filteredItems.length > 0 ? (
-            <motion.div
-              className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3"
-              variants={containerVariants}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-            >
-              {filteredItems.map((item) => (
-                <motion.div
-                  key={item.id}
-                  className="group cursor-pointer overflow-hidden rounded-xl border border-border bg-background transition-all duration-300 hover:border-primary/50 hover:shadow-lg"
-                  variants={itemVariants}
-                  whileHover={{ translateY: -4 }}
-                  onClick={() => navigate(`/news/${item.id}`)}
-                >
-                  <div className="relative h-48 overflow-hidden bg-gradient-to-br from-primary/20 to-secondary/20">
-                    {item.type === 'blog' && (
-                      <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/20 transition-colors group-hover:bg-black/40">
-                        <div className="flex h-14 w-14 items-center justify-center rounded-full bg-accent/80 transition-transform group-hover:scale-110">
-                          <Play className="ml-1 h-6 w-6 fill-white text-white" />
-                        </div>
-                      </div>
-                    )}
-                    <img
-                      src={getCardImage(item)}
-                      alt={item.title}
-                      className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-                    />
-                  </div>
-
-                  <div className="p-6">
-                    <div className="mb-2 flex items-center gap-2">
-                      <span className="rounded bg-primary/10 px-2 py-1 text-xs font-semibold text-primary">
-                        {item.category}
-                      </span>
-                      {item.type === 'blog' && (
-                        <span className="text-xs text-muted-foreground">{item.duration}</span>
-                      )}
-                    </div>
-
-                    <h3 className="mb-2 line-clamp-2 text-lg font-bold transition-colors group-hover:text-primary">
-                      {item.title}
-                    </h3>
-                    <p className="mb-4 line-clamp-2 text-sm text-muted-foreground">{item.excerpt}</p>
-
-                    <div className="flex items-center justify-between text-xs text-muted-foreground">
-                      <span>{new Date(item.date).toLocaleDateString()}</span>
-                      <span>{item.views.toLocaleString()} views</span>
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
-            </motion.div>
-          ) : (
+          {isLoading && (
             <motion.div
               className="py-20 text-center"
               initial={{ opacity: 0 }}
@@ -272,9 +259,92 @@ export default function NewsVlogPage() {
               viewport={{ once: true }}
               transition={{ duration: 0.6 }}
             >
-              <p className="mb-4 text-2xl font-bold text-muted-foreground">No content found</p>
-              <p className="text-muted-foreground">Try adjusting your filters to find more content.</p>
+              <p className="text-lg text-muted-foreground">Loading content...</p>
             </motion.div>
+          )}
+
+          {!isLoading && errorMessage && (
+            <motion.div
+              className="py-20 text-center"
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+            >
+              <p className="mb-2 text-2xl font-bold text-muted-foreground">Unable to load content</p>
+              <p className="text-muted-foreground">{errorMessage}</p>
+            </motion.div>
+          )}
+
+          {!isLoading && !errorMessage && (
+            <>
+              {filteredItems.length > 0 ? (
+                <motion.div
+                  className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3"
+                  variants={containerVariants}
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={{ once: true }}
+                >
+                  {filteredItems.map((item) => (
+                    <motion.div
+                      key={item.id}
+                      className="group cursor-pointer overflow-hidden rounded-xl border border-border bg-background transition-all duration-300 hover:border-primary/50 hover:shadow-lg"
+                      variants={itemVariants}
+                      whileHover={{ translateY: -4 }}
+                      onClick={() => navigate(`/news/${item.slug}`)}
+                    >
+                      <div className="relative h-48 overflow-hidden bg-gradient-to-br from-primary/20 to-secondary/20">
+                        {item.type === 'blog' && (
+                          <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/20 transition-colors group-hover:bg-black/40">
+                            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-accent/80 transition-transform group-hover:scale-110">
+                              <Play className="ml-1 h-6 w-6 fill-white text-white" />
+                            </div>
+                          </div>
+                        )}
+                        <img
+                          src={getCardImage(item)}
+                          alt={item.title}
+                          className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                        />
+                      </div>
+
+                      <div className="p-6">
+                        <div className="mb-2 flex items-center gap-2">
+                          <span className="rounded bg-primary/10 px-2 py-1 text-xs font-semibold text-primary">
+                            {item.category}
+                          </span>
+                          {item.type === 'blog' && (
+                            <span className="text-xs text-muted-foreground">{item.readTime}</span>
+                          )}
+                        </div>
+
+                        <h3 className="mb-2 line-clamp-2 text-lg font-bold transition-colors group-hover:text-primary">
+                          {item.title}
+                        </h3>
+                        <p className="mb-4 line-clamp-2 text-sm text-muted-foreground">{item.excerpt}</p>
+
+                        <div className="flex items-center justify-between text-xs text-muted-foreground">
+                          <span>{item.date ? new Date(item.date).toLocaleDateString() : '—'}</span>
+                          {item.views ? <span>{item.views.toLocaleString()} views</span> : <span>&nbsp;</span>}
+                        </div>
+                      </div>
+                    </motion.div>
+                  ))}
+                </motion.div>
+              ) : (
+                <motion.div
+                  className="py-20 text-center"
+                  initial={{ opacity: 0 }}
+                  whileInView={{ opacity: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6 }}
+                >
+                  <p className="mb-4 text-2xl font-bold text-muted-foreground">No content found</p>
+                  <p className="text-muted-foreground">Try adjusting your filters to find more content.</p>
+                </motion.div>
+              )}
+            </>
           )}
         </div>
       </section>

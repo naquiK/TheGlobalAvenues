@@ -8,16 +8,19 @@ import {
   MessageCircle,
   Phone,
   Send,
+  Twitter,
   Youtube,
 } from 'lucide-react';
 import { useScrollAnimation } from '../hooks/useScrollAnimation';
-import { SITE_CONFIG, formatAddress } from '../config';
+import { formatAddress } from '../config';
+import { useSettings } from '../context/SettingsContext';
 
 const socialIcons = {
   facebook: Facebook,
   linkedin: Linkedin,
   youtube: Youtube,
   instagram: Instagram,
+  twitter: Twitter,
   whatsapp: MessageCircle,
 };
 
@@ -25,6 +28,7 @@ export function Contact() {
   const [formData, setFormData] = useState({ name: '', email: '', message: '' });
   const [submitted, setSubmitted] = useState(false);
   const [ref, isVisible] = useScrollAnimation();
+  const { siteConfig } = useSettings();
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -38,7 +42,7 @@ export function Contact() {
     window.setTimeout(() => setSubmitted(false), 3000);
   };
 
-  const visibleSocialLinks = Object.entries(SITE_CONFIG.social).filter(([, href]) => Boolean(href));
+  const visibleSocialLinks = Object.entries(siteConfig.social).filter(([, href]) => Boolean(href));
 
   return (
     <section id="contact" className="relative overflow-hidden bg-muted/30 px-4 py-20">
@@ -70,7 +74,7 @@ export function Contact() {
                 </div>
                 <div>
                   <h3 className="mb-2 font-bold text-foreground">Phone</h3>
-                  {SITE_CONFIG.contact.phone.map((phone) => (
+                  {siteConfig.contact.phone.map((phone) => (
                     <p key={phone} className="text-muted-foreground">
                       {phone}
                     </p>
@@ -86,9 +90,9 @@ export function Contact() {
                 </div>
                 <div>
                   <h3 className="mb-2 font-bold text-foreground">Email</h3>
-                  <p className="text-muted-foreground">{SITE_CONFIG.contact.email.general}</p>
-                  <p className="text-muted-foreground">{SITE_CONFIG.contact.email.admissions}</p>
-                  <p className="text-muted-foreground">{SITE_CONFIG.contact.email.partnerships}</p>
+                  <p className="text-muted-foreground">{siteConfig.contact.email.general}</p>
+                  <p className="text-muted-foreground">{siteConfig.contact.email.admissions}</p>
+                  <p className="text-muted-foreground">{siteConfig.contact.email.partnerships}</p>
                 </div>
               </div>
             </div>
@@ -100,7 +104,7 @@ export function Contact() {
                 </div>
                 <div>
                   <h3 className="mb-2 font-bold text-foreground">Address</h3>
-                  <p className="text-muted-foreground">{formatAddress()}</p>
+                  <p className="text-muted-foreground">{formatAddress(siteConfig.contact.address)}</p>
                 </div>
               </div>
             </div>

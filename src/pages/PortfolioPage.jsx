@@ -234,7 +234,7 @@ export default function PortfolioPage() {
 
                       {/* View Details Button */}
                       <Link
-                        to={`/portfolio/${portfolio.id}`}
+                        to={`/portfolio/${portfolio.slug || portfolio.id}`}
                         className="inline-flex items-center gap-2 text-primary hover:text-secondary font-semibold text-sm transition-colors duration-300 group/btn"
                       >
                         View Full Profile

@@ -97,7 +97,7 @@ export default function PortfolioDisplay({ limit = 10 }) {
                 whileHover="hover"
                 className="group cursor-pointer"
               >
-                <Link to={`/portfolio/${portfolio.id}`} className="block h-full">
+                <Link to={`/portfolio/${portfolio.slug || portfolio.id}`} className="block h-full">
                   <div className="bg-card border border-border rounded-xl overflow-hidden h-full flex flex-col hover:shadow-lg transition-shadow duration-300">
                     {/* Image Container */}
                     <div className="relative h-40 sm:h-48 overflow-hidden bg-muted">

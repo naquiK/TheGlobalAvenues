@@ -39,6 +39,7 @@ export const SITE_CONFIG = {
     linkedin: null,
     youtube: null,
     instagram: null,
+    twitter: null,
     whatsapp: 'https://wa.me/919319831133',
   },
 
@@ -104,8 +105,15 @@ export const SITE_CONFIG = {
   ],
 };
 
-export const formatAddress = (address = SITE_CONFIG.contact.address) =>
-  `${address.street}, ${address.city}, ${address.state} ${address.zipcode}, ${address.country}`;
+export const formatAddress = (address = SITE_CONFIG.contact.address) => {
+  if (!address) return '';
+  if (typeof address === 'string') return address;
+
+  const parts = [address.street, address.city, address.state].filter(Boolean).join(', ');
+  const zip = address.zipcode ? ` ${address.zipcode}` : '';
+  const country = address.country ? `, ${address.country}` : '';
+  return `${parts}${zip}${country}`.replace(/^, /, '').trim();
+};
 
 export const portfolioMenuLabel = 'Our Portfolio';
 
