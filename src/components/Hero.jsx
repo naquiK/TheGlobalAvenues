@@ -2,6 +2,7 @@ import { useScrollAnimation } from "../hooks/useScrollAnimation";
 import { ArrowRight, Users, Globe, Award } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
+import { SITE_CONFIG } from "../config";
 
 const CountUpNumber = ({ target, duration = 2000 }) => {
   const [count, setCount] = useState(0);
@@ -29,6 +30,9 @@ const CountUpNumber = ({ target, duration = 2000 }) => {
 
 export function Hero() {
   const [ref, isVisible] = useScrollAnimation();
+  const studentsPlaced = Number.parseInt(SITE_CONFIG.stats.studentsRecruited, 10);
+  const partnerUniversities = Number.parseInt(SITE_CONFIG.stats.partnerUniversities, 10);
+  const visaSuccessRate = Number.parseInt(SITE_CONFIG.stats.visaSuccessRate, 10);
 
   return (
     <section
@@ -57,15 +61,15 @@ export function Hero() {
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
             Unlock Your Potential With
             <span className="block text-blue-300 text-5xl sm:text-6xl lg:text-7xl mt-2">
-              THE GLOBAL AVENUES
+              {SITE_CONFIG.company.name.toUpperCase()}
             </span>
           </h1>
 
           {/* Subtitle */}
           <p className="text-lg sm:text-xl text-gray-200 mb-10 max-w-2xl mx-auto">
-            Connecting students and professionals to
+            {SITE_CONFIG.company.description}
             <span className="text-blue-300 font-semibold">
-              {" "}Global Education Opportunities!
+              {" "}{SITE_CONFIG.company.tagline}
             </span>
           </p>
 
@@ -87,7 +91,7 @@ export function Hero() {
   <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-xl p-6 shadow-lg text-left text-white">
     <Users className="text-blue-400 mb-3" size={28} />
     <h3 className="text-3xl font-bold">
-      <CountUpNumber target={5000} />+
+      <CountUpNumber target={studentsPlaced} />+
     </h3>
     <p className="text-gray-200 mt-1">Students Placed</p>
   </div>
@@ -96,7 +100,7 @@ export function Hero() {
   <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-xl p-6 shadow-lg text-left text-white">
     <Globe className="text-blue-400 mb-3" size={28} />
     <h3 className="text-3xl font-bold">
-      <CountUpNumber target={50} />+
+      <CountUpNumber target={partnerUniversities} />+
     </h3>
     <p className="text-gray-200 mt-1">Universities</p>
   </div>
@@ -105,7 +109,7 @@ export function Hero() {
   <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-xl p-6 shadow-lg text-left text-white">
     <Award className="text-blue-400 mb-3" size={28} />
     <h3 className="text-3xl font-bold">
-      <CountUpNumber target={98} />%
+      <CountUpNumber target={visaSuccessRate} />%
     </h3>
     <p className="text-gray-200 mt-1">Success Rate</p>
   </div>

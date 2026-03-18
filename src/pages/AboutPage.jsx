@@ -1,7 +1,22 @@
+import { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Users, Target, Zap, Globe, Heart, Award, CheckCircle, Lightbulb, Shield } from 'lucide-react';
+import { SITE_CONFIG } from '../config';
 
 export default function AboutPage() {
+  useEffect(() => {
+    const script = document.createElement('script');
+    script.src = 'https://www-cdn.icef.com/scripts/iasbadgeid.js';
+    script.async = true;
+    script.defer = true;
+    script.crossOrigin = 'anonymous';
+    document.body.appendChild(script);
+
+    return () => {
+      document.body.removeChild(script);
+    };
+  }, []);
+
   const values = [
     { icon: Target, title: 'Our Mission', description: 'Uphold integrity, transparency, motivation, and unwavering dedication, ensuring open communication and tailored services for every student.' },
     { icon: Globe, title: 'Our Vision', description: 'Consistently enhance our role as trusted partner for universities through strong relationships, collaborative efforts, and innovative strategies.' },
@@ -61,10 +76,10 @@ export default function AboutPage() {
   ];
 
   const stats = [
-    { number: '1000+', label: 'Years of Experience' },
-    { number: '210+', label: 'Partner Universities' },
+    { number: SITE_CONFIG.stats.partnerUniversities, label: 'Partner Universities' },
+    { number: SITE_CONFIG.stats.countriesCovered, label: 'Countries Covered' },
     { number: '15+', label: 'Active Channel Partners' },
-    { number: '3000k+', label: 'Students Recruited' },
+    { number: SITE_CONFIG.stats.studentsRecruited, label: 'Students Recruited' },
   ];
 
   const containerVariants = {
@@ -366,9 +381,6 @@ export default function AboutPage() {
           </motion.div>
         </div>
       </section>
-
-      {/* Script for ICEF Badge */}
-      <script async defer crossOrigin="anonymous" src="https://www-cdn.icef.com/scripts/iasbadgeid.js"></script>
     </div>
   );
 }

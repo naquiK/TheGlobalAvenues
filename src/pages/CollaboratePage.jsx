@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Mail, Phone, MapPin, Send, CheckCircle } from 'lucide-react';
+import { CheckCircle, Mail, MapPin, Phone, Send } from 'lucide-react';
+import { SITE_CONFIG, formatAddress } from '../config';
 
 export default function CollaboratePage() {
   const [formData, setFormData] = useState({
@@ -12,49 +13,21 @@ export default function CollaboratePage() {
   });
   const [isSubmitted, setIsSubmitted] = useState(false);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    setFormData((previous) => ({ ...previous, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Simulate form submission
-    setTimeout(() => {
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    window.setTimeout(() => {
       setIsSubmitted(true);
-      setTimeout(() => {
+      window.setTimeout(() => {
         setFormData({ name: '', email: '', phone: '', subject: '', message: '' });
         setIsSubmitted(false);
       }, 3000);
     }, 500);
   };
-
-  const offices = [
-    {
-      city: 'Delhi',
-      address: '123 Education Lane, New Delhi, India',
-      phone: '+91 11 XXXX XXXX',
-      email: 'delhi@theglobalavenues.com',
-    },
-    {
-      city: 'Mumbai',
-      address: '456 Study Plaza, Mumbai, India',
-      phone: '+91 22 XXXX XXXX',
-      email: 'mumbai@theglobalavenues.com',
-    },
-    {
-      city: 'Bangalore',
-      address: '789 Learning Hub, Bangalore, India',
-      phone: '+91 80 XXXX XXXX',
-      email: 'bangalore@theglobalavenues.com',
-    },
-    {
-      city: 'UK Office',
-      address: '321 Global Avenue, London, UK',
-      phone: '+44 20 XXXX XXXX',
-      email: 'uk@theglobalavenues.com',
-    },
-  ];
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -70,38 +43,35 @@ export default function CollaboratePage() {
   };
 
   return (
-    <div className="pt-16 min-h-screen">
-      {/* Hero Section */}
+    <div className="min-h-screen pt-16">
       <motion.section
-        className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-primary/5 to-background"
+        className="bg-gradient-to-b from-primary/5 to-background px-4 py-20 sm:px-6 lg:px-8"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.6 }}
       >
-        <div className="max-w-7xl mx-auto text-center">
+        <div className="mx-auto max-w-7xl text-center">
           <motion.h1
-            className="text-5xl md:text-6xl font-bold mb-6 text-balance"
+            className="mb-6 text-5xl font-bold text-balance md:text-6xl"
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.1 }}
           >
-            Let's Connect
+            Let&apos;s Connect
           </motion.h1>
           <motion.p
-            className="text-xl text-muted-foreground max-w-3xl mx-auto"
+            className="mx-auto max-w-3xl text-xl text-muted-foreground"
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.2 }}
           >
-            Reach out to us to begin your journey towards global education success
+            Reach out to us to begin your journey towards global education success.
           </motion.p>
         </div>
       </motion.section>
 
-      {/* Contact Form & Info */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-12">
-          {/* Form */}
+      <section className="px-4 py-20 sm:px-6 lg:px-8">
+        <div className="mx-auto grid max-w-7xl grid-cols-1 gap-12 lg:grid-cols-3">
           <motion.div
             className="lg:col-span-2"
             initial={{ opacity: 0, x: -30 }}
@@ -109,22 +79,22 @@ export default function CollaboratePage() {
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            <form onSubmit={handleSubmit} className="bg-muted/30 border border-border/50 rounded-2xl p-8">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <form onSubmit={handleSubmit} className="rounded-2xl border border-border/50 bg-muted/30 p-8">
+              <div className="mb-6 grid grid-cols-1 gap-6 md:grid-cols-2">
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.5, delay: 0.1 }}
                 >
-                  <label className="block text-sm font-medium mb-2 text-foreground">Full Name</label>
+                  <label className="mb-2 block text-sm font-medium text-foreground">Full Name</label>
                   <input
                     type="text"
                     name="name"
                     value={formData.name}
                     onChange={handleChange}
                     required
-                    className="w-full px-4 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                    className="w-full rounded-lg border border-border bg-background px-4 py-2 text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
                     placeholder="Your name"
                   />
                 </motion.div>
@@ -135,34 +105,34 @@ export default function CollaboratePage() {
                   viewport={{ once: true }}
                   transition={{ duration: 0.5, delay: 0.15 }}
                 >
-                  <label className="block text-sm font-medium mb-2 text-foreground">Email</label>
+                  <label className="mb-2 block text-sm font-medium text-foreground">Email</label>
                   <input
                     type="email"
                     name="email"
                     value={formData.email}
                     onChange={handleChange}
                     required
-                    className="w-full px-4 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                    className="w-full rounded-lg border border-border bg-background px-4 py-2 text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
                     placeholder="your@email.com"
                   />
                 </motion.div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+              <div className="mb-6 grid grid-cols-1 gap-6 md:grid-cols-2">
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.5, delay: 0.2 }}
                 >
-                  <label className="block text-sm font-medium mb-2 text-foreground">Phone</label>
+                  <label className="mb-2 block text-sm font-medium text-foreground">Phone</label>
                   <input
                     type="tel"
                     name="phone"
                     value={formData.phone}
                     onChange={handleChange}
-                    className="w-full px-4 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-                    placeholder="+91 XXXXXXXXXX"
+                    className="w-full rounded-lg border border-border bg-background px-4 py-2 text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                    placeholder={SITE_CONFIG.contact.phone[0]}
                   />
                 </motion.div>
 
@@ -172,14 +142,14 @@ export default function CollaboratePage() {
                   viewport={{ once: true }}
                   transition={{ duration: 0.5, delay: 0.25 }}
                 >
-                  <label className="block text-sm font-medium mb-2 text-foreground">Subject</label>
+                  <label className="mb-2 block text-sm font-medium text-foreground">Subject</label>
                   <input
                     type="text"
                     name="subject"
                     value={formData.subject}
                     onChange={handleChange}
                     required
-                    className="w-full px-4 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                    className="w-full rounded-lg border border-border bg-background px-4 py-2 text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
                     placeholder="How can we help?"
                   />
                 </motion.div>
@@ -192,14 +162,14 @@ export default function CollaboratePage() {
                 transition={{ duration: 0.5, delay: 0.3 }}
                 className="mb-8"
               >
-                <label className="block text-sm font-medium mb-2 text-foreground">Message</label>
+                <label className="mb-2 block text-sm font-medium text-foreground">Message</label>
                 <textarea
                   name="message"
                   value={formData.message}
                   onChange={handleChange}
                   required
                   rows="6"
-                  className="w-full px-4 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary resize-none"
+                  className="w-full resize-none rounded-lg border border-border bg-background px-4 py-2 text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
                   placeholder="Tell us about your educational goals..."
                 />
               </motion.div>
@@ -207,18 +177,18 @@ export default function CollaboratePage() {
               <motion.button
                 type="submit"
                 disabled={isSubmitted}
-                className="w-full py-3 bg-gradient-to-r from-primary to-secondary text-white rounded-lg font-semibold hover:shadow-lg transition-all duration-300 disabled:opacity-50"
+                className="w-full rounded-lg bg-gradient-to-r from-primary to-secondary py-3 font-semibold text-white transition-all duration-300 hover:shadow-lg disabled:opacity-50"
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
               >
                 {isSubmitted ? (
                   <span className="flex items-center justify-center gap-2">
-                    <CheckCircle className="w-5 h-5" />
+                    <CheckCircle className="h-5 w-5" />
                     Message Sent!
                   </span>
                 ) : (
                   <span className="flex items-center justify-center gap-2">
-                    <Send className="w-5 h-5" />
+                    <Send className="h-5 w-5" />
                     Send Message
                   </span>
                 )}
@@ -226,7 +196,6 @@ export default function CollaboratePage() {
             </form>
           </motion.div>
 
-          {/* Contact Info */}
           <motion.div
             className="space-y-6"
             variants={containerVariants}
@@ -234,39 +203,39 @@ export default function CollaboratePage() {
             whileInView="visible"
             viewport={{ once: true }}
           >
-            <motion.div className="bg-primary/10 border border-primary/20 rounded-xl p-6" variants={itemVariants}>
+            <motion.div className="rounded-xl border border-primary/20 bg-primary/10 p-6" variants={itemVariants}>
               <div className="flex gap-4">
-                <Mail className="w-6 h-6 text-primary flex-shrink-0 mt-1" />
+                <Mail className="mt-1 h-6 w-6 flex-shrink-0 text-primary" />
                 <div>
-                  <h4 className="font-bold text-foreground mb-1">Email</h4>
-                  <a href="mailto:info@theglobalavenues.com" className="text-primary hover:text-secondary transition-colors">
-                    info@theglobalavenues.com
+                  <h4 className="mb-1 font-bold text-foreground">Email</h4>
+                  <a href={`mailto:${SITE_CONFIG.contact.email.general}`} className="text-primary transition-colors hover:text-secondary">
+                    {SITE_CONFIG.contact.email.general}
                   </a>
                 </div>
               </div>
             </motion.div>
 
-            <motion.div className="bg-secondary/10 border border-secondary/20 rounded-xl p-6" variants={itemVariants}>
+            <motion.div className="rounded-xl border border-secondary/20 bg-secondary/10 p-6" variants={itemVariants}>
               <div className="flex gap-4">
-                <Phone className="w-6 h-6 text-secondary flex-shrink-0 mt-1" />
+                <Phone className="mt-1 h-6 w-6 flex-shrink-0 text-secondary" />
                 <div>
-                  <h4 className="font-bold text-foreground mb-1">Phone</h4>
-                  <a href="tel:+911140001234" className="text-secondary hover:text-primary transition-colors">
-                    +91 11 4000 1234
+                  <h4 className="mb-1 font-bold text-foreground">Phone</h4>
+                  <a
+                    href={`tel:${SITE_CONFIG.contact.phone[0].replace(/\s+/g, '')}`}
+                    className="text-secondary transition-colors hover:text-primary"
+                  >
+                    {SITE_CONFIG.contact.phone[0]}
                   </a>
                 </div>
               </div>
             </motion.div>
 
-            <motion.div className="bg-accent/10 border border-accent/20 rounded-xl p-6" variants={itemVariants}>
+            <motion.div className="rounded-xl border border-accent/20 bg-accent/10 p-6" variants={itemVariants}>
               <div className="flex gap-4">
-                <MapPin className="w-6 h-6 text-accent flex-shrink-0 mt-1" />
+                <MapPin className="mt-1 h-6 w-6 flex-shrink-0 text-accent" />
                 <div>
-                  <h4 className="font-bold text-foreground mb-1">Address</h4>
-                  <p className="text-muted-foreground text-sm">
-                    123 Education Lane<br />
-                    New Delhi, India
-                  </p>
+                  <h4 className="mb-1 font-bold text-foreground">Address</h4>
+                  <p className="text-sm text-muted-foreground">{formatAddress()}</p>
                 </div>
               </div>
             </motion.div>
@@ -274,48 +243,52 @@ export default function CollaboratePage() {
         </div>
       </section>
 
-      {/* Offices Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-muted/30">
-        <div className="max-w-7xl mx-auto">
+      <section className="bg-muted/30 px-4 py-20 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-7xl">
           <motion.div
-            className="text-center mb-16"
+            className="mb-16 text-center"
             initial={{ y: 20, opacity: 0 }}
             whileInView={{ y: 0, opacity: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            <h2 className="text-4xl font-bold mb-4">Our Offices</h2>
-            <p className="text-muted-foreground text-lg">Visit us at any of our global locations</p>
+            <h2 className="mb-4 text-4xl font-bold">Connect With The Right Team</h2>
+            <p className="text-lg text-muted-foreground">
+              Reach the team best suited to your query for faster support.
+            </p>
           </motion.div>
 
           <motion.div
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8"
+            className="grid grid-cols-1 gap-8 md:grid-cols-3"
             variants={containerVariants}
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true }}
           >
-            {offices.map((office, index) => (
+            {SITE_CONFIG.collaborateTeams.map((team) => (
               <motion.div
-                key={index}
-                className="bg-background border border-border/50 rounded-xl p-8 hover:border-primary/50 transition-all"
+                key={team.title}
+                className="rounded-xl border border-border/50 bg-background p-8 transition-all hover:border-primary/50"
                 variants={itemVariants}
                 whileHover={{ translateY: -8 }}
-                transition={{ duration: 0.3 }}
               >
-                <h4 className="text-xl font-bold text-foreground mb-4">{office.city}</h4>
+                <h4 className="mb-4 text-xl font-bold text-foreground">{team.title}</h4>
                 <div className="space-y-3 text-sm text-muted-foreground">
                   <div className="flex gap-2">
-                    <MapPin className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />
-                    <p>{office.address}</p>
+                    <MapPin className="mt-0.5 h-4 w-4 flex-shrink-0 text-primary" />
+                    <p>{formatAddress()}</p>
                   </div>
                   <div className="flex gap-2">
-                    <Phone className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />
-                    <a href={`tel:${office.phone}`} className="hover:text-primary">{office.phone}</a>
+                    <Phone className="mt-0.5 h-4 w-4 flex-shrink-0 text-primary" />
+                    <a href={`tel:${team.phone.replace(/\s+/g, '')}`} className="hover:text-primary">
+                      {team.phone}
+                    </a>
                   </div>
                   <div className="flex gap-2">
-                    <Mail className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />
-                    <a href={`mailto:${office.email}`} className="hover:text-primary">{office.email}</a>
+                    <Mail className="mt-0.5 h-4 w-4 flex-shrink-0 text-primary" />
+                    <a href={`mailto:${team.email}`} className="hover:text-primary">
+                      {team.email}
+                    </a>
                   </div>
                 </div>
               </motion.div>

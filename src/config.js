@@ -1,17 +1,23 @@
-// Configuration file for The Global Avenues website
-// Update these values to customize the site content
+import { educationPrograms } from './data/educationProgramsData';
+
+const buildProgramPath = (programId, level = 'undergraduate') =>
+  `/education-program/${programId}/${level}`;
 
 export const SITE_CONFIG = {
-  // Company Information
   company: {
     name: 'The Global Avenues',
     shortName: 'TGA',
-    description: 'Your trusted partner for international student recruitment in South Asia',
+    description:
+      'Your trusted partner for international student recruitment and global education opportunities.',
     tagline: 'Unlock Your Potential With The Global Avenues',
     year: new Date().getFullYear(),
+    logo: {
+      lightSrc: '/logo-light.png',
+      darkSrc: '/logo-light.png',
+      alt: 'The Global Avenues logo',
+    },
   },
 
-  // Contact Information
   contact: {
     phone: ['+91 11 4680 1133', '+91 93198 31133', '+91 97178 01133'],
     email: {
@@ -28,162 +34,79 @@ export const SITE_CONFIG = {
     },
   },
 
-  // Social Media Links
   social: {
-    facebook: 'https://facebook.com/theglobalavenues',
-    linkedin: 'https://linkedin.com/company/theglobalavenues',
-    youtube: 'https://youtube.com/theglobalavenues',
-    instagram: 'https://instagram.com/theglobalavenues',
-    whatsapp: 'https://wa.me/919131983113',
+    facebook: null,
+    linkedin: null,
+    youtube: null,
+    instagram: null,
+    whatsapp: 'https://wa.me/919319831133',
   },
 
-  // Statistics
   stats: {
     studentsRecruited: '3000+',
-    partnerUniversities: '50+',
-    countriesCovered: '15+',
+    partnerUniversities: '210+',
+    countriesCovered: '50+',
     visaSuccessRate: '98%',
   },
 
-  // Navigation Links
-  navigation: [
-    { name: 'Home', href: '#home' },
-    { name: 'Services', href: '#services' },
-    { name: 'Portfolio', href: '#portfolio' },
-    { name: 'About', href: '#about' },
-    { name: 'Contact', href: '#contact' },
-  ],
-
-  // Services
-  services: [
-    {
-      title: 'In-Country Representation',
-      description: 'Establish your international institution\'s presence locally and maximize student recruitment potential in South Asia.',
-      icon: 'Globe',
-    },
-    {
-      title: 'Marketing & Promotion',
-      description: 'Strategic marketing campaigns and targeted promotional activities to attract top-tier international students.',
-      icon: 'TrendingUp',
-    },
-    {
-      title: 'Agent Management',
-      description: 'Develop recruitment strategies, provide personalized counseling, and organize informative sessions for prospective students.',
-      icon: 'Users',
-    },
-    {
-      title: 'Market Research & Analysis',
-      description: 'Deep market insights and strategic recommendations to enhance your international recruitment efforts.',
-      icon: 'FileText',
-    },
-    {
-      title: 'Administrative Services',
-      description: 'Complete support from assessment, application, enrollment, visa processing to ongoing student support.',
-      icon: 'Zap',
-    },
-    {
-      title: 'Partnerships & Collaboration',
-      description: 'Strategic alliances with educational institutions, EdTech platforms, and service providers.',
-      icon: 'Handshake',
-    },
-  ],
-
-  // Portfolio API Configuration
-  portfolio: {
-    // Set this to your API endpoint for dynamic data
-    apiEndpoint: null, // null = use mock data, set to 'YOUR_API_URL/portfolios' for live data
-    itemsPerPage: 6,
-    categories: ['All', 'University Partnership', 'Program Launch', 'Multi-University', 'Consortium', 'Foundation Year', 'Pathway Program'],
+  navigation: {
+    primary: [
+      { label: 'Home', path: '/' },
+      { label: 'Who We Are', path: '/about' },
+      { label: 'News & Blog', path: '/news-blog' },
+      { label: 'Gallery', path: '/gallery' },
+    ],
+    offerings: [
+      { label: 'All Programs', path: '/what-we-offer' },
+      ...educationPrograms.map((program) => ({
+        label: program.name,
+        path: buildProgramPath(program.id),
+      })),
+    ],
   },
 
-  // Process Steps
-  processSteps: [
-    {
-      number: '01',
-      title: 'Choose University',
-      description: 'Access our network of 350+ degree programs at reputed partner universities worldwide.',
-      icon: 'GraduationCap',
-    },
-    {
-      number: '02',
-      title: 'Financial Guidance',
-      description: 'Receive comprehensive guidance on funding requirements and cost of living analysis.',
-      icon: 'DollarSign',
-    },
-    {
-      number: '03',
-      title: 'Visa Process',
-      description: 'Professional visa interview preparation and complete documentation support.',
-      icon: 'Passport',
-    },
-    {
-      number: '04',
-      title: 'Fast Acceptance',
-      description: 'Streamlined application process with acceptance within 72 hours.',
-      icon: 'CheckCircle',
-    },
-    {
-      number: '05',
-      title: 'Pre-Departure',
-      description: 'Comprehensive briefing and orientation for smooth transition to your destination.',
-      icon: 'BookOpen',
-    },
-    {
-      number: '06',
-      title: 'Arrival Support',
-      description: 'On-arrival assistance, accommodation guidance, and ongoing student support services.',
-      icon: 'Plane',
-    },
-  ],
-
-  // Color Theme Configuration
-  colors: {
-    primary: '#1e3a8a',      // Navy Blue
-    secondary: '#d97706',    // Gold
-    foreground: '#1f2937',   // Dark gray
-    background: '#ffffff',   // White
-    muted: '#d1d5db',        // Light gray
-    accent: '#1e3a8a',       // Same as primary
-  },
-
-  // SEO Meta Tags
-  seo: {
-    title: 'The Global Avenues - International Student Recruitment',
-    description: 'Your trusted partner for international student recruitment in South Asia. 3000+ successful placements with 98% visa success rate.',
-    keywords: 'international education, student recruitment, South Asia, universities, visa support',
-    author: 'The Global Avenues',
-    ogImage: '/logo.png',
-  },
-
-  // Features
-  features: {
-    mobileResponsive: true,
-    darkMode: false,
-    apiIntegration: true,
-    analytics: false, // Set to true if using analytics
-    contactForm: true,
-  },
-
-  // Footer Links
   footerLinks: {
-    quickLinks: [
-      { name: 'Home', href: '#' },
-      { name: 'Services', href: '#services' },
-      { name: 'Portfolio', href: '#portfolio' },
-      { name: 'About Us', href: '#about' },
+    Explore: [
+      { label: 'Home', path: '/' },
+      { label: 'Who We Are', path: '/about' },
+      { label: 'What We Offer', path: '/what-we-offer' },
+      { label: 'Universities', path: '/universities' },
     ],
-    services: [
-      { name: 'In-Country Representation', href: '#' },
-      { name: 'Marketing & Promotion', href: '#' },
-      { name: 'Visa Support', href: '#' },
-      { name: 'Student Counseling', href: '#' },
+    Services: [
+      { label: 'Explore Pathways', path: '/services' },
+      { label: 'Student Guidance', path: '/services' },
+      { label: 'University Recruitment', path: '/services' },
+      { label: 'Visa Assistance', path: '/services' },
     ],
-    legal: [
-      { name: 'Privacy Policy', href: '#' },
-      { name: 'Terms of Service', href: '#' },
-      { name: 'Disclaimer', href: '#' },
+    Resources: [
+      { label: 'Blog', path: '/news-blog' },
+      { label: 'Gallery', path: '/gallery' },
+      { label: 'Partners', path: '/partners' },
     ],
   },
-}
 
-export default SITE_CONFIG
+  collaborateTeams: [
+    {
+      title: 'General Enquiries',
+      phone: '+91 11 4680 1133',
+      email: 'connect@theglobalavenues.com',
+    },
+    {
+      title: 'Admissions Support',
+      phone: '+91 93198 31133',
+      email: 'admissions@theglobalavenues.com',
+    },
+    {
+      title: 'Partnerships',
+      phone: '+91 97178 01133',
+      email: 'partnerships@theglobalavenues.com',
+    },
+  ],
+};
+
+export const formatAddress = (address = SITE_CONFIG.contact.address) =>
+  `${address.street}, ${address.city}, ${address.state} ${address.zipcode}, ${address.country}`;
+
+export const portfolioMenuLabel = 'Our Portfolio';
+
+export default SITE_CONFIG;

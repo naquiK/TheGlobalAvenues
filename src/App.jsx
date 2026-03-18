@@ -1,9 +1,10 @@
 
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import { ThemeProvider } from './context/ThemeContext';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 import { ScrollToTop } from './components/ScrollToTop';
+import { ScrollRestoration } from './components/ScrollRestoration';
 
 // Pages
 import HomePage from './pages/HomePage';
@@ -24,6 +25,7 @@ function App() {
   return (
     <ThemeProvider>
       <div className="min-h-screen bg-background text-foreground flex flex-col">
+        <ScrollRestoration />
         <Header />
         <main className="flex-grow">
           <Routes>
@@ -39,6 +41,7 @@ function App() {
             <Route path="/news-blog" element={<NewsVlogPage />} />
             <Route path="/news/:id" element={<NewsDetailPage />} />
             <Route path="/what-we-offer" element={<WhatWeOfferPage />} />
+            <Route path="/education-program" element={<Navigate to="/what-we-offer" replace />} />
             <Route path="/education-program/:programType/:degreeLevel" element={<EducationProgramPage />} />
           </Routes>
         </main>

@@ -2,6 +2,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Users, Award, TrendingUp, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import { portfolioData } from '../data/portfolioData';
 
 export default function PortfolioDisplay({ limit = 10 }) {
   const [portfolios, setPortfolios] = useState([]);
@@ -10,18 +11,8 @@ export default function PortfolioDisplay({ limit = 10 }) {
   const [itemsPerRow, setItemsPerRow] = useState(5);
 
   useEffect(() => {
-    const loadPortfolios = async () => {
-      try {
-        const { portfolioData } = await import('../data/portfolioData');
-        setPortfolios(portfolioData.slice(0, limit));
-        setIsLoading(false);
-      } catch (error) {
-        console.error('[v0] Error loading portfolios:', error);
-        setIsLoading(false);
-      }
-    };
-
-    loadPortfolios();
+    setPortfolios(portfolioData.slice(0, limit));
+    setIsLoading(false);
   }, [limit]);
 
   // Set items per row based on screen size

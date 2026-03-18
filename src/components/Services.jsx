@@ -1,116 +1,124 @@
-import { useScrollAnimation } from '../hooks/useScrollAnimation';
-import { Building2, Megaphone, Users, BarChart3, Settings, Handshake, ArrowRight, Briefcase, X } from 'lucide-react';
 import { useState } from 'react';
 import { motion } from 'framer-motion';
+import {
+  ArrowRight,
+  BarChart3,
+  Briefcase,
+  Building2,
+  Handshake,
+  Megaphone,
+  Settings,
+  Users,
+  X,
+} from 'lucide-react';
+import { useScrollAnimation } from '../hooks/useScrollAnimation';
 
 const services = [
   {
     icon: Building2,
     title: 'In-Country Representation',
-    description: 'Represent international educational institutions locally and establish their presence in the South Asian market.',
+    description:
+      'Represent international educational institutions locally and establish their presence in the South Asian market.',
     gradient: 'from-blue-500 to-cyan-500',
   },
   {
     icon: Megaphone,
     title: 'Marketing & Promotion',
-    description: 'Expert-driven international student recruitment with targeted marketing and promotion strategies.',
+    description:
+      'Expert-driven international student recruitment with targeted marketing and promotion strategies.',
     gradient: 'from-purple-500 to-pink-500',
   },
   {
     icon: Users,
     title: 'Agent Management',
-    description: 'Develop targeted recruitment strategies and provide personalized counseling for prospective students.',
+    description:
+      'Develop targeted recruitment strategies and provide personalized counseling for prospective students.',
     gradient: 'from-green-500 to-emerald-500',
   },
   {
     icon: BarChart3,
     title: 'Market Research & Analysis',
-    description: 'Conduct comprehensive market research to identify trends and provide strategic recommendations.',
+    description:
+      'Conduct comprehensive market research to identify trends and provide strategic recommendations.',
     gradient: 'from-orange-500 to-red-500',
   },
   {
     icon: Settings,
     title: 'Administrative Services',
-    description: 'Assist with assessment, application, enrollment, visa, immigration, and student support services.',
+    description:
+      'Assist with assessment, application, enrollment, visa, immigration, and student support services.',
     gradient: 'from-yellow-500 to-orange-500',
   },
   {
     icon: Handshake,
     title: 'Collaboration & Partnerships',
-    description: 'Enhance global reach through strategic collaboration and comprehensive student recruitment services.',
+    description:
+      'Enhance global reach through strategic collaboration and comprehensive student recruitment services.',
     gradient: 'from-indigo-500 to-blue-500',
   },
 ];
 
 const endToEndSupport = [
-  { title: 'Institutional Support', description: 'Complete strategic guidance for universities establishing presence in South Asia' },
-  { title: 'Student Recruitment', description: 'Comprehensive student recruitment and admission processing' },
-  { title: 'Visa & Immigration', description: 'Expert assistance with visa applications and immigration requirements' },
-  { title: 'Career Guidance', description: 'Professional counseling and career path planning for students' },
-  { title: 'Quality Assurance', description: 'Transparent processes with ICEF accreditation and industry standards' },
-  { title: 'Continuous Support', description: 'Ongoing support throughout the entire student journey' },
+  {
+    title: 'Institutional Support',
+    description: 'Complete strategic guidance for universities establishing presence in South Asia',
+  },
+  {
+    title: 'Student Recruitment',
+    description: 'Comprehensive student recruitment and admission processing',
+  },
+  {
+    title: 'Visa & Immigration',
+    description: 'Expert assistance with visa applications and immigration requirements',
+  },
+  {
+    title: 'Career Guidance',
+    description: 'Professional counseling and career path planning for students',
+  },
+  {
+    title: 'Quality Assurance',
+    description: 'Transparent processes with ICEF accreditation and industry standards',
+  },
+  {
+    title: 'Continuous Support',
+    description: 'Ongoing support throughout the entire student journey',
+  },
 ];
 
-const UniversitySolutionsModal = ({ isOpen, onClose }) => {
-  if (!isOpen) return null;
+const ModalShell = ({ title, accentClass, isOpen, onClose, children }) => {
+  if (!isOpen) {
+    return null;
+  }
 
   return (
     <motion.div
-      className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.3 }}
     >
       <motion.div
-        className="bg-background border border-border rounded-2xl max-w-lg w-full max-h-96 overflow-y-auto shadow-2xl"
+        className="max-h-96 w-full max-w-lg overflow-y-auto rounded-2xl border border-border bg-background shadow-2xl"
         initial={{ scale: 0.95, opacity: 0, y: 20 }}
         animate={{ scale: 1, opacity: 1, y: 0 }}
         exit={{ scale: 0.95, opacity: 0, y: 20 }}
         transition={{ duration: 0.3 }}
       >
-        {/* Header */}
-        <div className="sticky top-0 bg-gradient-to-r from-primary to-secondary text-white px-8 py-6 flex justify-between items-center">
-          <h2 className="text-2xl font-bold">Comprehensive University Solutions</h2>
-          <button onClick={onClose} className="p-2 hover:bg-white/20 rounded-lg transition-colors">
-            <X className="w-5 h-5" />
+        <div className={`sticky top-0 flex items-center justify-between px-8 py-6 text-white ${accentClass}`}>
+          <h2 className="text-2xl font-bold">{title}</h2>
+          <button onClick={onClose} className="rounded-lg p-2 transition-colors hover:bg-white/20" type="button">
+            <X className="h-5 w-5" />
           </button>
         </div>
 
-        {/* Content */}
-        <div className="p-8 space-y-6">
-          <p className="text-lg text-muted-foreground leading-relaxed">
-            Our comprehensive university solutions provide international educational institutions with complete support to establish and expand their presence in the South Asian market.
-          </p>
-
-          <div className="space-y-4">
-            <h3 className="text-lg font-bold text-foreground">Key Benefits:</h3>
-            <ul className="space-y-2 text-muted-foreground">
-              <li className="flex items-start gap-3">
-                <span className="text-primary font-bold mt-1">•</span>
-                <span>In-country representation and local market establishment</span>
-              </li>
-              <li className="flex items-start gap-3">
-                <span className="text-primary font-bold mt-1">•</span>
-                <span>Expert-driven student recruitment and marketing strategies</span>
-              </li>
-              <li className="flex items-start gap-3">
-                <span className="text-primary font-bold mt-1">•</span>
-                <span>Comprehensive market research and strategic analysis</span>
-              </li>
-              <li className="flex items-start gap-3">
-                <span className="text-primary font-bold mt-1">•</span>
-                <span>Full administrative and student support services</span>
-              </li>
-              <li className="flex items-start gap-3">
-                <span className="text-primary font-bold mt-1">•</span>
-                <span>Strategic partnerships and collaboration opportunities</span>
-              </li>
-            </ul>
-            
-          </div>
-
-          <button onClick={onClose} className="w-full px-6 py-3 bg-primary text-primary-foreground rounded-lg font-semibold hover:bg-secondary transition-all duration-300">
+        <div className="space-y-6 p-8">
+          {children}
+          <button
+            onClick={onClose}
+            className="w-full rounded-lg bg-primary px-6 py-3 font-semibold text-primary-foreground transition-all duration-300 hover:bg-secondary"
+            type="button"
+          >
             Close
           </button>
         </div>
@@ -119,356 +127,255 @@ const UniversitySolutionsModal = ({ isOpen, onClose }) => {
   );
 };
 
-const EducationalSolutionsModal = ({ isOpen, onClose }) => {
-  if (!isOpen) return null;
+const UniversitySolutionsModal = ({ isOpen, onClose }) => (
+  <ModalShell
+    title="Comprehensive University Solutions"
+    accentClass="bg-gradient-to-r from-primary to-secondary"
+    isOpen={isOpen}
+    onClose={onClose}
+  >
+    <p className="text-lg leading-relaxed text-muted-foreground">
+      Our comprehensive university solutions provide international educational institutions with complete
+      support to establish and expand their presence in the South Asian market.
+    </p>
 
-  return (
-    <motion.div
-      className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 backdrop-blur-sm"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.3 }}
-    >
-      <motion.div
-        className="bg-background border border-border rounded-2xl max-w-lg w-full max-h-96 overflow-y-auto shadow-2xl"
-        initial={{ scale: 0.95, opacity: 0, y: 20 }}
-        animate={{ scale: 1, opacity: 1, y: 0 }}
-        exit={{ scale: 0.95, opacity: 0, y: 20 }}
-        transition={{ duration: 0.3 }}
-      >
-        {/* Header */}
-        <div className="sticky top-0 bg-gradient-to-r from-accent to-primary text-white px-8 py-6 flex justify-between items-center">
-          <h2 className="text-2xl font-bold">Complete Educational Solutions</h2>
-          <button onClick={onClose} className="p-2 hover:bg-white/20 rounded-lg transition-colors">
-            <X className="w-5 h-5" />
-          </button>
-        </div>
-
-        {/* Content */}
-        <div className="p-8 space-y-6">
-          <p className="text-lg text-muted-foreground leading-relaxed">
-            From institutional representation to student success, we provide complete educational solutions at every stage of the international education journey.
-          </p>
-
-          <div className="space-y-4">
-            <h3 className="text-lg font-bold text-foreground">Our Services Include:</h3>
-            <ul className="space-y-2 text-muted-foreground">
-              <li className="flex items-start gap-3">
-                <span className="text-accent font-bold mt-1">✓</span>
-                <span>Institutional support and strategic guidance</span>
-              </li>
-              <li className="flex items-start gap-3">
-                <span className="text-accent font-bold mt-1">✓</span>
-                <span>Comprehensive student recruitment</span>
-              </li>
-              <li className="flex items-start gap-3">
-                <span className="text-accent font-bold mt-1">✓</span>
-                <span>Visa and immigration assistance</span>
-              </li>
-              <li className="flex items-start gap-3">
-                <span className="text-accent font-bold mt-1">✓</span>
-                <span>Professional career guidance and counseling</span>
-              </li>
-              <li className="flex items-start gap-3">
-                <span className="text-accent font-bold mt-1">✓</span>
-                <span>Quality assurance and ongoing student support</span>
-              </li>
-            </ul>
-          </div>
-
-          <button onClick={onClose} className="w-full px-6 py-3 bg-accent text-white rounded-lg font-semibold hover:bg-accent/90 transition-all duration-300">
-            Close
-          </button>
-        </div>
-      </motion.div>
-    </motion.div>
-  );
-};
+    <div className="space-y-4">
+      <h3 className="text-lg font-bold text-foreground">Key Benefits</h3>
+      <ul className="space-y-2 text-muted-foreground">
+        {[
+          'In-country representation and local market establishment',
+          'Expert-driven student recruitment and marketing strategies',
+          'Comprehensive market research and strategic analysis',
+          'Full administrative and student support services',
+          'Strategic partnerships and collaboration opportunities',
+        ].map((item) => (
+          <li key={item} className="flex items-start gap-3">
+            <span className="mt-1 font-bold text-primary">*</span>
+            <span>{item}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </ModalShell>
+);
 
 const ServiceCardModal = ({ isOpen, onClose, service }) => {
-  if (!isOpen || !service) return null;
+  if (!isOpen || !service) {
+    return null;
+  }
 
   return (
-    <motion.div
-      className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 backdrop-blur-sm"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.3 }}
+    <ModalShell
+      title={service.title}
+      accentClass={`bg-gradient-to-r ${service.gradient}`}
+      isOpen={isOpen}
+      onClose={onClose}
     >
-      <motion.div
-        className="bg-background border border-border rounded-2xl max-w-lg w-full max-h-96 overflow-y-auto shadow-2xl"
-        initial={{ scale: 0.95, opacity: 0, y: 20 }}
-        animate={{ scale: 1, opacity: 1, y: 0 }}
-        exit={{ scale: 0.95, opacity: 0, y: 20 }}
-        transition={{ duration: 0.3 }}
-      >
-        {/* Header */}
-        <div className={`sticky top-0 bg-gradient-to-r ${service.gradient} text-white px-8 py-6 flex justify-between items-center`}>
-          <h2 className="text-2xl font-bold">{service.title}</h2>
-          <button onClick={onClose} className="p-2 hover:bg-white/20 rounded-lg transition-colors">
-            <X className="w-5 h-5" />
-          </button>
-        </div>
+      <p className="text-lg leading-relaxed text-muted-foreground">{service.description}</p>
 
-        {/* Content */}
-        <div className="p-8 space-y-6">
-          <p className="text-lg text-muted-foreground leading-relaxed">
-            {service.description}
-          </p>
-
-          <div className="space-y-4">
-            <h3 className="text-lg font-bold text-foreground">Key Features:</h3>
-            <ul className="space-y-2 text-muted-foreground">
-              <li className="flex items-start gap-3">
-                <span className="text-primary font-bold mt-1">•</span>
-                <span>Expert professional guidance and support</span>
-              </li>
-              <li className="flex items-start gap-3">
-                <span className="text-primary font-bold mt-1">•</span>
-                <span>Comprehensive service delivery</span>
-              </li>
-              <li className="flex items-start gap-3">
-                <span className="text-primary font-bold mt-1">•</span>
-                <span>Tailored solutions for your needs</span>
-              </li>
-              <li className="flex items-start gap-3">
-                <span className="text-primary font-bold mt-1">•</span>
-                <span>Quality assurance and transparency</span>
-              </li>
-            </ul>
-          </div>
-
-          <button onClick={onClose} className="w-full px-6 py-3 bg-primary text-primary-foreground rounded-lg font-semibold hover:bg-secondary transition-all duration-300">
-            Close
-          </button>
-        </div>
-      </motion.div>
-    </motion.div>
+      <div className="space-y-4">
+        <h3 className="text-lg font-bold text-foreground">Key Features</h3>
+        <ul className="space-y-2 text-muted-foreground">
+          {[
+            'Expert professional guidance and support',
+            'Comprehensive service delivery',
+            'Tailored solutions for your needs',
+            'Quality assurance and transparency',
+          ].map((item) => (
+            <li key={item} className="flex items-start gap-3">
+              <span className="mt-1 font-bold text-primary">*</span>
+              <span>{item}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </ModalShell>
   );
 };
 
 const EndToEndModal = ({ isOpen, onClose, item }) => {
-  if (!isOpen || !item) return null;
+  if (!isOpen || !item) {
+    return null;
+  }
 
   return (
-    <motion.div
-      className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 backdrop-blur-sm"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.3 }}
+    <ModalShell
+      title={item.title}
+      accentClass="bg-gradient-to-r from-accent to-accent/80"
+      isOpen={isOpen}
+      onClose={onClose}
     >
-      <motion.div
-        className="bg-background border border-border rounded-2xl max-w-lg w-full max-h-96 overflow-y-auto shadow-2xl"
-        initial={{ scale: 0.95, opacity: 0, y: 20 }}
-        animate={{ scale: 1, opacity: 1, y: 0 }}
-        exit={{ scale: 0.95, opacity: 0, y: 20 }}
-        transition={{ duration: 0.3 }}
+      <p className="text-lg leading-relaxed text-muted-foreground">{item.description}</p>
+
+      <div className="space-y-4">
+        <h3 className="text-lg font-bold text-foreground">What We Provide</h3>
+        <ul className="space-y-2 text-muted-foreground">
+          {[
+            'Professional and experienced team support',
+            'Comprehensive service coverage',
+            'Quality assurance and best practices',
+            'Ongoing support and updates',
+          ].map((benefit) => (
+            <li key={benefit} className="flex items-start gap-3">
+              <span className="mt-1 font-bold text-accent">+</span>
+              <span>{benefit}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </ModalShell>
+  );
+};
+
+const ServiceGridCard = ({ service, index, onClick }) => {
+  const [cardRef, cardIsVisible] = useScrollAnimation();
+  const Icon = service.icon;
+
+  return (
+    <div
+      ref={cardRef}
+      onClick={() => onClick(service)}
+      className={`group cursor-pointer rounded-2xl border border-border bg-background p-8 transition-all duration-500 hover:-translate-y-2 hover:border-primary hover:shadow-lg ${
+        cardIsVisible ? 'animate-fade-in-up' : 'translate-y-[30px] opacity-0'
+      }`}
+      style={{ transitionDelay: `${index * 100}ms` }}
+    >
+      <div
+        className={`mb-6 inline-block rounded-xl bg-gradient-to-br p-4 transition-transform duration-300 group-hover:scale-110 ${service.gradient}`}
       >
-        {/* Header */}
-        <div className="sticky top-0 bg-gradient-to-r from-accent to-accent/80 text-white px-8 py-6 flex justify-between items-center">
-          <h2 className="text-2xl font-bold">{item.title}</h2>
-          <button onClick={onClose} className="p-2 hover:bg-white/20 rounded-lg transition-colors">
-            <X className="w-5 h-5" />
-          </button>
-        </div>
+        <Icon className="h-6 w-6 text-white" />
+      </div>
 
-        {/* Content */}
-        <div className="p-8 space-y-6">
-          <p className="text-lg text-muted-foreground leading-relaxed">
-            {item.description}
-          </p>
+      <h3 className="mb-3 text-xl font-bold text-foreground transition-colors group-hover:text-primary">
+        {service.title}
+      </h3>
+      <p className="mb-6 leading-relaxed text-muted-foreground">{service.description}</p>
 
-          <div className="space-y-4">
-            <h3 className="text-lg font-bold text-foreground">What We Provide:</h3>
-            <ul className="space-y-2 text-muted-foreground">
-              <li className="flex items-start gap-3">
-                <span className="text-accent font-bold mt-1">✓</span>
-                <span>Professional and experienced team support</span>
-              </li>
-              <li className="flex items-start gap-3">
-                <span className="text-accent font-bold mt-1">✓</span>
-                <span>Comprehensive service coverage</span>
-              </li>
-              <li className="flex items-start gap-3">
-                <span className="text-accent font-bold mt-1">✓</span>
-                <span>Quality assurance and best practices</span>
-              </li>
-              <li className="flex items-start gap-3">
-                <span className="text-accent font-bold mt-1">✓</span>
-                <span>Ongoing support and updates</span>
-              </li>
-            </ul>
-          </div>
-
-          <button onClick={onClose} className="w-full px-6 py-3 bg-accent text-white rounded-lg font-semibold hover:bg-accent/90 transition-all duration-300">
-            Close
-          </button>
-        </div>
-      </motion.div>
-    </motion.div>
+      <div className="flex items-center font-semibold text-primary transition-all group-hover:gap-2">
+        Learn more
+        <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-2" />
+      </div>
+    </div>
   );
 };
 
 export function Services() {
-  // each section needs its own observer so the headers animate independently
   const [headerRef, headerIsVisible] = useScrollAnimation();
   const [endRef, endIsVisible] = useScrollAnimation();
   const [showUniversityModal, setShowUniversityModal] = useState(false);
-  const [showEducationalModal, setShowEducationalModal] = useState(false);
   const [selectedService, setSelectedService] = useState(null);
   const [selectedEndToEnd, setSelectedEndToEnd] = useState(null);
 
-  const handleUniversityClick = () => {
-    setShowUniversityModal(true);
-  };
-
-  const handleEducationalClick = () => {
-    setShowEducationalModal(true);
-  };
-
-  const handleServiceCardClick = (service) => {
-    setSelectedService(service);
-  };
-
-  const handleEndToEndClick = (item) => {
-    setSelectedEndToEnd(item);
-  };
-
   return (
-    <section id="services" className="py-20 px-4 bg-muted/30 relative overflow-hidden">
-      {/* Background Elements */}
-      <div className="absolute -top-40 -right-40 w-80 h-80 bg-secondary/10 rounded-full blur-3xl -z-10"></div>
-      <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-primary/10 rounded-full blur-3xl -z-10"></div>
+    <section id="services" className="relative overflow-hidden bg-muted/30 px-4 py-20">
+      <div className="absolute -top-40 -right-40 -z-10 h-80 w-80 rounded-full bg-secondary/10 blur-3xl" />
+      <div className="absolute -bottom-40 -left-40 -z-10 h-80 w-80 rounded-full bg-primary/10 blur-3xl" />
 
-      <div className="max-w-7xl mx-auto w-full">
-        {/* Header with Image */}
+      <div className="mx-auto w-full max-w-7xl">
         <div
           ref={headerRef}
-          className={`grid grid-cols-1 lg:grid-cols-2 gap-8 items-center mb-16 transition-all duration-1000 ${
-            headerIsVisible ? 'animate-fade-in-up' : 'opacity-0 translate-y-[30px]'
+          className={`mb-16 grid grid-cols-1 items-center gap-8 transition-all duration-1000 lg:grid-cols-2 ${
+            headerIsVisible ? 'animate-fade-in-up' : 'translate-y-[30px] opacity-0'
           }`}
         >
           <div className="text-center lg:text-left">
-            <div className="inline-block px-4 py-2 bg-primary/10 text-primary rounded-full text-sm font-semibold mb-4">
-              🎯 What We Offer
+            <div className="mb-4 inline-block rounded-full bg-primary/10 px-4 py-2 text-sm font-semibold text-primary">
+              What We Offer
             </div>
-            <h2 className="text-4xl lg:text-5xl font-bold text-foreground mb-4">
+            <h2 className="mb-4 text-4xl font-bold text-foreground lg:text-5xl">
               Comprehensive University Solutions
             </h2>
-            <p className="text-lg text-muted-foreground mb-6">
+            <p className="mb-6 text-lg text-muted-foreground">
               We provide end-to-end support to help higher education institutions expand their reach and recruit top-tier international students.
             </p>
             <button
-              onClick={handleUniversityClick}
-              className="px-6 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-secondary transition-all duration-300 font-medium text-sm"
+              onClick={() => setShowUniversityModal(true)}
+              className="rounded-lg bg-primary px-6 py-2 text-sm font-medium text-primary-foreground transition-all duration-300 hover:bg-secondary"
+              type="button"
             >
               Learn More
             </button>
           </div>
 
-          {/* Image */}
-          <div className="hidden lg:block rounded-2xl overflow-hidden shadow-lg">
-            <img 
+          <div className="hidden overflow-hidden rounded-2xl shadow-lg lg:block">
+            <img
               src="https://images.unsplash.com/photo-1552664730-d307ca884978?w=600&h=500&fit=crop&q=80"
               alt="Educational services"
-              className="w-full h-96 object-cover hover:scale-105 transition-transform duration-300"
+              className="h-96 w-full object-cover transition-transform duration-300 hover:scale-105"
             />
           </div>
         </div>
 
-        {/* Services Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-20">
-          {services.map((service, index) => {
-            const Icon = service.icon;
-            const [cardRef, cardIsVisible] = useScrollAnimation();
-
-            return (
-              <div
-                key={index}
-                ref={cardRef}
-                onClick={() => handleServiceCardClick(service)}
-                className={`group p-8 bg-background border border-border rounded-2xl hover:border-primary hover:shadow-lg transition-all duration-500 hover:-translate-y-2 cursor-pointer ${
-                  cardIsVisible ? 'animate-fade-in-up' : 'opacity-0 translate-y-[30px]'
-                }`}
-                style={{ transitionDelay: `${index * 100}ms` }}
-              >
-                {/* Icon */}
-                <div className={`inline-block p-4 bg-gradient-to-br ${service.gradient} rounded-xl mb-6 group-hover:scale-110 transition-transform duration-300`}>
-                  <Icon className="w-6 h-6 text-white" />
-                </div>
-
-                {/* Content */}
-                <h3 className="text-xl font-bold text-foreground mb-3 group-hover:text-primary transition-colors">
-                  {service.title}
-                </h3>
-                <p className="text-muted-foreground mb-6 leading-relaxed">
-                  {service.description}
-                </p>
-
-                {/* Link */}
-                <div className="flex items-center text-primary font-semibold group-hover:gap-2 transition-all">
-                  Learn more
-                  <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-2 transition-transform" />
-                </div>
-              </div>
-            );
-          })}
+        <div className="mb-20 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {services.map((service, index) => (
+            <ServiceGridCard
+              key={service.title}
+              service={service}
+              index={index}
+              onClick={setSelectedService}
+            />
+          ))}
         </div>
 
-        {/* End-to-End Support Section */}
-        <div className="mt-24 pt-20 border-t border-border">
+        <div className="mt-24 border-t border-border pt-20">
           <div
             ref={endRef}
-            className={`text-center mb-16 transition-all duration-1000 ${
-              endIsVisible ? 'animate-fade-in-up' : 'opacity-0 translate-y-[30px]'
+            className={`mb-16 text-center transition-all duration-1000 ${
+              endIsVisible ? 'animate-fade-in-up' : 'translate-y-[30px] opacity-0'
             }`}
           >
-            <div className="inline-block px-4 py-2 bg-accent/10 text-accent rounded-full text-sm font-semibold mb-4">
-              🌍 Offering End-to-End Support
+            <div className="mb-4 inline-block rounded-full bg-accent/10 px-4 py-2 text-sm font-semibold text-accent">
+              Offering End-to-End Support
             </div>
-            <h3 className="text-4xl lg:text-5xl font-bold text-foreground mb-4">
+            <h3 className="mb-4 text-4xl font-bold text-foreground lg:text-5xl">
               Complete Educational Solutions
             </h3>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
               From institutional representation to student success, we provide comprehensive support at every stage of the international education journey.
             </p>
-     
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
             {endToEndSupport.map((item, index) => (
               <div
-                key={index}
-                onClick={() => handleEndToEndClick(item)}
-                className="p-8 bg-gradient-to-br from-primary/5 to-secondary/5 border border-border rounded-2xl hover:border-accent hover:shadow-lg transition-all duration-500 hover:-translate-y-2 animate-fade-in-up cursor-pointer group"
+                key={item.title}
+                onClick={() => setSelectedEndToEnd(item)}
+                className="group cursor-pointer rounded-2xl border border-border bg-gradient-to-br from-primary/5 to-secondary/5 p-8 transition-all duration-500 hover:-translate-y-2 hover:border-accent hover:shadow-lg"
                 style={{ animationDelay: `${index * 100}ms` }}
               >
-                <div className="flex items-start gap-3 mb-4">
-                  <div className="flex-shrink-0 w-10 h-10 bg-accent/20 rounded-lg flex items-center justify-center group-hover:bg-accent/30 transition-colors">
-                    <Briefcase className="w-5 h-5 text-accent" />
+                <div className="mb-4 flex items-start gap-3">
+                  <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-accent/20 transition-colors group-hover:bg-accent/30">
+                    <Briefcase className="h-5 w-5 text-accent" />
                   </div>
                 </div>
-                <h4 className="text-xl font-bold text-foreground mb-2 group-hover:text-accent transition-colors">{item.title}</h4>
+                <h4 className="mb-2 text-xl font-bold text-foreground transition-colors group-hover:text-accent">
+                  {item.title}
+                </h4>
                 <p className="text-muted-foreground">{item.description}</p>
-                  <div className="flex mt-10 items-center text-primary font-semibold group-hover:gap-2 transition-all">
+                <div className="mt-10 flex items-center font-semibold text-primary transition-all group-hover:gap-2">
                   Learn more
-                  <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-2 transition-transform" />
+                  <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-2" />
                 </div>
               </div>
-              
             ))}
           </div>
         </div>
       </div>
 
-      {/* Modals */}
-      <UniversitySolutionsModal isOpen={showUniversityModal} onClose={() => setShowUniversityModal(false)} />
-      <EducationalSolutionsModal isOpen={showEducationalModal} onClose={() => setShowEducationalModal(false)} />
-      <ServiceCardModal isOpen={selectedService !== null} onClose={() => setSelectedService(null)} service={selectedService} />
-      <EndToEndModal isOpen={selectedEndToEnd !== null} onClose={() => setSelectedEndToEnd(null)} item={selectedEndToEnd} />
+      <UniversitySolutionsModal
+        isOpen={showUniversityModal}
+        onClose={() => setShowUniversityModal(false)}
+      />
+      <ServiceCardModal
+        isOpen={selectedService !== null}
+        onClose={() => setSelectedService(null)}
+        service={selectedService}
+      />
+      <EndToEndModal
+        isOpen={selectedEndToEnd !== null}
+        onClose={() => setSelectedEndToEnd(null)}
+        item={selectedEndToEnd}
+      />
     </section>
   );
 }
