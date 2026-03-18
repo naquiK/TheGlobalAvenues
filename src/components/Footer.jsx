@@ -1,13 +1,17 @@
 import { useScrollAnimation } from '../hooks/useScrollAnimation';
-import { ChevronUp, Mail, Phone, MapPin, Facebook, Linkedin, Twitter } from 'lucide-react';
+import { ChevronUp, Mail, Phone, MapPin, Facebook, Linkedin, Twitter, Instagram, Youtube, MessageCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
+import { useSettings } from '../context/SettingsContext';
+import { formatAddress } from '../config';
 
 export function Footer() {
   const [ref, isVisible] = useScrollAnimation();
   const [email, setEmail] = useState('');
   const [subscribeStatus, setSubscribeStatus] = useState('');
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const { siteConfig } = useSettings();
+  const logoSrc = isDarkMode ? siteConfig.company.logo.darkSrc : siteConfig.company.logo.lightSrc;
 
   useEffect(() => {
     const isDark = document.documentElement.classList.contains('dark');
@@ -39,25 +43,16 @@ export function Footer() {
     }
   };
 
-  const links = {
-    'Explore': [
-      { label: 'Home', path: '/' },
-      { label: 'Who We Are', path: '/about' },
-      { label: 'Educational Pathways', path: '/education-program' },
-      { label: 'Universities', path: '/universities' },
-    ],
-    'Services': [
-      { label: 'Explore Pathways', path: '/services' },
-      { label: 'Student Guidance', path: '/services' },
-      { label: 'University Recruitment', path: '/services' },
-      { label: 'Visa Assistance', path: '/services' },
-    ],
-    'Resources': [
-      { label: 'Blog', path: '/news-blog' },
-      { label: 'Gallery', path: '/gallery' },
-      { label: 'Partners', path: '/partners' },
-    ],
-  };
+  const links = siteConfig.footerLinks;
+
+  const socialLinks = [
+    { key: 'facebook', href: siteConfig.social.facebook, Icon: Facebook },
+    { key: 'linkedin', href: siteConfig.social.linkedin, Icon: Linkedin },
+    { key: 'instagram', href: siteConfig.social.instagram, Icon: Instagram },
+    { key: 'youtube', href: siteConfig.social.youtube, Icon: Youtube },
+    { key: 'twitter', href: siteConfig.social.twitter, Icon: Twitter },
+    { key: 'whatsapp', href: siteConfig.social.whatsapp, Icon: MessageCircle },
+  ].filter(({ href }) => Boolean(href));
 
   return (
     <footer className={`relative transition-colors duration-300 border-t ${
@@ -108,25 +103,31 @@ export function Footer() {
           >
             <div className="mb-3">
               <img 
-                src="https://theglobalavenues.com/wp-content/uploads/2024/04/Transparent_png-e1722253623779-1536x398.png"
-                alt="The Global Avenues Logo"
+                src={logoSrc}
+                alt={siteConfig.company.logo.alt}
                 className="h-8 sm:h-10 w-auto"
               />
             </div>
             <p className={`text-xs sm:text-sm leading-relaxed mb-3 ${isDarkMode ? 'text-slate-400' : 'text-gray-600'}`}>
-              Connecting students with world-class universities.
+              {siteConfig.company.description}
             </p>
             {/* Social Links */}
             <div className="flex gap-2">
-              <a href="#" className={`p-1.5 sm:p-2 rounded-full transition-all ${isDarkMode ? 'bg-slate-800 text-slate-400 hover:bg-blue-600 hover:text-white' : 'bg-gray-100 text-gray-600 hover:bg-blue-600 hover:text-white'}`}>
-                <Facebook className="w-3 h-3 sm:w-4 sm:h-4" />
-              </a>
-              <a href="#" className={`p-1.5 sm:p-2 rounded-full transition-all ${isDarkMode ? 'bg-slate-800 text-slate-400 hover:bg-blue-600 hover:text-white' : 'bg-gray-100 text-gray-600 hover:bg-blue-600 hover:text-white'}`}>
-                <Linkedin className="w-3 h-3 sm:w-4 sm:h-4" />
-              </a>
-              <a href="#" className={`p-1.5 sm:p-2 rounded-full transition-all ${isDarkMode ? 'bg-slate-800 text-slate-400 hover:bg-blue-600 hover:text-white' : 'bg-gray-100 text-gray-600 hover:bg-blue-600 hover:text-white'}`}>
-                <Twitter className="w-3 h-3 sm:w-4 sm:h-4" />
-              </a>
+              {socialLinks.map(({ key, href, Icon }) => (
+                <a
+                  key={key}
+                  href={href}
+                  target="_blank"
+                  rel="noreferrer"
+                  className={`p-1.5 sm:p-2 rounded-full transition-all ${
+                    isDarkMode
+                      ? 'bg-slate-800 text-slate-400 hover:bg-blue-600 hover:text-white'
+                      : 'bg-gray-100 text-gray-600 hover:bg-blue-600 hover:text-white'
+                  }`}
+                >
+                  <Icon className="w-3 h-3 sm:w-4 sm:h-4" />
+                </a>
+              ))}
             </div>
           </div>
 
@@ -171,8 +172,11 @@ export function Footer() {
             <Mail className={`w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0 mt-0.5 ${isDarkMode ? 'text-blue-400' : 'text-blue-600'}`} />
             <div>
               <p className={`text-xs sm:text-sm font-semibold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Email</p>
-              <a href="mailto:info@globalaveneus.com" className={`text-xs sm:text-sm ${isDarkMode ? 'text-slate-400 hover:text-blue-400' : 'text-gray-600 hover:text-blue-600'}`}>
-                info@globalaveneus.com
+              <a
+                href={`mailto:${siteConfig.contact.email.general}`}
+                className={`text-xs sm:text-sm ${isDarkMode ? 'text-slate-400 hover:text-blue-400' : 'text-gray-600 hover:text-blue-600'}`}
+              >
+                {siteConfig.contact.email.general}
               </a>
             </div>
           </div>
@@ -180,8 +184,11 @@ export function Footer() {
             <Phone className={`w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0 mt-0.5 ${isDarkMode ? 'text-blue-400' : 'text-blue-600'}`} />
             <div>
               <p className={`text-xs sm:text-sm font-semibold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Phone</p>
-              <a href="tel:+1234567890" className={`text-xs sm:text-sm ${isDarkMode ? 'text-slate-400 hover:text-blue-400' : 'text-gray-600 hover:text-blue-600'}`}>
-                +1 (234) 567-890
+              <a
+                href={`tel:${siteConfig.contact.phone[0].replace(/\s+/g, '')}`}
+                className={`text-xs sm:text-sm ${isDarkMode ? 'text-slate-400 hover:text-blue-400' : 'text-gray-600 hover:text-blue-600'}`}
+              >
+                {siteConfig.contact.phone[0]}
               </a>
             </div>
           </div>
@@ -189,7 +196,9 @@ export function Footer() {
             <MapPin className={`w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0 mt-0.5 ${isDarkMode ? 'text-blue-400' : 'text-blue-600'}`} />
             <div>
               <p className={`text-xs sm:text-sm font-semibold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Location</p>
-              <p className={`text-xs sm:text-sm ${isDarkMode ? 'text-slate-400' : 'text-gray-600'}`}>South Asia Office</p>
+              <p className={`text-xs sm:text-sm ${isDarkMode ? 'text-slate-400' : 'text-gray-600'}`}>
+                {formatAddress(siteConfig.contact.address)}
+              </p>
             </div>
           </div>
         </div>
@@ -197,7 +206,7 @@ export function Footer() {
         {/* Bottom Section */}
         <div className="flex flex-col-reverse sm:flex-row justify-between items-center gap-3 sm:gap-6 pt-4 sm:pt-6">
           <p className={`text-xs sm:text-sm text-center sm:text-left ${isDarkMode ? 'text-slate-500' : 'text-gray-500'}`}>
-            © 2024 The Global Avenues. All rights reserved.
+            © {siteConfig.company.year} {siteConfig.company.name}. All rights reserved.
           </p>
 
           <button

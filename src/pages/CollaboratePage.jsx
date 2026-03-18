@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { CheckCircle, Mail, MapPin, Phone, Send } from 'lucide-react';
-import { SITE_CONFIG, formatAddress } from '../config';
+import { formatAddress } from '../config';
+import { useSettings } from '../context/SettingsContext';
 
 export default function CollaboratePage() {
   const [formData, setFormData] = useState({
@@ -12,6 +13,7 @@ export default function CollaboratePage() {
     message: '',
   });
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const { siteConfig } = useSettings();
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -132,7 +134,7 @@ export default function CollaboratePage() {
                     value={formData.phone}
                     onChange={handleChange}
                     className="w-full rounded-lg border border-border bg-background px-4 py-2 text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-                    placeholder={SITE_CONFIG.contact.phone[0]}
+                    placeholder={siteConfig.contact.phone[0]}
                   />
                 </motion.div>
 
@@ -208,8 +210,8 @@ export default function CollaboratePage() {
                 <Mail className="mt-1 h-6 w-6 flex-shrink-0 text-primary" />
                 <div>
                   <h4 className="mb-1 font-bold text-foreground">Email</h4>
-                  <a href={`mailto:${SITE_CONFIG.contact.email.general}`} className="text-primary transition-colors hover:text-secondary">
-                    {SITE_CONFIG.contact.email.general}
+                  <a href={`mailto:${siteConfig.contact.email.general}`} className="text-primary transition-colors hover:text-secondary">
+                    {siteConfig.contact.email.general}
                   </a>
                 </div>
               </div>
@@ -221,10 +223,10 @@ export default function CollaboratePage() {
                 <div>
                   <h4 className="mb-1 font-bold text-foreground">Phone</h4>
                   <a
-                    href={`tel:${SITE_CONFIG.contact.phone[0].replace(/\s+/g, '')}`}
+                    href={`tel:${siteConfig.contact.phone[0].replace(/\s+/g, '')}`}
                     className="text-secondary transition-colors hover:text-primary"
                   >
-                    {SITE_CONFIG.contact.phone[0]}
+                    {siteConfig.contact.phone[0]}
                   </a>
                 </div>
               </div>
@@ -235,7 +237,7 @@ export default function CollaboratePage() {
                 <MapPin className="mt-1 h-6 w-6 flex-shrink-0 text-accent" />
                 <div>
                   <h4 className="mb-1 font-bold text-foreground">Address</h4>
-                  <p className="text-sm text-muted-foreground">{formatAddress()}</p>
+                  <p className="text-sm text-muted-foreground">{formatAddress(siteConfig.contact.address)}</p>
                 </div>
               </div>
             </motion.div>
@@ -265,7 +267,7 @@ export default function CollaboratePage() {
             whileInView="visible"
             viewport={{ once: true }}
           >
-            {SITE_CONFIG.collaborateTeams.map((team) => (
+            {siteConfig.collaborateTeams.map((team) => (
               <motion.div
                 key={team.title}
                 className="rounded-xl border border-border/50 bg-background p-8 transition-all hover:border-primary/50"
@@ -276,7 +278,7 @@ export default function CollaboratePage() {
                 <div className="space-y-3 text-sm text-muted-foreground">
                   <div className="flex gap-2">
                     <MapPin className="mt-0.5 h-4 w-4 flex-shrink-0 text-primary" />
-                    <p>{formatAddress()}</p>
+                    <p>{formatAddress(siteConfig.contact.address)}</p>
                   </div>
                   <div className="flex gap-2">
                     <Phone className="mt-0.5 h-4 w-4 flex-shrink-0 text-primary" />

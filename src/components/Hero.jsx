@@ -2,7 +2,7 @@ import { useScrollAnimation } from "../hooks/useScrollAnimation";
 import { ArrowRight, Users, Globe, Award } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { SITE_CONFIG } from "../config";
+import { useSettings } from "../context/SettingsContext";
 
 const CountUpNumber = ({ target, duration = 2000 }) => {
   const [count, setCount] = useState(0);
@@ -30,9 +30,17 @@ const CountUpNumber = ({ target, duration = 2000 }) => {
 
 export function Hero() {
   const [ref, isVisible] = useScrollAnimation();
-  const studentsPlaced = Number.parseInt(SITE_CONFIG.stats.studentsRecruited, 10);
-  const partnerUniversities = Number.parseInt(SITE_CONFIG.stats.partnerUniversities, 10);
-  const visaSuccessRate = Number.parseInt(SITE_CONFIG.stats.visaSuccessRate, 10);
+  const { siteConfig } = useSettings();
+
+  const parseMetric = (value) => {
+    if (value === undefined || value === null) return 0;
+    const numeric = Number.parseInt(String(value).replace(/[^0-9]/g, ""), 10);
+    return Number.isNaN(numeric) ? 0 : numeric;
+  };
+
+  const studentsPlaced = parseMetric(siteConfig.stats.studentsRecruited);
+  const partnerUniversities = parseMetric(siteConfig.stats.partnerUniversities);
+  const visaSuccessRate = parseMetric(siteConfig.stats.visaSuccessRate);
 
   return (
     <section
@@ -61,15 +69,15 @@ export function Hero() {
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
             Unlock Your Potential With
             <span className="block text-blue-300 text-5xl sm:text-6xl lg:text-7xl mt-2">
-              {SITE_CONFIG.company.name.toUpperCase()}
+              {siteConfig.company.name.toUpperCase()}
             </span>
           </h1>
 
           {/* Subtitle */}
           <p className="text-lg sm:text-xl text-gray-200 mb-10 max-w-2xl mx-auto">
-            {SITE_CONFIG.company.description}
+            {siteConfig.company.description}
             <span className="text-blue-300 font-semibold">
-              {" "}{SITE_CONFIG.company.tagline}
+              {" "}{siteConfig.company.tagline}
             </span>
           </p>
 

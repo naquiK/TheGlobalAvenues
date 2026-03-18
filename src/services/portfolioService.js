@@ -2,7 +2,12 @@
 // This service layer allows easy migration to API calls in the future
 // Change API_BASE_URL and USE_MOCK_DATA to switch between mock data and real backend
 
-import { portfolioData, getPortfolioById as getMockPortfolioById, categories } from '../data/portfolioData';
+import {
+  portfolioData,
+  getPortfolioById as getMockPortfolioById,
+  getPortfolioBySlug as getMockPortfolioBySlug,
+  categories,
+} from '../data/portfolioData';
 
 // API Configuration - Change this to your backend URL when ready
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
@@ -93,7 +98,10 @@ export const getPortfolioById = async (id) => {
     if (USE_MOCK_DATA) {
       return new Promise((resolve, reject) => {
         setTimeout(() => {
-          const portfolio = getMockPortfolioById(id);
+          const numericId = Number.parseInt(id, 10);
+          const portfolio = Number.isNaN(numericId)
+            ? getMockPortfolioBySlug(id)
+            : getMockPortfolioById(numericId);
           if (portfolio) {
             resolve(portfolio);
           } else {
@@ -108,10 +116,17 @@ export const getPortfolioById = async (id) => {
     return await response.json();
   } catch (error) {
     console.error('Error fetching portfolio detail:', error);
-    const portfolio = getMockPortfolioById(id);
+    const numericId = Number.parseInt(id, 10);
+    const portfolio = Number.isNaN(numericId)
+      ? getMockPortfolioBySlug(id)
+      : getMockPortfolioById(numericId);
     if (!portfolio) throw error;
     return portfolio;
   }
+};
+
+export const getPortfolioBySlug = async (slug) => {
+  return getPortfolioById(slug);
 };
 
 /**
@@ -242,6 +257,7 @@ export default {
   getFeaturedPortfolios,
   getPortfolios,
   getPortfolioById,
+  getPortfolioBySlug,
   getPortfoliosByCategory,
   searchPortfolios,
   getCategories,

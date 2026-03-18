@@ -125,7 +125,7 @@ export function PortfolioPreview() {
                 >
                   <img
                     src={portfolio.image}
-                    alt={portfolio.studentName}
+                    alt={portfolio.studentName || portfolio.title}
                     className="w-full h-full object-cover"
                   />
 
@@ -136,7 +136,7 @@ export function PortfolioPreview() {
                     initial="hidden"
                   >
                     <Link
-                      to={`/portfolio/${portfolio.id}`}
+                      to={`/portfolio/${portfolio.slug || portfolio.id}`}
                       className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-secondary transition-all duration-300 transform hover:scale-105 w-fit"
                     >
                       View Details

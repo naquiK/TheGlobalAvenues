@@ -1,8 +1,10 @@
 import { useScrollAnimation } from '../hooks/useScrollAnimation';
 import { Star, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import { getTestimonials } from '../services/contentApi';
+import { resolveMediaUrl } from '../services/apiClient';
 
-const testimonials = [
+const fallbackTestimonials = [
   {
     name: 'Vardha Kharbanda',
     location: 'New York',
@@ -45,25 +47,65 @@ export function Testimonials() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [ref, isVisible] = useScrollAnimation();
   const [isAutoPlay, setIsAutoPlay] = useState(true);
+  const [testimonials, setTestimonials] = useState(fallbackTestimonials);
+  const [isLoading, setIsLoading] = useState(true);
+  const [errorMessage, setErrorMessage] = useState('');
 
   const nextSlide = () => {
+    if (testimonials.length === 0) return;
     setCurrentIndex((prev) => (prev + 1) % testimonials.length);
   };
 
   const prevSlide = () => {
+    if (testimonials.length === 0) return;
     setCurrentIndex((prev) => (prev - 1 + testimonials.length) % testimonials.length);
   };
 
   // Auto-play carousel
   useEffect(() => {
-    if (!isAutoPlay) return;
+    if (!isAutoPlay || testimonials.length <= 1) return;
 
     const timer = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % testimonials.length);
     }, 5000); // Change slide every 5 seconds
 
     return () => clearInterval(timer);
-  }, [isAutoPlay]);
+  }, [isAutoPlay, testimonials.length]);
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    const loadTestimonials = async () => {
+      setIsLoading(true);
+      setErrorMessage('');
+
+      try {
+        const data = await getTestimonials({ signal: controller.signal });
+        const mapped = (data || []).map((item) => ({
+          name: item.name,
+          location: item.designation || item.location || 'Student',
+          content: item.message || '',
+          rating: Number(item.rating) || 5,
+          photo: item.photo ? resolveMediaUrl(item.photo) : '',
+        }));
+
+        if (mapped.length > 0) {
+          setTestimonials(mapped);
+          setCurrentIndex(0);
+        }
+      } catch (error) {
+        if (error.name !== 'AbortError') {
+          setErrorMessage(error.message || 'Unable to load testimonials');
+        }
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadTestimonials();
+
+    return () => controller.abort();
+  }, []);
 
   return (
     <section id="testimonials" className="py-20 px-4 bg-gradient-to-b from-primary/5 to-secondary/5 relative overflow-hidden">
@@ -96,6 +138,14 @@ export function Testimonials() {
           onMouseEnter={() => setIsAutoPlay(false)}
           onMouseLeave={() => setIsAutoPlay(true)}
         >
+          {isLoading && (
+            <div className="py-10 text-center text-muted-foreground">Loading testimonials...</div>
+          )}
+
+          {!isLoading && errorMessage && (
+            <div className="py-10 text-center text-muted-foreground">{errorMessage}</div>
+          )}
+
           {/* Slides */}
           <div className="overflow-hidden rounded-2xl">
             <div className="flex transition-transform duration-500 ease-out" style={{ transform: `translateX(-${currentIndex * 100}%)` }}>

@@ -2,18 +2,16 @@ import { useEffect, useRef, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { ChevronDown, Menu, Moon, Sun, X } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
-import { SITE_CONFIG, portfolioMenuLabel } from '../config';
+import { useSettings } from '../context/SettingsContext';
+import { portfolioMenuLabel } from '../config';
 import { portfolioData } from '../data/portfolioData';
-
-const primaryStartItems = SITE_CONFIG.navigation.primary.slice(0, 2);
-const primaryEndItems = SITE_CONFIG.navigation.primary.slice(2);
-const offeringItems = SITE_CONFIG.navigation.offerings;
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState(null);
   const [openMobileDropdown, setOpenMobileDropdown] = useState(null);
   const { isDark, toggleTheme } = useTheme();
+  const { siteConfig } = useSettings();
   const location = useLocation();
   const dropdownRef = useRef(null);
 
@@ -27,7 +25,10 @@ export function Header() {
   const isPortfolioActive = location.pathname.startsWith('/portfolio');
   const isOfferingActive =
     location.pathname === '/what-we-offer' || location.pathname.startsWith('/education-program');
-  const logoSrc = isDark ? SITE_CONFIG.company.logo.darkSrc : SITE_CONFIG.company.logo.lightSrc;
+  const primaryStartItems = siteConfig.navigation.primary.slice(0, 2);
+  const primaryEndItems = siteConfig.navigation.primary.slice(2);
+  const offeringItems = siteConfig.navigation.offerings;
+  const logoSrc = isDark ? siteConfig.company.logo.darkSrc : siteConfig.company.logo.lightSrc;
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -53,7 +54,7 @@ export function Header() {
           <Link to="/" className="transition-opacity hover:opacity-80">
             <img
               src={logoSrc}
-              alt={SITE_CONFIG.company.logo.alt}
+              alt={siteConfig.company.logo.alt}
               className="h-12 w-auto sm:h-14 lg:h-16"
             />
           </Link>
@@ -103,7 +104,7 @@ export function Header() {
                   {portfolioData.map((portfolio) => (
                     <Link
                       key={portfolio.id}
-                      to={`/portfolio/${portfolio.id}`}
+                      to={`/portfolio/${portfolio.slug || portfolio.id}`}
                       className="block rounded-lg p-3 transition-all hover:bg-primary/10"
                     >
                       <h4 className="font-semibold">{portfolio.title}</h4>
@@ -234,7 +235,7 @@ export function Header() {
               {portfolioData.map((portfolio) => (
                 <Link
                   key={portfolio.id}
-                  to={`/portfolio/${portfolio.id}`}
+                  to={`/portfolio/${portfolio.slug || portfolio.id}`}
                   className="block rounded px-4 py-2 text-sm hover:bg-primary/10"
                 >
                   {portfolio.title}

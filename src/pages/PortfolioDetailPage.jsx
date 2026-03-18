@@ -1,8 +1,10 @@
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowLeft, MapPin, Trophy, Target, Users, Star, Globe, Zap, ChevronRight } from 'lucide-react';
 import { getPortfolioById, getPortfolios } from '../services/portfolioService';
+import { getUniversityDetail } from '../services/contentApi';
+import { resolveMediaUrl } from '../services/apiClient';
 
 export default function PortfolioDetailPage() {
   const { id } = useParams();
@@ -10,23 +12,126 @@ export default function PortfolioDetailPage() {
   const [portfolio, setPortfolio] = useState(null);
   const [allPortfolios, setAllPortfolios] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [errorMessage, setErrorMessage] = useState('');
+
+  const mapUniversityToPortfolio = (data) => {
+    if (!data || !data.university) return null;
+    const university = data.university;
+    const specializations = (data.specializations || [])
+      .map((item) => item.title)
+      .filter(Boolean);
+    const highlights = (data.benefits || [])
+      .map((item) => item.title)
+      .filter(Boolean);
+    const programs = data.programs || [];
+    const experiences = (data.experiences || []).map((item) => ({
+      name: item.student_name,
+      program: item.program,
+      quote: item.review,
+      location: university.city || university.country,
+      rating: Number(item.rating) || 5,
+      photo: item.photo ? resolveMediaUrl(item.photo) : '',
+    }));
+
+    return {
+      id: university.id,
+      slug: university.slug,
+      title: university.name,
+      country: university.country,
+      image: resolveMediaUrl(university.logo),
+      description: university.description,
+      programs: programs.length || undefined,
+      details: {
+        location: [university.city, university.country].filter(Boolean).join(', '),
+        specializations,
+        programs,
+        studentTestimonials: experiences,
+      },
+      highlights,
+    };
+  };
+
+  const mergePortfolioData = (base, override) => {
+    if (!base) return override;
+    if (!override) return base;
+    return {
+      ...base,
+      ...override,
+      image: override.image || base.image,
+      highlights: override.highlights && override.highlights.length > 0 ? override.highlights : base.highlights,
+      details: {
+        ...(base.details || {}),
+        ...(override.details || {}),
+      },
+    };
+  };
 
   useEffect(() => {
+    let isActive = true;
+    const controller = new AbortController();
+
     const loadData = async () => {
       try {
-        const data = await getPortfolioById(id);
-        const all = await getPortfolios();
-        setPortfolio(data);
-        setAllPortfolios(all.data || all);
+        setErrorMessage('');
+        let apiPortfolio = null;
+
+        try {
+          const apiData = await getUniversityDetail(id, { signal: controller.signal });
+          apiPortfolio = mapUniversityToPortfolio(apiData);
+        } catch (error) {
+          if (error.name !== 'AbortError') {
+            setErrorMessage(error.message || 'Unable to load university data');
+          }
+        }
+
+        const localData = await getPortfolioById(id);
+        const merged = mergePortfolioData(localData, apiPortfolio);
+
+        if (isActive) {
+          setPortfolio(merged || apiPortfolio || localData);
+          const all = await getPortfolios();
+          setAllPortfolios(all.data || all);
+        }
       } catch (error) {
-        console.error('Error loading portfolio:', error);
+        if (isActive) {
+          console.error('Error loading portfolio:', error);
+        }
       } finally {
-        setIsLoading(false);
+        if (isActive) {
+          setIsLoading(false);
+        }
       }
     };
 
     loadData();
+
+    return () => {
+      isActive = false;
+      controller.abort();
+    };
   }, [id]);
+
+  const metrics = useMemo(() => {
+    if (!portfolio) {
+      return {
+        studentsPlaced: null,
+        programs: null,
+        successRate: null,
+        visaSuccessRate: null,
+      };
+    }
+
+    const programCount =
+      portfolio.programs ??
+      (Array.isArray(portfolio.details?.programs) ? portfolio.details.programs.length : undefined);
+
+    return {
+      studentsPlaced: portfolio.studentsPlaced,
+      programs: programCount,
+      successRate: portfolio.successRate,
+      visaSuccessRate: portfolio.details?.visaSuccessRate,
+    };
+  }, [portfolio]);
 
   if (isLoading) {
     return (
@@ -40,6 +145,7 @@ export default function PortfolioDetailPage() {
     return (
       <div className="pt-16 min-h-screen flex flex-col items-center justify-center">
         <h1 className="text-4xl font-bold mb-4">Portfolio Not Found</h1>
+        {errorMessage && <p className="mb-4 text-muted-foreground">{errorMessage}</p>}
         <Link to="/portfolio" className="text-primary hover:text-secondary">
           Back to Portfolio
         </Link>
@@ -101,7 +207,7 @@ export default function PortfolioDetailPage() {
             <div className="relative rounded-2xl overflow-hidden bg-gradient-to-br from-primary/20 to-secondary/20 h-96 sm:h-[500px]">
               <motion.img
                 src={portfolio.image}
-                alt={portfolio.studentName}
+                alt={portfolio.studentName || portfolio.title}
                 className="w-full h-full object-cover"
                 initial={{ scale: 0.95, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
@@ -155,7 +261,9 @@ export default function PortfolioDetailPage() {
               >
                 <Users className="w-5 h-5 text-primary mb-2" />
                 <p className="text-muted-foreground text-xs font-medium">Students Placed</p>
-                <p className="text-xl font-bold text-foreground">{portfolio.studentsPlaced}+</p>
+                <p className="text-xl font-bold text-foreground">
+                  {metrics.studentsPlaced ? `${metrics.studentsPlaced}+` : '—'}
+                </p>
               </motion.div>
 
               {/* Programs */}
@@ -165,7 +273,9 @@ export default function PortfolioDetailPage() {
               >
                 <Target className="w-5 h-5 text-secondary mb-2" />
                 <p className="text-muted-foreground text-xs font-medium">Programs</p>
-                <p className="text-xl font-bold text-foreground">{portfolio.programs}</p>
+                <p className="text-xl font-bold text-foreground">
+                  {metrics.programs ?? '—'}
+                </p>
               </motion.div>
 
               {/* Success Rate */}
@@ -175,7 +285,9 @@ export default function PortfolioDetailPage() {
               >
                 <Star className="w-5 h-5 text-accent mb-2" />
                 <p className="text-muted-foreground text-xs font-medium">Success Rate</p>
-                <p className="text-xl font-bold text-foreground">{portfolio.successRate}%</p>
+                <p className="text-xl font-bold text-foreground">
+                  {metrics.successRate ? `${metrics.successRate}%` : '—'}
+                </p>
               </motion.div>
 
               {/* Visa Success */}
@@ -185,7 +297,9 @@ export default function PortfolioDetailPage() {
               >
                 <Zap className="w-5 h-5 text-green-500 mb-2" />
                 <p className="text-muted-foreground text-xs font-medium">Visa Success</p>
-                <p className="text-xl font-bold text-foreground">{portfolio.details?.visaSuccessRate}%</p>
+                <p className="text-xl font-bold text-foreground">
+                  {metrics.visaSuccessRate ? `${metrics.visaSuccessRate}%` : '—'}
+                </p>
               </motion.div>
             </div>
 
@@ -333,7 +447,9 @@ export default function PortfolioDetailPage() {
                   
                   <div className="relative z-10">
                     <div className="flex items-center gap-1 mb-3">
-                      {[...Array(5)].map((_, i) => (
+                      {Array.from({
+                        length: Math.min(5, Math.max(1, Number(testimonial.rating) || 5)),
+                      }).map((_, i) => (
                         <Star key={i} className="w-4 h-4 fill-accent text-accent" />
                       ))}
                     </div>
@@ -405,7 +521,7 @@ export default function PortfolioDetailPage() {
                     <p className="text-primary font-semibold text-sm mb-1">{related.country}</p>
                     <p className="text-muted-foreground text-sm mb-4">{related.description}</p>
                     <Link
-                      to={`/portfolio/${related.id}`}
+                      to={`/portfolio/${related.slug || related.id}`}
                       className="inline-flex items-center gap-2 text-primary hover:text-secondary text-sm font-semibold group/link"
                     >
                       View University

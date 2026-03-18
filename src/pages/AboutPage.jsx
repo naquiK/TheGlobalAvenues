@@ -1,9 +1,10 @@
 import { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Users, Target, Zap, Globe, Heart, Award, CheckCircle, Lightbulb, Shield } from 'lucide-react';
-import { SITE_CONFIG } from '../config';
+import { useSettings } from '../context/SettingsContext';
 
 export default function AboutPage() {
+  const { siteConfig } = useSettings();
   useEffect(() => {
     const script = document.createElement('script');
     script.src = 'https://www-cdn.icef.com/scripts/iasbadgeid.js';
@@ -76,10 +77,10 @@ export default function AboutPage() {
   ];
 
   const stats = [
-    { number: SITE_CONFIG.stats.partnerUniversities, label: 'Partner Universities' },
-    { number: SITE_CONFIG.stats.countriesCovered, label: 'Countries Covered' },
+    { number: siteConfig.stats.partnerUniversities, label: 'Partner Universities' },
+    { number: siteConfig.stats.countriesCovered, label: 'Countries Covered' },
     { number: '15+', label: 'Active Channel Partners' },
-    { number: SITE_CONFIG.stats.studentsRecruited, label: 'Students Recruited' },
+    { number: siteConfig.stats.studentsRecruited, label: 'Students Recruited' },
   ];
 
   const containerVariants = {
