@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 260 320" role="img" aria-labelledby="title desc">
+  <title id="title">ICEF Accredited Badge</title>
+  <desc id="desc">Fallback visual for ICEF accreditation badge.</desc>
+  <defs>
+    <linearGradient id="outer" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#22305f" />
+      <stop offset="100%" stop-color="#162148" />
+    </linearGradient>
+    <linearGradient id="inner" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#f7f9fe" />
+      <stop offset="100%" stop-color="#dfe6f8" />
+    </linearGradient>
+  </defs>
+
+  <rect x="16" y="10" width="228" height="300" rx="30" fill="url(#outer)" stroke="#6c7aaa" stroke-width="3" />
+  <text x="130" y="42" text-anchor="middle" fill="#f2f5ff" font-size="20" font-family="Arial, sans-serif" font-weight="700" letter-spacing="2">ICEF ACCREDITED</text>
+
+  <circle cx="130" cy="164" r="95" fill="url(#inner)" stroke="#5a668f" stroke-width="3" />
+  <circle cx="130" cy="164" r="78" fill="none" stroke="#818db3" stroke-width="2" stroke-dasharray="4 4" />
+
+  <text x="130" y="92" text-anchor="middle" fill="#2b3765" font-size="13" font-family="Arial, sans-serif" font-weight="700" letter-spacing="1.2">ICEF AGENCY STATUS</text>
+  <text x="130" y="245" text-anchor="middle" fill="#2b3765" font-size="13" font-family="Arial, sans-serif" font-weight="700" letter-spacing="1.2">TRUSTED AGENCY</text>
+  <text x="130" y="224" text-anchor="middle" fill="#2b3765" font-size="22" font-family="Arial, sans-serif" font-weight="700">5705</text>
+
+  <rect x="92" y="126" width="76" height="76" rx="4" fill="#ffffff" stroke="#3b4672" stroke-width="2" />
+  <rect x="100" y="134" width="14" height="14" fill="#1f2a55" />
+  <rect x="108" y="142" width="20" height="20" fill="#ffffff" />
+  <rect x="114" y="148" width="8" height="8" fill="#1f2a55" />
+  <rect x="146" y="134" width="14" height="14" fill="#1f2a55" />
+  <rect x="152" y="140" width="8" height="8" fill="#ffffff" />
+  <rect x="100" y="176" width="14" height="14" fill="#1f2a55" />
+  <rect x="106" y="182" width="8" height="8" fill="#ffffff" />
+  <rect x="124" y="136" width="8" height="8" fill="#1f2a55" />
+  <rect x="136" y="150" width="8" height="8" fill="#1f2a55" />
+  <rect x="124" y="162" width="8" height="8" fill="#1f2a55" />
+  <rect x="138" y="164" width="8" height="8" fill="#1f2a55" />
+  <rect x="132" y="176" width="8" height="8" fill="#1f2a55" />
+  <rect x="148" y="178" width="12" height="12" fill="#1f2a55" />
+</svg>

@@ -8,17 +8,12 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks(id) {
-          if (!id.includes('node_modules')) return;
-
-          if (id.includes('react-router')) return 'router-vendor';
-          if (id.includes('react') || id.includes('scheduler')) return 'react-vendor';
-          if (id.includes('framer-motion')) return 'motion-vendor';
-          if (id.includes('@radix-ui')) return 'radix-vendor';
-          if (id.includes('lucide-react')) return 'icons-vendor';
-
-          return 'vendor';
+          if (id.includes('node_modules')) return 'vendor'
+          if (id.includes('src/pages')) return 'pages'
+          if (id.includes('src/components')) return 'components'
         },
       },
     },
+    chunkSizeWarningLimit: 500,
   },
 })

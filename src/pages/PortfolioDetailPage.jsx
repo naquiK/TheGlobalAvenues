@@ -208,6 +208,8 @@ export default function PortfolioDetailPage() {
               <motion.img
                 src={portfolio.image}
                 alt={portfolio.studentName || portfolio.title}
+                loading="lazy"
+                decoding="async"
                 className="w-full h-full object-cover"
                 initial={{ scale: 0.95, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
@@ -511,6 +513,8 @@ export default function PortfolioDetailPage() {
                     <motion.img
                       src={related.image}
                       alt={related.title}
+                      loading="lazy"
+                      decoding="async"
                       className="w-full h-full object-cover"
                       whileHover={{ scale: 1.1 }}
                       transition={{ duration: 0.4 }}

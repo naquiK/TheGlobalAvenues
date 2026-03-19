@@ -1,46 +1,44 @@
-import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 import PortfolioDisplay from './PortfolioDisplay';
+import useScrollAnimation from '../hooks/useScrollAnimation';
 
 export default function PortfolioSection() {
+  const headerRef = useScrollAnimation({ y: 20, duration: 600 });
+  const gridRef = useScrollAnimation({ y: 20, duration: 600, delay: 200 });
+  const ctaRef = useScrollAnimation({ y: 20, duration: 600, delay: 400 });
+
   return (
-    <section className="py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8 bg-background">
+    <section className="py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8 bg-transparent">
       <div className="max-w-7xl mx-auto">
         {/* Section Header */}
-        <motion.div
+        <div
+          ref={headerRef}
           className="text-center mb-12 sm:mb-16"
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.6 }}
         >
-          <div className="inline-block px-4 py-2 bg-primary/10 text-primary rounded-full text-xs sm:text-sm font-semibold mb-3 sm:mb-4">
+          <div className="section-kicker-classic mb-3 sm:mb-4">
             Featured Opportunities
           </div>
-          <h2 className="text-2xl sm:text-3xl lg:text-5xl font-bold text-foreground mb-3 sm:mb-4">
-            Our Featured Portfolio
+          <h2 className="section-title-classic mb-3 sm:mb-4">
+            Our Featured <span className="section-title-classic-accent">Portfolio</span>
           </h2>
-          <p className="text-sm sm:text-base lg:text-xl text-muted-foreground max-w-3xl mx-auto px-2">
+          <p className="section-subtitle-classic px-2">
             Discover top universities and educational institutions we partner with. Each offers unique opportunities for global education and career advancement.
           </p>
-        </motion.div>
+        </div>
 
         {/* Portfolio Grid */}
-        <motion.div
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
+        <div
+          ref={gridRef}
           className="overflow-hidden"
         >
           <PortfolioDisplay limit={10} />
-        </motion.div>
+        </div>
 
         {/* CTA Section */}
-        <motion.div
+        <div
+          ref={ctaRef}
           className="mt-12 sm:mt-16 text-center"
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.6, delay: 0.4 }}
         >
           <Link
             to="/portfolio"
@@ -52,7 +50,7 @@ export default function PortfolioSection() {
           <p className="text-xs sm:text-sm lg:text-base text-muted-foreground mt-3 sm:mt-4">
             Browse our complete portfolio of 100+ partner institutions worldwide
           </p>
-        </motion.div>
+        </div>
       </div>
     </section>
   );

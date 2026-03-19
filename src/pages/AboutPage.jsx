@@ -1,387 +1,499 @@
-import { useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { Users, Target, Zap, Globe, Heart, Award, CheckCircle, Lightbulb, Shield } from 'lucide-react';
+import { memo, useEffect, useMemo, useRef, useState } from 'react';
+import {
+  Award,
+  CheckCircle,
+  Globe,
+  Heart,
+  Lightbulb,
+  Shield,
+  Target,
+  Users,
+  Zap,
+} from 'lucide-react';
 import { useSettings } from '../context/SettingsContext';
+import useScrollAnimation from '../hooks/useScrollAnimation';
+import useLazySection from '../hooks/useLazySection';
+import SectionSkeleton from '../components/ui/SectionSkeleton';
+
+const ProfileCard = memo(function ProfileCard({ member, featured }) {
+  const cardRef = useScrollAnimation({ y: 24, duration: 600, delay: featured ? 0 : 80 });
+
+  return (
+    <div ref={cardRef} className={`relative h-full ${featured ? 'lg:col-span-2' : ''}`}>
+      <div className="h-full rounded-[30px] bg-gradient-to-br from-primary/35 via-white/80 to-accent/35 p-[1px] shadow-[0_30px_80px_rgba(13,10,26,0.16)] dark:from-[#3A2A78]/80 dark:via-[#0D0A1A] dark:to-[#3A2A78]/70">
+        <div className="relative flex h-full flex-col overflow-hidden rounded-[28px] bg-white/90 p-6 shadow-inner dark:bg-[#0F0B1E]/90">
+          <div className="absolute -right-14 -top-12 h-32 w-32 rounded-full bg-primary/10 blur-2xl dark:bg-brand-orange/10" />
+          <div className="flex items-start gap-5">
+            <div className="relative">
+              <div className="absolute -inset-1 rounded-2xl bg-gradient-to-br from-primary/40 to-accent/40 blur-lg opacity-70" />
+              <img
+                src={member.image}
+                alt={member.name}
+                loading="lazy"
+                decoding="async"
+                className="relative h-20 w-20 rounded-2xl object-cover ring-1 ring-white/60 dark:ring-white/10"
+              />
+            </div>
+            <div className="min-w-0">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-muted-foreground/70">
+                Team
+              </p>
+              <h3 className="mt-2 text-xl font-semibold text-foreground">{member.name}</h3>
+              <p className="mt-1 text-sm font-semibold text-primary">{member.role}</p>
+            </div>
+          </div>
+          <div className="mt-5 flex h-full flex-col justify-between">
+            <p className="text-sm leading-relaxed text-muted-foreground">{member.bio}</p>
+            <div className="mt-6 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-primary dark:border-white/20 dark:bg-white/10 dark:text-white">
+              {featured ? 'Leadership' : 'Specialist'}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+});
+
+ProfileCard.displayName = 'ProfileCard';
+
+const ValueCard = ({ item, index }) => {
+  const cardRef = useScrollAnimation({ y: 20, duration: 500, delay: index * 80, scale: 0.98 });
+  const Icon = item.icon;
+
+  return (
+    <div
+      ref={cardRef}
+      className="group relative overflow-hidden rounded-2xl border border-border/70 bg-white/80 p-6 shadow-[0_20px_50px_rgba(21,14,44,0.08)] transition-all duration-300 ease-out hover:-translate-y-1 hover:border-primary/40 hover:shadow-[0_26px_60px_rgba(21,14,44,0.14)] dark:border-[#2B2354] dark:bg-[#0F0B1E]/80"
+    >
+      <div className="absolute -right-10 -top-12 h-24 w-24 rounded-full bg-primary/10 blur-2xl transition-opacity duration-300 group-hover:opacity-90" />
+      <div className="inline-flex h-12 w-12 items-center justify-center rounded-xl border border-primary/20 bg-primary/10 text-primary transition-all duration-300 ease-out group-hover:rotate-6 group-hover:scale-110 dark:border-white/15 dark:bg-white/10 dark:text-white">
+        <Icon className="h-5 w-5" />
+      </div>
+      <h4 className="mt-4 text-lg font-semibold text-foreground">{item.title}</h4>
+      <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{item.description}</p>
+    </div>
+  );
+};
 
 export default function AboutPage() {
   const { siteConfig } = useSettings();
+  const badgeRef = useRef(null);
+  const [isBadgeReady, setIsBadgeReady] = useState(false);
+
   useEffect(() => {
+    let mounted = true;
+    let checkTimer;
+    let stopTimer;
+
+    const checkBadge = () => {
+      if (!mounted || !badgeRef.current) return;
+      const hasBadgeContent =
+        badgeRef.current.children.length > 0 || badgeRef.current.innerHTML.trim().length > 0;
+      if (hasBadgeContent) {
+        setIsBadgeReady(true);
+        if (checkTimer) window.clearInterval(checkTimer);
+      }
+    };
+
     const script = document.createElement('script');
     script.src = 'https://www-cdn.icef.com/scripts/iasbadgeid.js';
     script.async = true;
     script.defer = true;
     script.crossOrigin = 'anonymous';
+    script.onload = () => {
+      window.setTimeout(checkBadge, 350);
+    };
     document.body.appendChild(script);
+    checkTimer = window.setInterval(checkBadge, 600);
+    stopTimer = window.setTimeout(() => window.clearInterval(checkTimer), 7000);
 
     return () => {
+      mounted = false;
+      if (checkTimer) window.clearInterval(checkTimer);
+      if (stopTimer) window.clearTimeout(stopTimer);
       document.body.removeChild(script);
     };
   }, []);
 
-  const values = [
-    { icon: Target, title: 'Our Mission', description: 'Uphold integrity, transparency, motivation, and unwavering dedication, ensuring open communication and tailored services for every student.' },
-    { icon: Globe, title: 'Our Vision', description: 'Consistently enhance our role as trusted partner for universities through strong relationships, collaborative efforts, and innovative strategies.' },
-    { icon: Heart, title: 'Student Centric', description: 'Every decision guided by student success and long-term impact in the global education landscape.' },
-    { icon: Shield, title: 'Quality Assurance', description: 'ICEF accredited organization with transparent processes and professional ethical standards.' },
-  ];
+  const values = useMemo(
+    () => [
+      {
+        icon: Target,
+        title: 'Our Mission',
+        description:
+          'Uphold integrity, transparency, motivation, and unwavering dedication, ensuring open communication and tailored services for every student.',
+      },
+      {
+        icon: Globe,
+        title: 'Our Vision',
+        description:
+          'Consistently enhance our role as trusted partner for universities through strong relationships, collaborative efforts, and innovative strategies.',
+      },
+      {
+        icon: Heart,
+        title: 'Student Centric',
+        description:
+          'Every decision guided by student success and long-term impact in the global education landscape.',
+      },
+      {
+        icon: Shield,
+        title: 'Quality Assurance',
+        description:
+          'ICEF accredited organization with transparent processes and professional ethical standards.',
+      },
+    ],
+    []
+  );
 
-  const team = [
-    { 
-      name: 'Neetu Verma Gupta', 
-      role: 'Director', 
-      image: '/team/neetu-verma-gupta.jpg',
-      bio: 'Visionary leader with extensive experience in international education partnerships and institutional development'
-    },
-    { 
-      name: 'Deepshikha Chauhan', 
-      role: 'International Recruitment Head', 
-      image: '/team/deepshikha-chauhan.jpg',
-      bio: 'Strategic recruitment expert overseeing international student placements and university partnerships'
-    },
-    { 
-      name: 'Bhawna', 
-      role: 'International Recruitment', 
-      image: '/team/bhawna.jpg',
-      bio: 'Dedicated recruitment specialist focused on student counseling and placement success'
-    },
-    { 
-      name: 'Shabana Azmi', 
-      role: 'International Recruitment', 
-      image: '/team/shabana-azmi.jpg',
-      bio: 'Experienced recruitment professional with strong focus on student mobility and university relations'
-    },
-    { 
-      name: 'Vaamika Sinha', 
-      role: 'International Recruitment', 
-      image: '/team/vaamika-sinha.jpg',
-      bio: 'Passionate recruitment specialist committed to bridging educational opportunities for students'
-    },
-    { 
-      name: 'Naman Sharma', 
-      role: 'Marketing & Promotions', 
-      image: '/team/naman-sharma.jpg',
-      bio: 'Creative marketing professional driving brand presence and institutional visibility in key markets'
-    },
-    { 
-      name: 'Ambar Johar', 
-      role: 'Admissions Coordinator', 
-      image: '/team/ambar-johar.jpg',
-      bio: 'Efficient coordinator ensuring smooth application processing and student onboarding'
-    },
-    { 
-      name: 'Suraj Kumar Soni', 
-      role: 'Admissions Coordinator', 
-      image: '/team/suraj-kumar-soni.jpg',
-      bio: 'Dedicated professional managing admissions workflows and student documentation'
-    },
-  ];
+  const team = useMemo(
+    () => [
+      {
+        name: 'Neetu Verma Gupta',
+        role: 'Director',
+        image: '/team/neetu-verma-gupta.jpg',
+        bio: 'Visionary leader with extensive experience in international education partnerships and institutional development',
+      },
+      {
+        name: 'Deepshikha Chauhan',
+        role: 'International Recruitment Head',
+        image: '/team/deepshikha-chauhan.jpg',
+        bio: 'Strategic recruitment expert overseeing international student placements and university partnerships',
+      },
+      {
+        name: 'Bhawna',
+        role: 'International Recruitment',
+        image: '/team/bhawna.jpg',
+        bio: 'Dedicated recruitment specialist focused on student counseling and placement success',
+      },
+      {
+        name: 'Shabana Azmi',
+        role: 'International Recruitment',
+        image: '/team/shabana-azmi.jpg',
+        bio: 'Experienced recruitment professional with strong focus on student mobility and university relations',
+      },
+      {
+        name: 'Vaamika Sinha',
+        role: 'International Recruitment',
+        image: '/team/vaamika-sinha.jpg',
+        bio: 'Passionate recruitment specialist committed to bridging educational opportunities for students',
+      },
+      {
+        name: 'Naman Sharma',
+        role: 'Marketing & Promotions',
+        image: '/team/naman-sharma.jpg',
+        bio: 'Creative marketing professional driving brand presence and institutional visibility in key markets',
+      },
+      {
+        name: 'Ambar Johar',
+        role: 'Admissions Coordinator',
+        image: '/team/ambar-johar.jpg',
+        bio: 'Efficient coordinator ensuring smooth application processing and student onboarding',
+      },
+      {
+        name: 'Suraj Kumar Soni',
+        role: 'Admissions Coordinator',
+        image: '/team/suraj-kumar-soni.jpg',
+        bio: 'Dedicated professional managing admissions workflows and student documentation',
+      },
+    ],
+    []
+  );
 
-  const stats = [
-    { number: siteConfig.stats.partnerUniversities, label: 'Partner Universities' },
-    { number: siteConfig.stats.countriesCovered, label: 'Countries Covered' },
-    { number: '15+', label: 'Active Channel Partners' },
-    { number: siteConfig.stats.studentsRecruited, label: 'Students Recruited' },
-  ];
+  const stats = useMemo(
+    () => [
+      { number: siteConfig.stats.partnerUniversities, label: 'Partner Universities' },
+      { number: siteConfig.stats.countriesCovered, label: 'Countries Covered' },
+      { number: '15+', label: 'Active Channel Partners' },
+      { number: siteConfig.stats.studentsRecruited, label: 'Students Recruited' },
+    ],
+    [siteConfig]
+  );
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: { staggerChildren: 0.1, delayChildren: 0.2 },
-    },
-  };
+  const heroRef = useScrollAnimation({ y: 20, duration: 600 });
+  const statsRef = useScrollAnimation({ y: 20, duration: 600, delay: 120 });
+  const storyRef = useScrollAnimation({ y: 20, duration: 600 });
+  const promiseRef = useScrollAnimation({ y: 20, duration: 600, delay: 120 });
 
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
-  };
+  const { ref: valuesRef, isVisible: valuesVisible } = useLazySection();
+  const { ref: teamRef, isVisible: teamVisible } = useLazySection();
+  const { ref: accreditationRef, isVisible: accreditationVisible } = useLazySection();
 
   return (
-    <div className="pt-16 min-h-screen">
-      {/* Hero Section */}
-      <motion.section
-        className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-primary/5 to-background"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.6 }}
-      >
-        <div className="max-w-7xl mx-auto text-center">
-          <motion.h1
-            className="text-5xl md:text-6xl font-bold mb-6 text-balance"
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ duration: 0.6, delay: 0.1 }}
-          >
-            Empowering Global Education
-          </motion.h1>
-          <motion.p
-            className="text-xl text-muted-foreground max-w-3xl mx-auto mb-6"
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-          >
-            The Global Avenues is a trusted name in the international education industry. We specialize in partnering with institutions seeking to establish and grow their presence in the Indian subcontinent, building their brand from the ground up and positioning them as recognized names in the region.
-          </motion.p>
-          <motion.p
-            className="text-lg text-muted-foreground max-w-3xl mx-auto"
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ duration: 0.6, delay: 0.3 }}
-          >
-            Our core mission is to create impactful collaborations that connect Indian institutions, students, and parents with leading global education opportunities. We facilitate student admissions, foster university partnerships, and drive student mobility with a strong emphasis on transparency, innovation, and long-term impact.
-          </motion.p>
+    <div className="about-page-gradient min-h-screen pt-16 text-foreground">
+      <section className="about-section-shell relative overflow-hidden bg-gradient-to-b from-primary/8 via-background/80 to-background/40 px-4 py-20 sm:px-6 lg:px-8">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(83,64,176,0.14),transparent_35%),radial-gradient(circle_at_top_right,rgba(232,82,26,0.12),transparent_40%)]" />
+        <div ref={heroRef} className="relative mx-auto max-w-5xl text-center">
+          <div className="section-kicker-classic mb-5 inline-flex">Who We Are</div>
+          <h1 className="text-4xl font-bold text-foreground sm:text-5xl lg:text-6xl">
+            Empowering Global Education With
+            <span className="block text-transparent bg-clip-text bg-gradient-to-r from-primary via-brand-purple to-brand-orange">
+              Trusted Partnerships
+            </span>
+          </h1>
+          <p className="mt-6 text-lg text-muted-foreground">
+            The Global Avenues is a trusted name in the international education industry. We specialize in
+            partnering with institutions seeking to establish and grow their presence in the Indian subcontinent,
+            building their brand from the ground up and positioning them as recognized names in the region.
+          </p>
+          <p className="mt-4 text-base text-muted-foreground">
+            Our core mission is to create impactful collaborations that connect Indian institutions, students, and
+            parents with leading global education opportunities. We facilitate student admissions, foster university
+            partnerships, and drive student mobility with a strong emphasis on transparency, innovation, and long-term
+            impact.
+          </p>
+          <div className="mt-8 flex flex-wrap items-center justify-center gap-3 text-xs font-semibold uppercase tracking-[0.22em] text-muted-foreground">
+            <span className="rounded-full border border-border/60 bg-white/70 px-4 py-2">ICEF Accredited</span>
+            <span className="rounded-full border border-border/60 bg-white/70 px-4 py-2">Global University Network</span>
+            <span className="rounded-full border border-border/60 bg-white/70 px-4 py-2">Student First</span>
+          </div>
         </div>
-      </motion.section>
+      </section>
 
-      {/* Stats Section */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-muted/30">
-        <div className="max-w-7xl mx-auto">
-          <motion.div
-            className="grid grid-cols-2 md:grid-cols-4 gap-8"
-            variants={containerVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-          >
-            {stats.map((stat, index) => (
-              <motion.div
-                key={index}
-                className="text-center"
-                variants={itemVariants}
+      <section className="about-section-shell px-4 py-16 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-6xl">
+          <div ref={statsRef} className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+            {stats.map((stat) => (
+              <div
+                key={stat.label}
+                className="rounded-2xl border border-border/60 bg-white/80 p-5 text-center shadow-[0_16px_40px_rgba(16,12,40,0.08)] dark:border-[#2B2354] dark:bg-[#0F0B1E]/80"
               >
-                <h3 className="text-4xl md:text-5xl font-bold text-primary mb-2">{stat.number}</h3>
-                <p className="text-muted-foreground">{stat.label}</p>
-              </motion.div>
+                <p className="text-3xl font-bold text-primary sm:text-4xl">{stat.number}</p>
+                <p className="mt-2 text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+                  {stat.label}
+                </p>
+              </div>
             ))}
-          </motion.div>
+          </div>
         </div>
       </section>
 
-      {/* Values Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-          <motion.div
-            className="text-center mb-16"
-            initial={{ y: 20, opacity: 0 }}
-            whileInView={{ y: 0, opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-          >
-            <h2 className="text-4xl font-bold mb-4">Our Core Values</h2>
-            <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-              Everything we do is rooted in these fundamental principles
+      <section className="about-section-shell px-4 py-16 sm:px-6 lg:px-8">
+        <div className="mx-auto grid max-w-6xl grid-cols-1 gap-12 lg:grid-cols-[1.1fr_0.9fr]">
+          <div ref={storyRef}>
+            <div className="section-kicker-classic mb-4">Our Story</div>
+            <h2 className="text-3xl font-bold text-foreground sm:text-4xl">
+              Building pathways that connect ambition with opportunity.
+            </h2>
+            <p className="mt-5 text-base text-muted-foreground">
+              We act as a strategic bridge between universities and the Indian student community, bringing tailored
+              market intelligence, recruitment expertise, and cultural insight to every partnership.
             </p>
-          </motion.div>
-
-          <motion.div
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8"
-            variants={containerVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-          >
-            {values.map((value, index) => {
-              const Icon = value.icon;
-              return (
-                <motion.div
-                  key={index}
-                  className="bg-muted/30 border border-border/50 rounded-xl p-8 text-center hover:border-primary/50 transition-all"
-                  variants={itemVariants}
-                  whileHover={{ translateY: -8 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <motion.div
-                    className="inline-block p-3 bg-primary/10 rounded-lg mb-4"
-                    whileHover={{ scale: 1.1, rotate: 5 }}
-                    transition={{ duration: 0.3 }}
-                  >
-                    <Icon className="w-6 h-6 text-primary" />
-                  </motion.div>
-                  <h3 className="text-xl font-bold mb-2">{value.title}</h3>
-                  <p className="text-muted-foreground">{value.description}</p>
-                </motion.div>
-              );
-            })}
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Team Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-muted/20">
-        <div className="max-w-7xl mx-auto">
-          <motion.div
-            className="text-center mb-16"
-            initial={{ y: 20, opacity: 0 }}
-            whileInView={{ y: 0, opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-          >
-            <h2 className="text-4xl font-bold mb-4">Meet Our Team</h2>
-            <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-              Expert professionals dedicated to your success
+            <p className="mt-4 text-base text-muted-foreground">
+              With deep relationships across institutions, counselors, and industry networks, our team crafts outcomes
+              that are measurable, sustainable, and rooted in trust.
             </p>
-          </motion.div>
-
-          <motion.div
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
-            variants={containerVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-          >
-            {team.map((member, index) => (
-              <motion.div
-                key={index}
-                className="bg-background border border-border/50 rounded-xl overflow-hidden hover:border-primary/50 transition-all hover:shadow-xl group"
-                variants={itemVariants}
-                whileHover={{ translateY: -8 }}
-                transition={{ duration: 0.3 }}
-              >
-                <div className="relative h-48 overflow-hidden bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center">
-                  <motion.img
-                    src={member.image}
-                    alt={member.name}
-                    className="w-full h-full object-cover"
-                    whileHover={{ scale: 1.05 }}
-                    transition={{ duration: 0.4 }}
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+          </div>
+          <div ref={promiseRef} className="rounded-3xl border border-border/60 bg-muted/30 p-8 shadow-[0_20px_60px_rgba(18,12,45,0.08)]">
+            <div className="flex items-center gap-3">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+                <Lightbulb className="h-5 w-5" />
+              </div>
+              <div>
+                <p className="text-sm font-semibold uppercase tracking-[0.2em] text-muted-foreground">Our Promise</p>
+                <h3 className="text-xl font-semibold text-foreground">What partners receive</h3>
+              </div>
+            </div>
+            <div className="mt-6 space-y-3 text-sm text-muted-foreground">
+              {[
+                'Localized market entry strategy and brand positioning',
+                'Recruitment pipeline management with transparent reporting',
+                'Student counseling journeys backed by experienced advisors',
+                'Long-term partnership support with measurable outcomes',
+              ].map((item) => (
+                <div key={item} className="flex items-start gap-3">
+                  <CheckCircle className="mt-0.5 h-4 w-4 text-primary" />
+                  <span>{item}</span>
                 </div>
-                <div className="p-6 text-center">
-                  <h4 className="text-lg font-bold text-foreground mb-1">{member.name}</h4>
-                  <p className="text-primary font-semibold text-sm mb-3">{member.role}</p>
-                  <p className="text-muted-foreground text-sm leading-relaxed">{member.bio}</p>
-                </div>
-              </motion.div>
-            ))}
-          </motion.div>
+              ))}
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* Accreditation & Memberships Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-background">
-        <div className="max-w-6xl mx-auto">
-          {/* Section Header */}
-          <motion.div
-            className="text-center mb-20"
-            initial={{ y: 20, opacity: 0 }}
-            whileInView={{ y: 0, opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-          >
-            <h2 className="text-5xl font-bold mb-4 text-blue-600">Accreditation & Memberships</h2>
-            <p className="text-muted-foreground text-lg">Industry Recognition & Professional Partnerships</p>
-          </motion.div>
+      <div ref={valuesRef}>
+        {valuesVisible ? (
+          <section className="about-section-shell px-4 py-16 sm:px-6 lg:px-8">
+            <div className="mx-auto max-w-6xl">
+              <div className="text-center">
+                <div className="section-kicker-classic mb-4 inline-flex">Core Values</div>
+                <h2 className="text-3xl font-bold text-foreground sm:text-4xl">The principles guiding every action</h2>
+                <p className="mt-4 text-base text-muted-foreground">
+                  Everything we do is rooted in these fundamentals, shaping how we build trust and deliver results.
+                </p>
+              </div>
+              <div className="mt-10 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
+                {values.map((item, index) => (
+                  <ValueCard key={item.title} item={item} index={index} />
+                ))}
+              </div>
+            </div>
+          </section>
+        ) : (
+          <SectionSkeleton height="h-[520px]" />
+        )}
+      </div>
 
-          {/* Accreditation Section */}
-          <motion.div
-            className="mb-20 pb-20 border-b border-border"
-            initial={{ y: 20, opacity: 0 }}
-            whileInView={{ y: 0, opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-          >
-            <h3 className="text-3xl font-bold text-blue-600 mb-12 text-center">Accreditation</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
-              {/* ICEF Badge */}
-              <div className="flex justify-center md:justify-start">
-                <div className="bg-white p-12 rounded-lg border border-border/50 inline-block">
-                  <span id="iasBadge" data-account-id="5944" style={{transform: 'scale(1.5)', transformOrigin: 'top left'}}></span>
-                </div>
+      <div ref={teamRef}>
+        {teamVisible ? (
+          <section className="about-section-shell bg-muted/20 px-4 py-16 sm:px-6 lg:px-8">
+            <div className="mx-auto max-w-6xl">
+              <div className="text-center">
+                <div className="section-kicker-classic mb-4 inline-flex">Leadership & Team</div>
+                <h2 className="text-3xl font-bold text-foreground sm:text-4xl">Meet the experts behind the mission</h2>
+                <p className="mt-4 text-base text-muted-foreground">
+                  Expert professionals dedicated to guiding students and partners with care and precision.
+                </p>
               </div>
 
-              {/* ICEF Description */}
-              <motion.div
-                className="flex flex-col justify-center"
-                initial={{ x: 20, opacity: 0 }}
-                whileInView={{ x: 0, opacity: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: 0.1 }}
-              >
-                <p className="text-muted-foreground leading-relaxed mb-4">
-                  ICEF's industry-leading quality assurance processes are increasingly recognized worldwide as a benchmark for education agencies and industry stakeholders, allowing for the easy identification of accredited organisations.
-                </p>
-                <p className="text-muted-foreground leading-relaxed mb-4">
-                  This recognition affirms that The Global Avenues has been thoroughly screened and accredited for its quality work, professional approach, and strong ethical standards in recruiting international students.
-                </p>
-                <p className="text-muted-foreground leading-relaxed">
-                  It reinforces our credibility and commitment to excellence in guiding students towards global opportunities. With this accreditation, we continue to strengthen trust among our partners, students, and the wider education community.
-                </p>
-              </motion.div>
+              <div className="mt-12 grid auto-rows-fr grid-cols-1 gap-6 lg:grid-cols-4">
+                {team.map((member, index) => (
+                  <ProfileCard key={member.name} member={member} featured={index < 2} />
+                ))}
+              </div>
             </div>
-          </motion.div>
+          </section>
+        ) : (
+          <SectionSkeleton height="h-[720px]" />
+        )}
+      </div>
 
-          {/* Membership Section */}
-          <motion.div
-            initial={{ y: 20, opacity: 0 }}
-            whileInView={{ y: 0, opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-          >
-            <h3 className="text-3xl font-bold text-blue-600 mb-12 text-center">Membership</h3>
+      <div ref={accreditationRef}>
+        {accreditationVisible ? (
+          <section className="about-section-shell px-4 py-16 sm:px-6 lg:px-8">
+            <div className="mx-auto max-w-6xl">
+              <div className="text-center">
+                <div className="section-kicker-classic mb-4 inline-flex">Recognition</div>
+                <h2 className="text-3xl font-bold text-foreground sm:text-4xl">Accreditation & Memberships</h2>
+                <p className="mt-4 text-base text-muted-foreground">
+                  Industry recognition that reinforces our commitment to quality and trusted partnerships.
+                </p>
+              </div>
 
-            {/* NET24 */}
-            <div className="mb-16 pb-16 border-b border-border">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
-                {/* NET24 Description */}
-                <motion.div
-                  className="flex flex-col justify-center"
-                  initial={{ x: -20, opacity: 0 }}
-                  whileInView={{ x: 0, opacity: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.6 }}
-                >
-                  <p className="text-muted-foreground leading-relaxed">
-                    NET24 connects educational institutions with reputable student recruitment agencies through its advanced online platform (NET24Apply) and a series of impactful B2B events, including conferences and workshops. Their core aim is to enhance the enrollment of international students and support global student mobility by fostering efficient and reliable partnerships.
-                  </p>
-                </motion.div>
-
-                {/* NET24 Logo */}
-                <motion.div
-                  className="flex justify-center md:justify-end"
-                  initial={{ x: 20, opacity: 0 }}
-                  whileInView={{ x: 0, opacity: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.6, delay: 0.1 }}
-                >
-                  <div className="bg-white p-12 rounded-lg border border-border/50 inline-block">
-                    <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-GUrYXfZRVyPpqFswzm4YXvBmq13UKu.png" alt="NET24" className="h-32 w-auto object-contain" />
+              <div className="mt-12 grid grid-cols-1 gap-10 lg:grid-cols-[0.9fr_1.1fr]">
+                <div className="rounded-3xl border border-[#DDD7F2] bg-[linear-gradient(160deg,#FFFFFF_0%,#F9F6FF_52%,#F3F7FF_100%)] p-8 shadow-[0_24px_70px_rgba(16,12,40,0.12)] dark:border-[#2B2354] dark:bg-[linear-gradient(160deg,#140F28_0%,#0E0A1E_55%,#181133_100%)]">
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+                      <Award className="h-5 w-5" />
+                    </div>
+                    <div>
+                      <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">Accreditation</p>
+                      <h3 className="text-xl font-semibold text-foreground">ICEF Certified</h3>
+                    </div>
                   </div>
-                </motion.div>
+                  <div className="mt-6 flex min-h-[180px] items-center justify-center rounded-2xl border border-[#DAD3F0] bg-[#F6F4FD] p-6 dark:border-[#3A2E72] dark:bg-[#17122D]">
+                    {!isBadgeReady ? (
+                      <img
+                        src="/icef-badge-fallback.svg"
+                        alt="ICEF accredited badge"
+                        loading="lazy"
+                        decoding="async"
+                        className="h-36 w-auto object-contain"
+                      />
+                    ) : null}
+                    <span
+                      ref={badgeRef}
+                      id="iasBadge"
+                      data-account-id="5944"
+                      className={`relative z-10 block ${isBadgeReady ? 'opacity-100' : 'opacity-0'}`}
+                      style={{ transform: 'scale(1.15)', transformOrigin: 'top left' }}
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-4 text-sm text-muted-foreground">
+                  <p>
+                    ICEF&apos;s industry-leading quality assurance processes are increasingly recognized worldwide as a
+                    benchmark for education agencies and industry stakeholders, allowing for the easy identification of
+                    accredited organizations.
+                  </p>
+                  <p>
+                    This recognition affirms that The Global Avenues has been thoroughly screened and accredited for
+                    its quality work, professional approach, and strong ethical standards in recruiting international
+                    students.
+                  </p>
+                  <p>
+                    It reinforces our credibility and commitment to excellence in guiding students towards global
+                    opportunities. With this accreditation, we continue to strengthen trust among our partners,
+                    students, and the wider education community.
+                  </p>
+                </div>
+              </div>
+
+              <div className="mt-12 grid grid-cols-1 gap-10 lg:grid-cols-2">
+                <div className="rounded-3xl border border-[#DDD7F2] bg-[linear-gradient(160deg,#FFFFFF_0%,#F9F6FF_52%,#F3F7FF_100%)] p-8 shadow-[0_24px_70px_rgba(16,12,40,0.12)] dark:border-[#2B2354] dark:bg-[linear-gradient(160deg,#140F28_0%,#0E0A1E_55%,#181133_100%)]">
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+                      <Users className="h-5 w-5" />
+                    </div>
+                    <div>
+                      <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">Membership</p>
+                      <h3 className="text-xl font-semibold text-foreground">NET24</h3>
+                    </div>
+                  </div>
+                  <div className="mt-6 flex justify-center rounded-2xl border border-[#DAD3F0] bg-[#F6F4FD] p-6 dark:border-[#3A2E72] dark:bg-[#17122D]">
+                    <div className="w-full max-w-[320px] rounded-2xl border border-[#D3CBEA] bg-[linear-gradient(140deg,#FFFFFF_0%,#F4F0FF_100%)] p-6 text-center shadow-[inset_0_1px_0_rgba(255,255,255,0.85)] dark:border-[#43337C] dark:bg-[linear-gradient(140deg,#1A1435_0%,#241A48_100%)]">
+                      <p className="text-3xl font-bold tracking-[0.08em] text-primary">NET24</p>
+                      <p className="mt-2 text-[11px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
+                        Global Education Network
+                      </p>
+                    </div>
+                  </div>
+                  <p className="mt-6 text-sm text-muted-foreground">
+                    NET24 connects educational institutions with reputable student recruitment agencies through its
+                    advanced online platform (NET24Apply) and a series of impactful B2B events, including conferences
+                    and workshops.
+                  </p>
+                </div>
+
+                <div className="rounded-3xl border border-[#DDD7F2] bg-[linear-gradient(160deg,#FFFFFF_0%,#F9F6FF_52%,#F3F7FF_100%)] p-8 shadow-[0_24px_70px_rgba(16,12,40,0.12)] dark:border-[#2B2354] dark:bg-[linear-gradient(160deg,#140F28_0%,#0E0A1E_55%,#181133_100%)]">
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+                      <Globe className="h-5 w-5" />
+                    </div>
+                    <div>
+                      <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">Membership</p>
+                      <h3 className="text-xl font-semibold text-foreground">EAIE</h3>
+                    </div>
+                  </div>
+                  <div className="mt-6 flex items-center justify-center rounded-2xl border border-[#DAD3F0] bg-[#F6F4FD] p-6 dark:border-[#3A2E72] dark:bg-[#17122D]">
+                    <div className="flex h-20 w-48 items-center justify-center rounded-xl border border-[#BDD2C5] bg-[#E6F4EA] text-3xl font-bold text-green-700 dark:border-[#3F6552] dark:bg-[#1D352A] dark:text-[#7FD79F]">
+                      EAIE
+                    </div>
+                  </div>
+                  <p className="mt-6 text-sm text-muted-foreground">
+                    The European Association for International Education (EAIE) is a member-led, non-profit
+                    organization founded in 1989 that serves as a European center for expertise, networking, and
+                    resources in international higher education.
+                  </p>
+                </div>
+              </div>
+
+              <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-3">
+                {[
+                  { icon: Zap, label: 'Operational Excellence' },
+                  { icon: Shield, label: 'Ethical Practices' },
+                  { icon: Heart, label: 'Student Success' },
+                ].map((item) => {
+                  const Icon = item.icon;
+                  return (
+                    <div
+                      key={item.label}
+                      className="flex items-center gap-3 rounded-2xl border border-border/60 bg-muted/30 px-5 py-4"
+                    >
+                      <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                        <Icon className="h-4 w-4" />
+                      </div>
+                      <p className="text-sm font-semibold text-foreground">{item.label}</p>
+                    </div>
+                  );
+                })}
               </div>
             </div>
-
-            {/* EAIE */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
-              {/* EAIE Logo */}
-              <motion.div
-                className="flex justify-center md:justify-start"
-                initial={{ x: -20, opacity: 0 }}
-                whileInView={{ x: 0, opacity: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6 }}
-              >
-                <div className="bg-white p-12 rounded-lg border border-border/50 inline-block">
-                  <div className="w-64 h-28 flex items-center justify-center text-3xl font-bold text-green-600">EAIE</div>
-                </div>
-              </motion.div>
-
-              {/* EAIE Description */}
-              <motion.div
-                className="flex flex-col justify-center"
-                initial={{ x: 20, opacity: 0 }}
-                whileInView={{ x: 0, opacity: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: 0.1 }}
-              >
-                <p className="text-muted-foreground leading-relaxed">
-                  The European Association for International Education (EAIE) is a member-led, non-profit organization founded in 1989 that serves as a European center for expertise, networking, and resources in international higher education. The EAIE provides professionals with training, conferences, publications, and a platform for sharing knowledge to promote and advance responsible international education in Europe and beyond.
-                </p>
-              </motion.div>
-            </div>
-          </motion.div>
-        </div>
-      </section>
+          </section>
+        ) : (
+          <SectionSkeleton height="h-[720px]" />
+        )}
+      </div>
     </div>
   );
 }

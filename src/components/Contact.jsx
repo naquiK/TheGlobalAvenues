@@ -1,12 +1,14 @@
 import { useState } from 'react';
 import { Send } from 'lucide-react';
-import { useScrollAnimation } from '../hooks/useScrollAnimation';
+import useScrollAnimation from '../hooks/useScrollAnimation';
 import { InteractiveGlobe } from './contact/InteractiveGlobe';
 
 export function Contact() {
   const [formData, setFormData] = useState({ name: '', email: '', message: '' });
   const [submitted, setSubmitted] = useState(false);
-  const [ref, isVisible] = useScrollAnimation();
+  const headingRef = useScrollAnimation({ y: 20, duration: 600 });
+  const globeRef = useScrollAnimation({ x: -20, duration: 700 });
+  const formRef = useScrollAnimation({ x: 20, duration: 700, delay: 150 });
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -21,37 +23,37 @@ export function Contact() {
   };
 
   return (
-    <section id="contact" className="relative overflow-hidden bg-muted/30 px-4 pb-0 pt-20">
-      <div className="absolute top-0 right-0 z-0 h-96 w-96 rounded-full bg-secondary/10 blur-3xl" />
-      <div className="absolute bottom-0 left-0 z-0 h-96 w-96 rounded-full bg-primary/10 blur-3xl" />
+    <section id="contact" className="relative overflow-hidden bg-transparent px-4 pb-0 pt-20">
 
       <div className="relative z-10 mx-auto w-full max-w-7xl">
         <div
-          ref={ref}
-          className={`mb-2 text-center transition-all duration-1000 ${
-            isVisible ? 'animate-fade-in-up' : 'translate-y-[30px] opacity-0'
-          }`}
+          ref={headingRef}
+          className="mb-2 text-center"
         >
-          <div className="mb-4 inline-block rounded-full bg-primary/10 px-4 py-2 text-sm font-semibold text-primary">
+          <div className="section-kicker-classic mb-4">
             Get In Touch
           </div>
-          <h2 className="mb-4 text-4xl font-bold text-foreground lg:text-5xl">Ready to Start Your Journey?</h2>
-          <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
+          <h2 className="section-title-classic mb-4">
+            Ready to Start <span className="section-title-classic-accent">Your Journey?</span>
+          </h2>
+          <p className="section-subtitle-classic">
             Contact us today and let&apos;s discuss how we can help you achieve your international education goals.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 gap-3 lg:grid-cols-[minmax(0,1fr)_24.5rem] lg:items-center lg:gap-0">
-          <div className="order-2 overflow-hidden rounded-[28px] lg:order-1 lg:pt-20">
-            <div className="h-[400px] sm:h-[500px] lg:h-[650px]">
+        <div className="grid grid-cols-1 gap-3 lg:grid-cols-[minmax(0,1fr)_24.5rem] lg:items-center lg:gap-6 xl:gap-8">
+          <div
+            ref={globeRef}
+            className="order-2 overflow-visible rounded-[24px] lg:order-1 lg:overflow-hidden lg:rounded-[28px] lg:pt-20"
+          >
+            <div className="mx-auto h-[320px] w-full max-w-[34rem] sm:h-[430px] sm:max-w-[42rem] lg:h-[620px] lg:max-w-[52rem]">
               <InteractiveGlobe />
             </div>
           </div>
 
           <div
-            className={`order-1 w-full max-w-[24.5rem] rounded-2xl border border-slate-200 bg-background/62 p-4 shadow-[0_24px_60px_rgba(13,10,26,0.22)] backdrop-blur-md transition-all duration-1000 dark:border-white/12 sm:p-5 lg:order-2 lg:mt-24 lg:-ml-[5.25rem] lg:justify-self-start lg:p-5 ${
-              isVisible ? 'animate-fade-in-right' : 'translate-x-[30px] opacity-0'
-            }`}
+            ref={formRef}
+            className="order-1 mx-auto w-full max-w-[24.5rem] rounded-2xl border border-slate-200 bg-background/62 p-4 shadow-[0_24px_60px_rgba(13,10,26,0.22)] backdrop-blur-md dark:border-white/12 sm:p-5 lg:order-2 lg:mx-0 lg:mt-10 lg:justify-self-end lg:p-5"
           >
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>

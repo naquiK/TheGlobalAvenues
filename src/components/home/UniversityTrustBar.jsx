@@ -1,4 +1,4 @@
-import useTheme from '../../hooks/useTheme';
+import useScrollAnimation from '../../hooks/useScrollAnimation';
 
 const trustItems = [
   { id: 1, label: 'Mesoyios College', href: 'https://www.mesoyios.ac.cy/' },
@@ -13,37 +13,14 @@ const trustItems = [
 ];
 
 export default function UniversityTrustBar() {
-  const { isDark } = useTheme();
+  const sectionRef = useScrollAnimation({ delay: 0, duration: 500 });
   const marqueeItems = [...trustItems, ...trustItems];
-  const sectionBackground = isDark
-    ? 'linear-gradient(to bottom, #0D0A1A 0%, #1A1033 100%)'
-    : '#F5F3FC';
 
   return (
     <section
-      className="relative overflow-hidden px-4 pb-10 pt-4 sm:px-6 sm:pb-10 sm:pt-5 lg:px-8"
-      style={{
-        background: sectionBackground,
-      }}
+      ref={sectionRef}
+      className="relative overflow-hidden bg-transparent px-4 pb-10 pt-4 sm:px-6 sm:pb-10 sm:pt-5 lg:px-8"
     >
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 top-0 h-12"
-        style={{
-          background: isDark
-            ? 'linear-gradient(to bottom, rgba(13,10,26,0.55) 0%, transparent 100%)'
-            : 'linear-gradient(to bottom, rgba(255,255,255,0.28) 0%, transparent 100%)',
-        }}
-      />
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 bottom-0 h-16"
-        style={{
-          background: isDark
-            ? 'linear-gradient(to bottom, transparent 0%, rgba(26,16,51,0.65) 100%)'
-            : 'linear-gradient(to bottom, transparent 0%, rgba(245,243,252,0.2) 100%)',
-        }}
-      />
 
       <div className="mx-auto max-w-7xl">
         <p className="mx-auto mb-7 w-fit rounded-full border border-[#2D1B69]/15 bg-white/70 px-5 py-2.5 text-center text-[12px] font-semibold uppercase tracking-[0.28em] text-[#4F3F84] shadow-[0_8px_24px_rgba(45,27,105,0.08)] backdrop-blur-sm dark:border-white/15 dark:bg-white/[0.06] dark:text-white/65 dark:shadow-[0_10px_24px_rgba(4,2,20,0.42)]">

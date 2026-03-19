@@ -80,7 +80,7 @@ export function Footer() {
   };
 
   const renderLinkGroup = ([title, items]) => (
-    <div>
+    <div className="text-center sm:text-left">
       <h4 className="mb-3 text-sm font-semibold uppercase tracking-wider text-white">{title}</h4>
       <ul className="space-y-2">
         {items.map((item) => (
@@ -88,7 +88,7 @@ export function Footer() {
             {item.external ? (
               <a
                 href={item.href}
-                className="group flex items-center gap-2 text-sm text-white/60 transition-colors duration-150 hover:text-brand-orange"
+                className="group flex items-center justify-center gap-2 text-sm text-white/60 transition-colors duration-150 hover:text-brand-orange sm:justify-start"
               >
                 <span className="h-1.5 w-1.5 flex-shrink-0 rounded-full bg-brand-orange" />
                 <span>{item.label}</span>
@@ -96,7 +96,7 @@ export function Footer() {
             ) : (
               <Link
                 to={item.path}
-                className="group flex items-center gap-2 text-sm text-white/60 transition-colors duration-150 hover:text-brand-orange"
+                className="group flex items-center justify-center gap-2 text-sm text-white/60 transition-colors duration-150 hover:text-brand-orange sm:justify-start"
               >
                 <span className="h-1.5 w-1.5 flex-shrink-0 rounded-full bg-brand-orange" />
                 <span>{item.label}</span>
@@ -124,7 +124,7 @@ export function Footer() {
     >
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(83,64,176,0.14),transparent_30%),linear-gradient(180deg,rgba(25,18,56,0.42)_0%,rgba(13,10,26,0.06)_42%,rgba(13,10,26,0.2)_100%)]" />
       <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[340px] bg-[radial-gradient(ellipse_82%_60%_at_50%_100%,rgba(32,24,66,0.78)_0%,rgba(26,16,51,0.52)_26%,transparent_72%),radial-gradient(ellipse_46%_38%_at_26%_100%,rgba(61,44,118,0.42)_0%,transparent_60%),radial-gradient(ellipse_42%_34%_at_74%_100%,rgba(44,33,92,0.28)_0%,transparent_58%)] opacity-100 blur-3xl" />
-      <div className="pointer-events-none absolute inset-0 z-10 overflow-hidden">
+      <div className="pointer-events-none absolute inset-0 z-10 hidden overflow-hidden lg:block">
         {partnerLogos.map((logo, index) => (
           <div
             key={`${logo.src}-${logo.top}-${logo.left}`}
@@ -141,6 +141,8 @@ export function Footer() {
               <img
                 src={logo.src}
                 alt="University partner placeholder"
+                loading="lazy"
+                decoding="async"
                 className={`${logo.size} object-contain will-change-transform transition-all duration-1000 ease-out ${
                   activeLogo === index
                     ? 'scale-100 opacity-32 blur-0 grayscale saturate-0 brightness-100 contrast-100'
@@ -149,7 +151,7 @@ export function Footer() {
                       : 'scale-75 opacity-0 blur-md'
                 }`}
                 style={{
-                  transitionDelay: hovered ? `${index * 50}ms` : '0ms',
+                  transitionDelay: hovered ? `${index * 60}ms` : '0ms',
                 }}
               />
             </div>
@@ -158,18 +160,24 @@ export function Footer() {
       </div>
       <div className="relative z-20 mx-auto max-w-7xl px-4 pb-4 pt-10 sm:px-6 sm:pb-5 sm:pt-12 lg:px-8 lg:pb-5 lg:pt-12">
         <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4 lg:gap-6">
-          <div className="relative z-20">
-            <img src={footerLogoSrc} alt={siteConfig.company.logo.alt} className="h-10 w-auto" />
-            <p className="mt-3 max-w-[220px] text-sm leading-relaxed text-white/60">
+          <div className="relative z-20 flex flex-col items-center text-center sm:items-start sm:text-left">
+            <img
+              src={footerLogoSrc}
+              alt={siteConfig.company.logo.alt}
+              loading="lazy"
+              decoding="async"
+              className="h-10 w-auto"
+            />
+            <p className="mt-3 max-w-[220px] text-sm leading-relaxed text-white/60 sm:max-w-[260px]">
               {siteConfig.company.description}
             </p>
 
             {socialIcons.length > 0 && (
-              <div className="mt-5 flex gap-3">
+              <div className="mt-5 flex justify-center gap-3 sm:justify-start">
                 {socialIcons.map((key) => (
                   <span
                     key={key}
-                    className="flex h-9 w-9 items-center justify-center rounded-full border border-white/20 text-white/60 transition-all duration-200 hover:border-brand-orange hover:bg-brand-orange hover:text-white"
+                    className="flex h-9 w-9 items-center justify-center rounded-full border border-white/20 text-white/60 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-110 hover:border-brand-orange hover:bg-brand-orange hover:text-white active:-translate-y-0.5 active:scale-110 active:border-brand-orange active:bg-brand-orange active:text-white"
                     aria-hidden="true"
                   >
                     {SOCIAL_ICON_PATHS[key]}
@@ -179,16 +187,16 @@ export function Footer() {
             )}
           </div>
 
-          <div className="relative z-20">{firstLinkGroup && renderLinkGroup(firstLinkGroup)}</div>
+          <div className="relative z-20 min-w-0">{firstLinkGroup && renderLinkGroup(firstLinkGroup)}</div>
 
-          <div className="relative z-20 space-y-6">
+          <div className="relative z-20 min-w-0 space-y-6">
             {secondLinkGroup && renderLinkGroup(secondLinkGroup)}
             {thirdLinkGroup && renderLinkGroup(thirdLinkGroup)}
           </div>
 
-          <div className="relative z-20">
+          <div className="relative z-20 text-center sm:text-left">
             <div className="space-y-3.5">
-              <div className="flex items-start gap-3 text-sm text-white/60">
+              <div className="flex flex-col items-center gap-2 text-sm text-white/60 sm:flex-row sm:items-start sm:gap-3">
                 <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg bg-brand-purple/40">
                   <EnvelopeIcon />
                 </div>
@@ -196,14 +204,14 @@ export function Footer() {
                   <p className="mb-1 text-sm font-semibold text-white">Email</p>
                   <a
                     href={`mailto:${siteConfig.contact.email.general}`}
-                    className="text-sm text-white/60 transition-colors duration-150 hover:text-brand-orange"
+                    className="break-all text-sm text-white/60 transition-colors duration-150 hover:text-brand-orange"
                   >
                     {siteConfig.contact.email.general}
                   </a>
                 </div>
               </div>
 
-              <div className="flex items-start gap-3 text-sm text-white/60">
+              <div className="flex flex-col items-center gap-2 text-sm text-white/60 sm:flex-row sm:items-start sm:gap-3">
                 <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg bg-brand-purple/40">
                   <PhoneIcon />
                 </div>
@@ -211,26 +219,26 @@ export function Footer() {
                   <p className="mb-1 text-sm font-semibold text-white">Phone</p>
                   <a
                     href={`tel:${siteConfig.contact.phone[0].replace(/\s+/g, '')}`}
-                    className="text-sm text-white/60 transition-colors duration-150 hover:text-brand-orange"
+                    className="break-words text-sm text-white/60 transition-colors duration-150 hover:text-brand-orange"
                   >
                     {siteConfig.contact.phone[0]}
                   </a>
                 </div>
               </div>
 
-              <div className="flex items-start gap-3 text-sm text-white/60">
+              <div className="flex flex-col items-center gap-2 text-sm text-white/60 sm:flex-row sm:items-start sm:gap-3">
                 <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg bg-brand-purple/40">
                   <MapPinIcon />
                 </div>
                 <div>
                   <p className="mb-1 text-sm font-semibold text-white">Location</p>
-                  <p className="text-sm text-white/60">{formatAddress(siteConfig.contact.address)}</p>
+                  <p className="break-words text-sm text-white/60">{formatAddress(siteConfig.contact.address)}</p>
                 </div>
               </div>
 
               <div className="mt-3 border-t border-white/15 pt-3">
                 <p className="mb-2 text-sm text-white/60">Certified by:</p>
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap justify-center gap-2 sm:justify-start">
                   <span className="rounded-full border border-white/15 px-3 py-1 text-xs text-white/60 transition-all duration-150 hover:border-brand-orange/50 hover:text-white">
                     ICEF Certified
                   </span>
@@ -243,15 +251,15 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="relative z-20 mt-4 border-t border-white/8 py-1.5">
-          <div className="relative flex min-h-10 items-center justify-center">
-            <p className="text-center text-xs text-white/30">
+        <div className="relative z-20 mt-4 border-t border-white/8 py-3">
+          <div className="flex flex-col items-center gap-3 sm:flex-row sm:justify-between">
+            <p className="text-center text-xs text-white/30 sm:text-left">
               © {siteConfig.company.year} {siteConfig.company.name}. All rights reserved.
             </p>
 
             <button
               onClick={scrollToTop}
-              className="absolute right-0 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/15 bg-white/5 text-white/70 transition-all duration-200 hover:border-brand-orange hover:bg-brand-orange hover:text-white"
+              className="flex h-10 w-10 items-center justify-center rounded-full border border-white/15 bg-white/5 text-white/70 transition-all duration-200 hover:border-brand-orange hover:bg-brand-orange hover:text-white"
               aria-label="Scroll to top"
               type="button"
             >

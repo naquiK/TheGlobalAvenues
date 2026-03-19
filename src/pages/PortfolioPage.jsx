@@ -188,6 +188,8 @@ export default function PortfolioPage() {
                       <motion.img
                         src={portfolio.image}
                         alt={portfolio.studentName}
+                        loading="lazy"
+                        decoding="async"
                         className="w-full h-full object-cover"
                         whileHover={{ scale: 1.1 }}
                         transition={{ duration: 0.4 }}

@@ -147,6 +147,8 @@ export default function UniversitiesPage() {
                     <motion.img
                       src={university.image}
                       alt={university.title}
+                      loading="lazy"
+                      decoding="async"
                       className="h-full w-full object-cover"
                       whileHover={{ scale: 1.1 }}
                       transition={{ duration: 0.4 }}
