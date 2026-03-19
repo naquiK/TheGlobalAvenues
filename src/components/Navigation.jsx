@@ -6,6 +6,61 @@ export default function Navigation() {
   const [isOpen, setIsOpen] = useState(false)
   const [openDropdown, setOpenDropdown] = useState(null)
 
+  const preloadRoute = (path = '') => {
+    if (!path) return
+    if (path === '/') {
+      void import('../pages/HomePage')
+      return
+    }
+    if (path.startsWith('/portfolio/')) {
+      void import('../pages/PortfolioDetailPage')
+      return
+    }
+    if (path.startsWith('/portfolio')) {
+      void import('../pages/PortfolioPage')
+      return
+    }
+    if (path === '/about') {
+      void import('../pages/AboutPage')
+      return
+    }
+    if (path === '/services') {
+      void import('../pages/ServicesPage')
+      return
+    }
+    if (path === '/collaborate') {
+      void import('../pages/CollaboratePage')
+      return
+    }
+    if (path === '/universities') {
+      void import('../pages/UniversitiesPage')
+      return
+    }
+    if (path === '/gallery') {
+      void import('../pages/GalleryPage')
+      return
+    }
+    if (path === '/partners') {
+      void import('../pages/PartnersPage')
+      return
+    }
+    if (path === '/news-blog') {
+      void import('../pages/NewsVlogPage')
+      return
+    }
+    if (path.startsWith('/news/')) {
+      void import('../pages/NewsDetailPage')
+      return
+    }
+    if (path === '/what-we-offer') {
+      void import('../pages/WhatWeOfferPage')
+      return
+    }
+    if (path.startsWith('/education-program')) {
+      void import('../pages/EducationProgramPage')
+    }
+  }
+
   const navLinks = [
     { name: 'Home', href: '/' },
     { name: 'Services', href: '/services' },
@@ -60,6 +115,7 @@ export default function Navigation() {
               <Link
                 key={link.name}
                 to={link.href}
+                onMouseEnter={() => preloadRoute(link.href)}
                 className="hover:text-secondary transition-colors font-medium"
               >
                 {link.name}
@@ -80,6 +136,7 @@ export default function Navigation() {
                     <Link
                       key={program.id}
                       to={program.path}
+                      onMouseEnter={() => preloadRoute(program.path)}
                       className="block px-4 py-3 rounded-lg hover:bg-primary/10 text-foreground font-medium transition-colors"
                     >
                       {program.name}
@@ -112,6 +169,7 @@ export default function Navigation() {
               <Link
                 key={link.name}
                 to={link.href}
+                onMouseEnter={() => preloadRoute(link.href)}
                 className="block px-4 py-2 hover:bg-primary-foreground/10 rounded transition-colors"
                 onClick={() => setIsOpen(false)}
               >
@@ -139,6 +197,7 @@ export default function Navigation() {
                     <Link
                       key={program.id}
                       to={program.path}
+                      onMouseEnter={() => preloadRoute(program.path)}
                       className="block px-4 py-2 text-sm hover:bg-primary-foreground/10 rounded transition-colors"
                       onClick={() => {
                         setIsOpen(false);

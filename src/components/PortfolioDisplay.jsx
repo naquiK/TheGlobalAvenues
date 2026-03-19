@@ -121,6 +121,8 @@ export default function PortfolioDisplay({ limit = 10 }) {
                       <img
                         src={portfolio.image}
                         alt={portfolio.title}
+                        loading="lazy"
+                        decoding="async"
                         className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/45 to-black/10 transition-colors duration-300" />

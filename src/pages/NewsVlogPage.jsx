@@ -153,6 +153,8 @@ export default function NewsVlogPage() {
                     <img
                       src={getCardImage(item)}
                       alt={item.title}
+                      loading="lazy"
+                      decoding="async"
                       className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
                     />
                   </div>
@@ -305,6 +307,8 @@ export default function NewsVlogPage() {
                         <img
                           src={getCardImage(item)}
                           alt={item.title}
+                          loading="lazy"
+                          decoding="async"
                           className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
                         />
                       </div>

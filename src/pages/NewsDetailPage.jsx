@@ -213,7 +213,13 @@ export default function NewsDetailPage() {
               </div>
             )}
             {newsItem.image ? (
-              <img src={getCardImage(newsItem)} alt={newsItem.title} className="h-full w-full object-cover" />
+              <img
+                src={getCardImage(newsItem)}
+                alt={newsItem.title}
+                loading="lazy"
+                decoding="async"
+                className="h-full w-full object-cover"
+              />
             ) : (
               <div className="flex h-full w-full items-center justify-center text-muted-foreground">
                 No image available
@@ -301,6 +307,8 @@ export default function NewsDetailPage() {
                         <img
                           src={getCardImage(article)}
                           alt={article.title}
+                          loading="lazy"
+                          decoding="async"
                           className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
                         />
                       ) : (

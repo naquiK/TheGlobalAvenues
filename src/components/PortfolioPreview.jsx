@@ -126,6 +126,8 @@ export function PortfolioPreview() {
                   <img
                     src={portfolio.image}
                     alt={portfolio.studentName || portfolio.title}
+                    loading="lazy"
+                    decoding="async"
                     className="w-full h-full object-cover"
                   />
 

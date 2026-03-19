@@ -10,6 +10,7 @@ import {
   Newspaper,
   Sparkles,
   Users2,
+  X,
 } from 'lucide-react';
 import useTheme from '../hooks/useTheme';
 import { useSettings } from '../context/SettingsContext';
@@ -68,6 +69,61 @@ export function Header() {
     return offeringIconMap[path] || GraduationCap;
   };
 
+  const preloadRoute = (path = '') => {
+    if (!path) return;
+    if (path === '/') {
+      void import('../pages/HomePage');
+      return;
+    }
+    if (path.startsWith('/portfolio/')) {
+      void import('../pages/PortfolioDetailPage');
+      return;
+    }
+    if (path.startsWith('/portfolio')) {
+      void import('../pages/PortfolioPage');
+      return;
+    }
+    if (path === '/about') {
+      void import('../pages/AboutPage');
+      return;
+    }
+    if (path === '/services') {
+      void import('../pages/ServicesPage');
+      return;
+    }
+    if (path === '/collaborate') {
+      void import('../pages/CollaboratePage');
+      return;
+    }
+    if (path === '/universities') {
+      void import('../pages/UniversitiesPage');
+      return;
+    }
+    if (path === '/gallery') {
+      void import('../pages/GalleryPage');
+      return;
+    }
+    if (path === '/partners') {
+      void import('../pages/PartnersPage');
+      return;
+    }
+    if (path === '/news-blog') {
+      void import('../pages/NewsVlogPage');
+      return;
+    }
+    if (path.startsWith('/news/')) {
+      void import('../pages/NewsDetailPage');
+      return;
+    }
+    if (path === '/what-we-offer') {
+      void import('../pages/WhatWeOfferPage');
+      return;
+    }
+    if (path.startsWith('/education-program')) {
+      void import('../pages/EducationProgramPage');
+    }
+  };
+
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -110,22 +166,29 @@ export function Header() {
         }`}
       >
         <div className="flex-shrink-0">
-          <Link to="/" className="transition-opacity duration-200 ease-out hover:opacity-80">
+          <Link
+            to="/"
+            className="transition-opacity duration-200 ease-out hover:opacity-80"
+            onMouseEnter={() => preloadRoute('/')}
+          >
             <img
               src={logoSrc}
               alt={siteConfig.company.logo.alt}
+              loading="lazy"
+              decoding="async"
               className={`w-auto transition-all duration-200 ease-out ${
-                hasScrolled ? 'h-10 sm:h-12 lg:h-14' : 'h-12 sm:h-14 lg:h-16'
+                hasScrolled ? 'h-8 lg:h-10' : 'h-8 lg:h-10'
               }`}
             />
           </Link>
         </div>
 
-        <nav className="hidden items-center gap-1 md:flex" ref={dropdownRef}>
+        <nav className="hidden items-center gap-1 lg:flex" ref={dropdownRef}>
           {primaryStartItems.map((item) => (
             <Link
               key={item.label}
               to={item.path}
+              onMouseEnter={() => preloadRoute(item.path)}
               className={`nav-link ${isActive(item.path) ? 'nav-link-active' : ''} rounded-full px-4 py-2 text-sm font-medium ${
                 isActive(item.path)
                   ? 'bg-brand-purple text-white shadow-[0_10px_24px_rgba(45,27,105,0.22)]'
@@ -146,7 +209,10 @@ export function Header() {
           >
             <button
               type="button"
-              onMouseEnter={() => setOpenDropdown('portfolio')}
+              onMouseEnter={() => {
+                preloadRoute('/portfolio');
+                setOpenDropdown('portfolio');
+              }}
               className={`nav-link nav-trigger ${isPortfolioActive ? 'nav-link-active' : ''} group flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium ${
                 isPortfolioActive
                   ? 'bg-brand-purple text-white shadow-[0_10px_24px_rgba(45,27,105,0.22)]'
@@ -163,7 +229,7 @@ export function Header() {
 
             {openDropdown === 'portfolio' && (
               <div
-                className="absolute left-1/2 top-full w-[26rem] max-w-[calc(50vw-1rem)] -translate-x-1/2 pt-4"
+                className="absolute left-1/2 top-full hidden w-[26rem] max-w-[calc(50vw-1rem)] -translate-x-1/2 pt-4 lg:block"
                 onMouseEnter={() => setOpenDropdown('portfolio')}
               >
                 <div className="mega-panel overflow-hidden rounded-2xl border border-brand-purple/10 bg-background/95 shadow-[0_28px_80px_rgba(26,16,51,0.18)] backdrop-blur-xl transition-all duration-200 ease-out">
@@ -177,6 +243,9 @@ export function Header() {
                       <Link
                         key={portfolio.id}
                         to={`/portfolio/${portfolio.slug || portfolio.id}`}
+                        onMouseEnter={() =>
+                          preloadRoute(`/portfolio/${portfolio.slug || portfolio.id}`)
+                        }
                         className="mega-link group flex items-start gap-2.5 rounded-2xl border border-transparent p-2 transition-all duration-200 ease-out hover:border-brand-orange/20 hover:bg-brand-orange/5"
                       >
                         <div className="mega-link-icon flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl bg-brand-purple-light text-xs font-semibold text-primary transition-all duration-200 ease-out group-hover:-translate-y-0.5 group-hover:bg-brand-orange group-hover:text-white">
@@ -197,6 +266,7 @@ export function Header() {
                   <div className="border-t border-brand-purple/10 bg-brand-purple-light/45 p-3">
                     <Link
                       to="/portfolio"
+                      onMouseEnter={() => preloadRoute('/portfolio')}
                       className="cta-btn flex w-full items-center justify-center rounded-xl bg-brand-orange px-4 py-2.5 text-sm font-semibold text-white shadow-[0_12px_28px_rgba(232,82,26,0.2)] hover:bg-brand-orange/90"
                     >
                       View all universities
@@ -217,7 +287,10 @@ export function Header() {
           >
             <button
               type="button"
-              onMouseEnter={() => setOpenDropdown('offer')}
+              onMouseEnter={() => {
+                preloadRoute('/what-we-offer');
+                setOpenDropdown('offer');
+              }}
               className={`nav-link nav-trigger ${isOfferingActive ? 'nav-link-active' : ''} group flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium ${
                 isOfferingActive
                   ? 'bg-brand-purple text-white shadow-[0_10px_24px_rgba(45,27,105,0.22)]'
@@ -234,7 +307,7 @@ export function Header() {
 
             {openDropdown === 'offer' && (
               <div
-                className="absolute right-0 top-full w-[24rem] max-w-[calc(50vw-1rem)] pt-4"
+                className="absolute right-0 top-full hidden w-[24rem] max-w-[calc(50vw-1rem)] pt-4 lg:block"
                 onMouseEnter={() => setOpenDropdown('offer')}
               >
                 <div className="mega-panel overflow-hidden rounded-2xl border border-brand-purple/10 bg-background/95 shadow-[0_28px_80px_rgba(26,16,51,0.18)] backdrop-blur-xl transition-all duration-200 ease-out">
@@ -247,6 +320,7 @@ export function Header() {
                       <Link
                         key={item.path}
                         to={item.path}
+                        onMouseEnter={() => preloadRoute(item.path)}
                         className="mega-link group flex w-full items-center gap-2.5 rounded-2xl border border-transparent px-2.5 py-2.5 transition-all duration-200 ease-out hover:border-brand-orange/20 hover:bg-brand-orange/5"
                       >
                         <div className="mega-link-icon flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl bg-brand-purple-light text-primary transition-all duration-200 ease-out group-hover:-translate-y-0.5 group-hover:bg-brand-orange group-hover:text-white">
@@ -272,6 +346,7 @@ export function Header() {
             <Link
               key={item.label}
               to={item.path}
+              onMouseEnter={() => preloadRoute(item.path)}
               className={`nav-link ${isActive(item.path) ? 'nav-link-active' : ''} rounded-full px-4 py-2 text-sm font-medium ${
                 isActive(item.path)
                   ? 'bg-brand-purple text-white shadow-[0_10px_24px_rgba(45,27,105,0.22)]'
@@ -288,14 +363,15 @@ export function Header() {
 
           <Link
             to="/collaborate"
-            className="cta-btn hidden rounded-full bg-accent px-6 py-2.5 text-sm font-semibold text-white shadow-[0_12px_30px_rgba(232,82,26,0.24)] sm:inline-block"
+            onMouseEnter={() => preloadRoute('/collaborate')}
+            className="cta-btn hidden rounded-full bg-accent px-6 py-2.5 text-sm font-semibold text-white shadow-[0_12px_30px_rgba(232,82,26,0.24)] lg:inline-block"
           >
             Connect Now
           </Link>
 
           <button
             onClick={() => setIsMenuOpen((open) => !open)}
-            className={`mobile-menu-button rounded-full p-2 text-foreground transition-all duration-200 ease-out hover:bg-brand-purple-light md:hidden ${
+            className={`mobile-menu-button flex rounded-full p-2 text-foreground transition-all duration-200 ease-out hover:bg-brand-purple-light active:scale-95 dark:hover:bg-white/10 lg:hidden ${
               isMenuOpen ? 'is-open' : ''
             }`}
             type="button"
@@ -312,8 +388,35 @@ export function Header() {
 
       {isMenuOpen && (
         <>
-          <div className="fixed inset-0 top-0 z-40 bg-[#0D0A1A]/45 backdrop-blur-sm md:hidden" />
-          <nav className="animate-fade-in-right fixed right-0 top-0 z-50 flex h-screen w-full max-w-sm flex-col border-l border-brand-purple/10 bg-background/95 px-5 pb-6 pt-24 shadow-[0_28px_80px_rgba(26,16,51,0.22)] backdrop-blur-xl transition-all duration-200 ease-out md:hidden">
+          <div
+            className="fixed inset-0 top-0 z-40 bg-[#0D0A1A]/45 backdrop-blur-sm lg:hidden"
+            onClick={() => setIsMenuOpen(false)}
+          />
+          <nav className="animate-fade-in-right fixed right-0 top-0 z-50 flex h-screen w-full max-w-[320px] flex-col border-l border-brand-purple/10 bg-background/95 px-5 pb-6 pt-5 shadow-[0_28px_80px_rgba(26,16,51,0.22)] backdrop-blur-xl transition-all duration-200 ease-out dark:border-white/12 dark:bg-[#0F0C1E]/96 lg:hidden">
+            <div className="mb-5 flex items-center justify-between">
+              <Link
+                to="/"
+                className="transition-opacity duration-200 ease-out hover:opacity-80"
+                onMouseEnter={() => preloadRoute('/')}
+              >
+                <img
+                  src={logoSrc}
+                  alt={siteConfig.company.logo.alt}
+                  loading="lazy"
+                  decoding="async"
+                  className="h-8 w-auto"
+                />
+              </Link>
+              <button
+                onClick={() => setIsMenuOpen(false)}
+                type="button"
+                aria-label="Close navigation menu"
+                className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-brand-purple/20 bg-white/80 text-foreground transition-all duration-200 hover:bg-brand-purple-light active:scale-95 dark:border-white/15 dark:bg-white/10 dark:hover:bg-white/20"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
             <div className="space-y-2 overflow-y-auto">
               {primaryStartItems.map((item, index) => {
                 const Icon = getPrimaryIcon(item.path);
@@ -322,14 +425,15 @@ export function Header() {
                   <Link
                     key={item.label}
                     to={item.path}
-                    className={`mobile-drawer-link flex items-center gap-3 rounded-2xl px-4 py-3 transition-all duration-200 ease-out ${
+                    onMouseEnter={() => preloadRoute(item.path)}
+                    className={`mobile-drawer-link flex items-center gap-3 rounded-2xl border border-transparent px-4 py-3 text-sm font-medium transition-all duration-200 ease-out ${
                       isActive(item.path)
-                        ? 'bg-brand-purple text-white'
-                        : 'text-foreground hover:bg-brand-purple-light'
+                        ? 'bg-brand-purple text-white shadow-[0_8px_22px_rgba(45,27,105,0.24)] dark:bg-[#4C3BA7]'
+                        : 'text-foreground hover:bg-brand-purple-light active:bg-brand-purple-light/80 dark:hover:bg-white/10 dark:active:bg-white/15'
                     }`}
                     style={{ animationDelay: `${index * 40}ms` }}
                   >
-                    <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-brand-purple-light text-primary">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-brand-purple-light text-primary dark:bg-white/10 dark:text-white">
                       <Icon className="h-5 w-5" />
                     </div>
                     <span className="text-sm font-medium">{item.label}</span>
@@ -337,15 +441,20 @@ export function Header() {
                 );
               })}
 
-              <div className="rounded-2xl border border-brand-purple/10 bg-brand-purple-light/35 px-2 py-2">
+              <div className="rounded-2xl border border-brand-purple/15 bg-brand-purple-light/30 px-2 py-2 dark:border-white/12 dark:bg-white/[0.04]">
                 <button
                   onClick={() =>
                     setOpenMobileDropdown((value) => (value === 'portfolio' ? null : 'portfolio'))
                   }
-                  className="flex w-full items-center justify-between rounded-2xl px-3 py-3 text-left transition-all duration-200 ease-out hover:bg-background/70"
+                  className="flex w-full items-center justify-between rounded-xl px-3 py-3 text-left text-sm font-medium text-foreground transition-all duration-200 ease-out hover:bg-brand-purple-light active:bg-brand-purple-light/80 dark:hover:bg-white/10 dark:active:bg-white/15"
                   type="button"
                 >
-                  <span className="text-sm font-medium text-foreground">{portfolioMenuLabel}</span>
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-white/80 text-primary dark:bg-white/10 dark:text-white">
+                      <Globe2 className="h-4 w-4" />
+                    </div>
+                    <span className="text-sm font-medium text-foreground">{portfolioMenuLabel}</span>
+                  </div>
                   <ChevronDown
                     className={`h-4 w-4 transition-transform duration-200 ease-out ${
                       openMobileDropdown === 'portfolio' ? 'rotate-180' : ''
@@ -359,9 +468,12 @@ export function Header() {
                       <Link
                         key={portfolio.id}
                         to={`/portfolio/${portfolio.slug || portfolio.id}`}
-                        className="mobile-drawer-link flex items-center gap-3 rounded-2xl px-3 py-3 text-sm transition-all duration-200 ease-out hover:bg-background/80"
+                        onMouseEnter={() =>
+                          preloadRoute(`/portfolio/${portfolio.slug || portfolio.id}`)
+                        }
+                        className="mobile-drawer-link flex items-center gap-3 rounded-2xl border border-transparent px-3 py-3 text-sm transition-all duration-200 ease-out hover:bg-brand-purple-light active:bg-brand-purple-light/80 dark:hover:bg-white/10 dark:active:bg-white/15"
                       >
-                        <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-background text-primary">
+                        <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-white/80 text-primary dark:bg-white/10 dark:text-white">
                           <span className="text-sm font-semibold leading-none">
                             {portfolioIconMap[portfolio.country] || 'GL'}
                           </span>
@@ -376,15 +488,20 @@ export function Header() {
                 )}
               </div>
 
-              <div className="rounded-2xl border border-brand-purple/10 bg-brand-purple-light/35 px-2 py-2">
+              <div className="rounded-2xl border border-brand-purple/15 bg-brand-purple-light/30 px-2 py-2 dark:border-white/12 dark:bg-white/[0.04]">
                 <button
                   onClick={() =>
                     setOpenMobileDropdown((value) => (value === 'offer' ? null : 'offer'))
                   }
-                  className="flex w-full items-center justify-between rounded-2xl px-3 py-3 text-left transition-all duration-200 ease-out hover:bg-background/70"
+                  className="flex w-full items-center justify-between rounded-xl px-3 py-3 text-left text-sm font-medium text-foreground transition-all duration-200 ease-out hover:bg-brand-purple-light active:bg-brand-purple-light/80 dark:hover:bg-white/10 dark:active:bg-white/15"
                   type="button"
                 >
-                  <span className="text-sm font-medium text-foreground">Offerings</span>
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-white/80 text-primary dark:bg-white/10 dark:text-white">
+                      <GraduationCap className="h-4 w-4" />
+                    </div>
+                    <span className="text-sm font-medium text-foreground">Offerings</span>
+                  </div>
                   <ChevronDown
                     className={`h-4 w-4 transition-transform duration-200 ease-out ${
                       openMobileDropdown === 'offer' ? 'rotate-180' : ''
@@ -401,10 +518,11 @@ export function Header() {
                         <Link
                           key={item.path}
                           to={item.path}
-                          className="mobile-drawer-link flex items-center gap-3 rounded-2xl px-3 py-3 text-sm transition-all duration-200 ease-out hover:bg-background/80"
+                          onMouseEnter={() => preloadRoute(item.path)}
+                          className="mobile-drawer-link flex items-center gap-3 rounded-2xl border border-transparent px-3 py-3 text-sm transition-all duration-200 ease-out hover:bg-brand-purple-light active:bg-brand-purple-light/80 dark:hover:bg-white/10 dark:active:bg-white/15"
                           style={{ animationDelay: `${index * 40}ms` }}
                         >
-                          <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-background text-primary">
+                          <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-white/80 text-primary dark:bg-white/10 dark:text-white">
                             <Icon className="h-4 w-4" />
                           </div>
                           <span className="font-medium text-foreground">{item.label}</span>
@@ -422,14 +540,15 @@ export function Header() {
                   <Link
                     key={item.label}
                     to={item.path}
-                    className={`mobile-drawer-link flex items-center gap-3 rounded-2xl px-4 py-3 transition-all duration-200 ease-out ${
+                    onMouseEnter={() => preloadRoute(item.path)}
+                    className={`mobile-drawer-link flex items-center gap-3 rounded-2xl border border-transparent px-4 py-3 text-sm font-medium transition-all duration-200 ease-out ${
                       isActive(item.path)
-                        ? 'bg-brand-purple text-white'
-                        : 'text-foreground hover:bg-brand-purple-light'
+                        ? 'bg-brand-purple text-white shadow-[0_8px_22px_rgba(45,27,105,0.24)] dark:bg-[#4C3BA7]'
+                        : 'text-foreground hover:bg-brand-purple-light active:bg-brand-purple-light/80 dark:hover:bg-white/10 dark:active:bg-white/15'
                     }`}
                     style={{ animationDelay: `${(primaryStartItems.length + index) * 40}ms` }}
                   >
-                    <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-brand-purple-light text-primary">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-brand-purple-light text-primary dark:bg-white/10 dark:text-white">
                       <Icon className="h-5 w-5" />
                     </div>
                     <span className="text-sm font-medium">{item.label}</span>
@@ -441,7 +560,8 @@ export function Header() {
             <div className="mt-auto pt-5">
               <Link
                 to="/collaborate"
-                className="cta-btn block rounded-full bg-accent px-4 py-3 text-center text-sm font-semibold text-white shadow-[0_16px_36px_rgba(232,82,26,0.28)]"
+                onMouseEnter={() => preloadRoute('/collaborate')}
+                className="cta-btn block rounded-full bg-accent px-4 py-3 text-center text-sm font-semibold text-white shadow-[0_16px_36px_rgba(232,82,26,0.28)] active:scale-[0.99]"
               >
                 Connect Now
               </Link>

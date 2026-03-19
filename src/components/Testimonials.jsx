@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Star } from 'lucide-react';
-import { useScrollAnimation } from '../hooks/useScrollAnimation';
+import useScrollAnimation from '../hooks/useScrollAnimation';
 import { getTestimonials } from '../services/contentApi';
 import { resolveMediaUrl } from '../services/apiClient';
 
@@ -142,6 +142,8 @@ const Avatar = ({ testimonial, size = 'h-10 w-10' }) => {
       <img
         src={testimonial.photo}
         alt={testimonial.name}
+        loading="lazy"
+        decoding="async"
         className={`${size} rounded-full border border-white/30 object-cover dark:border-white/20`}
       />
     );
@@ -164,13 +166,28 @@ const RatingStars = ({ rating }) => (
   </div>
 );
 
+const TestimonialCard = ({ children, delay = 0, className, onMouseEnter, onMouseLeave }) => {
+  const cardRef = useScrollAnimation({ delay, duration: 500, y: 24 });
+
+  return (
+    <article
+      ref={cardRef}
+      className={`${className} transition-all duration-300 ease-out hover:-translate-y-1 hover:border-[rgba(232,82,26,0.3)] active:-translate-y-1 active:border-[rgba(232,82,26,0.3)]`}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
+    >
+      {children}
+    </article>
+  );
+};
+
 export function Testimonials() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [layoutKey, setLayoutKey] = useState('two_big');
   const [nextIndex, setNextIndex] = useState(0);
   const [nextLayoutKey, setNextLayoutKey] = useState('two_big');
   const [isSliding, setIsSliding] = useState(false);
-  const [ref, isVisible] = useScrollAnimation();
+  const headingRef = useScrollAnimation({ y: 20, duration: 600 });
   const [isAutoPlay, setIsAutoPlay] = useState(true);
   const [testimonials, setTestimonials] = useState(fallbackTestimonials);
   const [isLoading, setIsLoading] = useState(true);
@@ -288,9 +305,10 @@ export function Testimonials() {
   const pauseAutoPlay = () => setIsAutoPlay(false);
   const resumeAutoPlay = () => setIsAutoPlay(true);
 
-  const renderBigCard = (item, keyPrefix, tone = 'blue') => (
-    <article
+  const renderBigCard = (item, keyPrefix, tone = 'blue', index = 0) => (
+    <TestimonialCard
       key={`${keyPrefix}-${item.id}`}
+      delay={index * 120}
       className={
         tone === 'blue'
           ? 'relative min-h-[220px] overflow-hidden rounded-2xl border border-[#7E8CFF]/40 bg-gradient-to-br from-[#2E3FAE] via-[#3850C8] to-[#4361EE] p-5 shadow-[0_16px_34px_rgba(34,49,132,0.32)]'
@@ -315,12 +333,13 @@ export function Testimonials() {
           <p className={`truncate text-sm ${tone === 'blue' ? 'text-white/80' : 'text-[#6A5A9D] dark:text-[#B4A8E8]'}`}>{item.location}</p>
         </div>
       </div>
-    </article>
+    </TestimonialCard>
   );
 
-  const renderSmallCard = (item, keyPrefix) => (
-    <article
+  const renderSmallCard = (item, keyPrefix, index = 0) => (
+    <TestimonialCard
       key={`${keyPrefix}-${item.id}`}
+      delay={index * 120}
       className="min-h-[220px] rounded-2xl border border-[#D8D2EE] bg-white/92 p-4 shadow-[0_14px_32px_rgba(37,23,90,0.12)] dark:border-[#2B2354] dark:bg-[#17122E]/84 dark:shadow-[0_20px_42px_rgba(0,0,0,0.45)]"
       onMouseEnter={pauseAutoPlay}
       onMouseLeave={resumeAutoPlay}
@@ -335,7 +354,7 @@ export function Testimonials() {
           <p className="truncate text-sm text-[#6A5A9D] dark:text-[#B4A8E8]">{item.location}</p>
         </div>
       </div>
-    </article>
+    </TestimonialCard>
   );
 
   const renderLayout = (activeLayoutKey, baseIndex, keyPrefix) => {
@@ -344,7 +363,7 @@ export function Testimonials() {
     if (activeLayoutKey === 'four_small') {
       return (
         <div className="grid grid-cols-2 gap-4 xl:grid-cols-4">
-          {visibleCards.map((item) => renderSmallCard(item, keyPrefix))}
+          {visibleCards.map((item, index) => renderSmallCard(item, `${keyPrefix}-${index}`, index))}
         </div>
       );
     }
@@ -352,7 +371,7 @@ export function Testimonials() {
     return (
       <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
         {visibleCards.map((item, index) =>
-          renderBigCard(item, `${keyPrefix}-${index}`, index % 2 === 0 ? 'blue' : 'light')
+          renderBigCard(item, `${keyPrefix}-${index}`, index % 2 === 0 ? 'blue' : 'light', index)
         )}
       </div>
     );
@@ -361,20 +380,20 @@ export function Testimonials() {
   return (
     <section
       id="testimonials"
-      className="relative overflow-hidden bg-gradient-to-b from-[#F7F4FF] via-[#FDFDFF] to-[#F3F0FF] px-4 py-20 dark:from-[#130F26] dark:via-[#0E0C1C] dark:to-[#161032] sm:py-24 lg:py-28"
+      className="relative overflow-hidden bg-transparent px-4 py-20 sm:py-24 lg:py-28"
     >
       <div className="mx-auto w-full max-w-7xl">
         <div
-          ref={ref}
-          className={`mb-12 text-center transition-all duration-1000 ${
-            isVisible ? 'animate-fade-in-up' : 'translate-y-[30px] opacity-0'
-          }`}
+          ref={headingRef}
+          className="mb-12 text-center"
         >
-          <div className="mb-4 inline-flex rounded-full border border-brand-orange/30 bg-brand-orange/12 px-4 py-2 text-sm font-semibold text-brand-orange dark:border-brand-orange/35 dark:bg-brand-orange/18">
+          <div className="section-kicker-classic mb-4">
             Testimonials
           </div>
-          <h2 className="mb-4 text-4xl font-bold text-foreground lg:text-5xl">What Students Say About Us</h2>
-          <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
+          <h2 className="section-title-classic mb-4">
+            What Students Say <span className="section-title-classic-accent">About Us</span>
+          </h2>
+          <p className="section-subtitle-classic">
             Trusted voices from students and families we have guided across international admissions.
           </p>
         </div>

@@ -8,6 +8,24 @@ const statCards = [
   { value: '95%', label: 'Visa Success Rate' },
 ];
 
+const countUp = (el, target, duration = 1500) => {
+  let start = 0;
+  const isPercent = String(target).includes('%');
+  const isK = String(target).includes('K');
+  const end = parseInt(target, 10);
+  const step = end / (duration / 16);
+
+  const timer = window.setInterval(() => {
+    start += step;
+    if (start >= end) {
+      window.clearInterval(timer);
+      el.textContent = target;
+    } else {
+      el.textContent = `${Math.floor(start)}${isPercent ? '%' : isK ? 'K+' : '+'}`;
+    }
+  }, 16);
+};
+
 export default function HeroSection() {
   const { isDark } = useTheme();
   const sectionRef = useRef(null);
@@ -17,7 +35,15 @@ export default function HeroSection() {
   const textRef = useRef(null);
   const fogRef = useRef(null);
   const statsRef = useRef(null);
-  const [isMobile, setIsMobile] = useState(false);
+  const hasCountedRef = useRef(false);
+  const [isMobile, setIsMobile] = useState(() =>
+    typeof window !== 'undefined' ? window.matchMedia('(max-width: 767px)').matches : false
+  );
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(() =>
+    typeof window !== 'undefined'
+      ? window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      : false
+  );
   const [isVideoReady, setIsVideoReady] = useState(false);
 
   useEffect(() => {
@@ -40,7 +66,24 @@ export default function HeroSection() {
   }, []);
 
   useEffect(() => {
-    if (typeof window === 'undefined' || isMobile) return undefined;
+    if (typeof window === 'undefined') return undefined;
+
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const updateReducedMotion = (event) => {
+      setPrefersReducedMotion(event.matches);
+    };
+
+    if (typeof mediaQuery.addEventListener === 'function') {
+      mediaQuery.addEventListener('change', updateReducedMotion);
+      return () => mediaQuery.removeEventListener('change', updateReducedMotion);
+    }
+
+    mediaQuery.addListener(updateReducedMotion);
+    return () => mediaQuery.removeListener(updateReducedMotion);
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return undefined;
 
     const section = sectionRef.current;
     const video = videoRef.current;
@@ -56,6 +99,10 @@ export default function HeroSection() {
         if (dataSrc && !source.src) {
           source.src = dataSrc;
           video.load();
+          const playPromise = video.play();
+          if (playPromise && typeof playPromise.catch === 'function') {
+            playPromise.catch(() => {});
+          }
         }
 
         observer.disconnect();
@@ -66,10 +113,10 @@ export default function HeroSection() {
     observer.observe(section);
 
     return () => observer.disconnect();
-  }, [isMobile]);
+  }, []);
 
   useEffect(() => {
-    if (typeof window === 'undefined' || isMobile) return undefined;
+    if (typeof window === 'undefined') return undefined;
 
     const video = videoRef.current;
     if (!video) return undefined;
@@ -89,7 +136,7 @@ export default function HeroSection() {
 
     video.addEventListener('timeupdate', handleTimeUpdate);
     return () => video.removeEventListener('timeupdate', handleTimeUpdate);
-  }, [isMobile]);
+  }, []);
 
   useEffect(() => {
     if (typeof window === 'undefined' || isMobile) return undefined;
@@ -126,10 +173,53 @@ export default function HeroSection() {
     return () => window.removeEventListener('scroll', onScroll);
   }, [isMobile]);
 
+  useEffect(() => {
+    if (typeof window === 'undefined') return undefined;
+    if (isMobile) return undefined;
+
+    const stats = statsRef.current;
+    if (!stats) return undefined;
+
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReduced) {
+      stats.querySelectorAll('[data-countup]').forEach((el) => {
+        el.textContent = el.dataset.countup || el.textContent;
+      });
+      return undefined;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting || hasCountedRef.current) return;
+
+        hasCountedRef.current = true;
+        stats.querySelectorAll('[data-countup]').forEach((el) => {
+          countUp(el, el.dataset.countup || el.textContent);
+        });
+        observer.disconnect();
+      },
+      { threshold: 0.4 }
+    );
+
+    observer.observe(stats);
+    return () => observer.disconnect();
+  }, [isMobile]);
+
+  const heroAnimation = (name, duration, delay) => {
+    if (prefersReducedMotion) {
+      return 'none';
+    }
+    const resolvedDuration = isMobile ? 400 : duration;
+    const resolvedDelay = isMobile ? 0 : delay;
+    return `${name} ${resolvedDuration}ms ease-out ${resolvedDelay}ms forwards`;
+  };
+
+  const heroOpacity = prefersReducedMotion ? 1 : 0;
+
   return (
     <section
       ref={sectionRef}
-      className="relative min-h-[100dvh] overflow-hidden bg-[#F8F5FF] text-[#1A1033] dark:bg-[#0D0A1A] dark:text-white"
+      className="relative min-h-[100dvh] overflow-hidden bg-transparent text-foreground"
     >
       <div
         ref={mediaRef}
@@ -140,25 +230,31 @@ export default function HeroSection() {
           src="/videos/hero-poster.png"
           alt=""
           aria-hidden="true"
+          loading="lazy"
+          decoding="async"
           className="absolute inset-0 h-full w-full object-cover"
         />
 
-        {!isMobile && (
-          <video
-            ref={videoRef}
-            autoPlay
-            muted
-            playsInline
-            preload="auto"
-            poster="/videos/hero-poster.png"
-            onLoadedData={() => setIsVideoReady(true)}
-            className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-700 ease-out ${
-              isVideoReady ? 'opacity-100' : 'opacity-0'
-            }`}
-          >
-            <source ref={sourceRef} data-src="/videos/hero.mp4" type="video/mp4" />
-          </video>
-        )}
+        <video
+          ref={videoRef}
+          autoPlay
+          muted
+          playsInline
+          preload="auto"
+          poster="/videos/hero-poster.png"
+            onLoadedData={() => {
+              setIsVideoReady(true);
+              const playPromise = videoRef.current?.play();
+              if (playPromise && typeof playPromise.catch === 'function') {
+                playPromise.catch(() => {});
+              }
+            }}
+          className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-700 ease-out ${
+            isVideoReady ? 'opacity-100' : 'opacity-0'
+          }`}
+        >
+          <source ref={sourceRef} data-src="/videos/hero.mp4" type="video/mp4" />
+        </video>
       </div>
 
       <div
@@ -202,7 +298,7 @@ export default function HeroSection() {
           <div className="max-w-3xl">
             <span
               className="inline-flex rounded-full border border-brand-orange/60 bg-[#140F2A]/30 px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.24em] text-[#FF7A3D] sm:text-xs dark:border-brand-orange/30 dark:bg-brand-orange/15 dark:text-brand-orange"
-              style={{ animation: 'fadeDown 600ms ease forwards', opacity: 0 }}
+              style={{ animation: heroAnimation('fadeDown', 500, 0), opacity: heroOpacity }}
             >
               {'\u{1F30D}'} India's Trusted Global Education Partner
             </span>
@@ -210,15 +306,17 @@ export default function HeroSection() {
             <h1
               className="mt-6 font-heading text-[36px] font-bold leading-[1.1] text-white sm:text-[44px] lg:text-[60px]"
               style={{
-                animation: 'fadeUp 700ms ease 100ms forwards',
-                opacity: 0,
                 textShadow: isDark
                   ? '0 6px 24px rgba(13,10,26,0.45)'
                   : '0 8px 30px rgba(8,5,20,0.46)',
               }}
             >
-              <span className="block">Your Dream University.</span>
-              <span className="block">Our Proven Pathway.</span>
+              <span className="block" style={{ animation: heroAnimation('fadeUp', 700, 100), opacity: heroOpacity }}>
+                Your Dream University.
+              </span>
+              <span className="block" style={{ animation: heroAnimation('fadeUp', 700, 200), opacity: heroOpacity }}>
+                Our Proven Pathway.
+              </span>
             </h1>
 
             <p
@@ -226,8 +324,8 @@ export default function HeroSection() {
                 isDark ? 'text-white/70' : 'text-white/88'
               }`}
               style={{
-                animation: 'fadeUp 700ms ease 200ms forwards',
-                opacity: 0,
+                animation: heroAnimation('fadeUp', 600, 300),
+                opacity: heroOpacity,
                 textShadow: isDark ? 'none' : '0 3px 16px rgba(6,4,16,0.38)',
               }}
             >
@@ -237,7 +335,7 @@ export default function HeroSection() {
 
             <div
               className="mt-8 flex flex-col gap-4 sm:flex-row"
-              style={{ animation: 'fadeUp 700ms ease 300ms forwards', opacity: 0 }}
+              style={{ animation: heroAnimation('fadeUp', 600, 400), opacity: heroOpacity }}
             >
               <Link
                 to="/collaborate"
@@ -261,18 +359,22 @@ export default function HeroSection() {
         className="pointer-events-none absolute inset-x-0 bottom-10 z-10 px-4 sm:px-6 lg:px-8"
         style={{ willChange: 'transform' }}
       >
-        <div className="mx-auto flex max-w-4xl flex-wrap items-center justify-center gap-4">
+        <div className="mx-auto grid w-full max-w-4xl grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4">
           {statCards.map((card, index) => (
             <div
               key={card.label}
-              className={`relative min-w-[160px] overflow-hidden rounded-2xl border px-5 py-4 text-center sm:px-7 ${
+              className={`relative w-full overflow-hidden rounded-2xl border px-3 py-3 text-center sm:px-5 sm:py-4 ${
+                index === statCards.length - 1
+                  ? 'col-span-2 mx-auto max-w-[220px] sm:col-span-1 sm:max-w-none'
+                  : ''
+              } ${
                 isDark
                   ? 'border-[#8B7BE8]/28 bg-[#151129]/70 shadow-[0_24px_56px_rgba(5,3,18,0.55)]'
                   : 'border-[#D8D3EB] shadow-[0_16px_34px_rgba(26,16,51,0.18)]'
               }`}
               style={{
-                animation: `slideUp 800ms ease ${500 + index * 120}ms forwards`,
-                opacity: 0,
+                animation: heroAnimation('scaleIn', 500, 500 + index * 80),
+                opacity: heroOpacity,
                 ...(isDark
                   ? {}
                   : {
@@ -297,14 +399,15 @@ export default function HeroSection() {
                 </>
               )}
               <p
-                className={`font-heading text-[28px] font-bold ${
+                className={`font-heading text-2xl font-bold sm:text-[28px] ${
                   isDark ? 'text-white' : 'text-[#1E1440]'
                 }`}
+                data-countup={card.value}
               >
                 {card.value}
               </p>
               <p
-                className={`mt-1 text-[11px] font-medium uppercase tracking-[0.22em] ${
+                className={`mt-1 text-[10px] font-medium uppercase tracking-[0.2em] sm:text-[11px] sm:tracking-[0.22em] ${
                   isDark ? 'text-[#B8ADDC]' : 'text-[#5F4D98]'
                 }`}
               >
@@ -315,9 +418,12 @@ export default function HeroSection() {
         </div>
       </div>
 
-      <div className="pointer-events-none absolute bottom-7 left-1/2 z-10 -translate-x-1/2 text-[#2D1B69]/45 dark:text-white/40">
+      <div
+        className="pointer-events-none absolute bottom-7 left-1/2 z-10 -translate-x-1/2 text-[#2D1B69]/45 dark:text-white/40"
+        style={{ animation: heroAnimation('fadeUp', 400, 800), opacity: heroOpacity }}
+      >
         <svg
-          className="h-6 w-6 animate-[bounce_2s_ease-in-out_infinite]"
+          className="h-6 w-6"
           viewBox="0 0 24 24"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
@@ -333,22 +439,6 @@ export default function HeroSection() {
         </svg>
       </div>
 
-      <style>{`
-        @keyframes fadeUp {
-          from { opacity: 0; transform: translateY(24px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes fadeDown {
-          from { opacity: 0; transform: translateY(-12px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes slideUp {
-          from { opacity: 0; transform: translateY(40px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-      `}</style>
     </section>
   );
 }

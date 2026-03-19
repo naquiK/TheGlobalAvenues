@@ -171,6 +171,8 @@ export default function GalleryPage() {
                 <motion.img
                   src={item.image}
                   alt={item.title}
+                  loading="lazy"
+                  decoding="async"
                   className="w-full h-full object-cover"
                   whileHover={{ scale: 1.1 }}
                   transition={{ duration: 0.4 }}
@@ -238,6 +240,8 @@ export default function GalleryPage() {
             <img
               src={selectedImage.image}
               alt={selectedImage.title}
+              loading="lazy"
+              decoding="async"
               className="w-full h-auto rounded-lg"
             />
             <button

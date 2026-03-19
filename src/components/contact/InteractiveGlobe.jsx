@@ -64,18 +64,53 @@ export function InteractiveGlobe() {
     let frameId = 0;
     let globe = null;
     let scene = null;
+    let ambientLight = null;
+    let keyLight = null;
+    let rimLight = null;
+    let countriesLoaded = false;
+    let isDarkMode = document.documentElement.classList.contains('dark');
+    let THREERef = null;
     let controls = null;
+    let resizeObserver = null;
     let raycaster = null;
     let mouse = null;
     let hoveringMesh = false;
     let pointerDown = false;
     const container = containerRef.current;
     const geoAbortController = new AbortController();
+    let viewportSettings = { altitude: 1.55, autoRotateSpeed: 3.0 };
+
+    const getResponsiveSettings = () => {
+      const width = container?.clientWidth || window.innerWidth;
+
+      if (width < 430) {
+        return { altitude: 2.28, autoRotateSpeed: 2.2 };
+      }
+      if (width < 768) {
+        return { altitude: 2.0, autoRotateSpeed: 2.45 };
+      }
+      if (width < 1024) {
+        return { altitude: 1.74, autoRotateSpeed: 2.7 };
+      }
+      return { altitude: 1.55, autoRotateSpeed: 3.0 };
+    };
 
     const handleResize = () => {
       if (!globe || !container) return;
       globe.width(container.clientWidth);
       globe.height(container.clientHeight);
+
+      const nextSettings = getResponsiveSettings();
+      const altitudeChanged = Math.abs(nextSettings.altitude - viewportSettings.altitude) > 0.01;
+
+      viewportSettings = nextSettings;
+      if (controls) {
+        controls.autoRotateSpeed = viewportSettings.autoRotateSpeed;
+      }
+
+      if (controls && altitudeChanged) {
+        globe.pointOfView({ lat: 30, lng: 40, altitude: viewportSettings.altitude }, 700);
+      }
     };
 
     const handleMouseMove = (event) => {
@@ -129,6 +164,113 @@ export function InteractiveGlobe() {
       frameId = window.requestAnimationFrame(animate);
     };
 
+    const applyTheme = (dark) => {
+      if (!globe || !THREERef) return;
+
+      const theme = dark
+        ? {
+            globeColor: 0x050203,
+            shininess: 0.18,
+            atmosphereColor: '#6e1428',
+            atmosphereAltitude: 0.18,
+            hexColor: 'rgba(255, 150, 182, 0.64)',
+            hexAltitude: 0.007,
+            hexMargin: 0.52,
+            ambientColor: 0x4a1525,
+            ambientIntensity: 3.6,
+            keyColor: 0xffffff,
+            keyIntensity: 0.6,
+            keyPosition: [10, 8, 12],
+            rimColor: 0x6e1428,
+            rimIntensity: 0.35,
+            rimPosition: [-12, 4, -6],
+            ringPrimary: '255, 255, 255',
+            ringAccent: '255, 0, 85',
+            ringAlpha: 1,
+            ringScale: 0.72,
+            ringSpeed: 1.75,
+            ringPeriod: 780,
+            ringAltitude: 0.012,
+          }
+        : {
+            globeColor: 0x444852,
+            shininess: 0.08,
+            atmosphereColor: '#7e7ab8',
+            atmosphereAltitude: 0.09,
+            hexColor: 'rgba(20, 20, 26, 0.98)',
+            hexAltitude: 0.018,
+            hexMargin: 0.25,
+            ambientColor: 0x40434c,
+            ambientIntensity: 0.2,
+            keyColor: 0x8f95a6,
+            keyIntensity: 0.12,
+            keyPosition: [-6, 6, 4],
+            rimColor: 0x6b5aa8,
+            rimIntensity: 0.12,
+            rimPosition: [-10, 6, -8],
+            ringPrimary: '255, 255, 255',
+            ringAccent: '255, 210, 140',
+            ringAlpha: 1,
+            ringScale: 1.2,
+            ringSpeed: 1.15,
+            ringPeriod: 920,
+            ringAltitude: 0.04,
+          };
+
+      const material = dark
+        ? new THREERef.MeshPhongMaterial({
+            color: theme.globeColor,
+            shininess: theme.shininess,
+            specular: new THREERef.Color(0x1b0b13),
+            emissive: new THREERef.Color(0x000000),
+            emissiveIntensity: 0.05,
+          })
+        : new THREERef.MeshLambertMaterial({
+            color: theme.globeColor,
+            emissive: new THREERef.Color(0x2a2d36),
+            emissiveIntensity: 0.12,
+          });
+
+      globe
+        .showAtmosphere(true)
+        .atmosphereColor(theme.atmosphereColor)
+        .atmosphereAltitude(theme.atmosphereAltitude)
+        .globeMaterial(material);
+
+      if (countriesLoaded) {
+        globe
+          .hexPolygonColor(() => theme.hexColor)
+          .hexPolygonAltitude(theme.hexAltitude)
+          .hexPolygonMargin(theme.hexMargin);
+      }
+
+      globe.ringColor((location) => (time) => {
+        const rgb = location.colorRgb === '255, 255, 255' ? theme.ringPrimary : theme.ringAccent;
+        const fade = Math.max(0, 1 - time * 0.55);
+        return `rgba(${rgb}, ${Math.min(1, theme.ringAlpha * fade)})`;
+      });
+      globe
+        .ringMaxRadius((location) => location.radius * theme.ringScale)
+        .ringAltitude(theme.ringAltitude)
+        .ringPropagationSpeed(theme.ringSpeed)
+        .ringRepeatPeriod(theme.ringPeriod);
+
+      if (ambientLight) {
+        ambientLight.color = new THREERef.Color(theme.ambientColor);
+        ambientLight.intensity = theme.ambientIntensity;
+      }
+      if (keyLight) {
+        keyLight.color = new THREERef.Color(theme.keyColor);
+        keyLight.intensity = dark ? theme.keyIntensity : 0;
+        keyLight.position.set(...theme.keyPosition);
+      }
+      if (rimLight) {
+        rimLight.color = new THREERef.Color(theme.rimColor);
+        rimLight.intensity = dark ? theme.rimIntensity : 0;
+        rimLight.position.set(...theme.rimPosition);
+      }
+    };
+
     const initializeGlobe = async () => {
       try {
         await loadExternalScript(THREE_CDN);
@@ -141,27 +283,30 @@ export function InteractiveGlobe() {
 
         if (!THREE || !GlobeFactory) return;
 
+        THREERef = THREE;
+        viewportSettings = getResponsiveSettings();
         globe = GlobeFactory()(container)
           .backgroundColor('rgba(0,0,0,0)')
           .showGlobe(true)
-          .showAtmosphere(true)
-          .atmosphereColor('#6e1428')
-          .atmosphereAltitude(0.18)
           .ringsData(LOCATIONS)
-          .ringColor((location) => (time) => `rgba(${location.colorRgb}, ${Math.max(0, 1 - time)})`)
-          .ringMaxRadius((location) => location.radius * 1.45)
+          .ringMaxRadius((location) => location.radius * 0.72)
           .ringPropagationSpeed(1.75)
           .ringRepeatPeriod(780);
 
         handleResize();
 
-        globe.globeMaterial(new THREE.MeshPhongMaterial({ color: 0x050203, shininess: 0.18 }));
-
         scene = globe.scene();
         scene.children = scene.children.filter(
           (child) => !(child instanceof THREE.AmbientLight || child instanceof THREE.DirectionalLight)
         );
-        scene.add(new THREE.AmbientLight(0x4a1525, 3.6));
+        ambientLight = new THREE.AmbientLight(0x4a1525, 3.6);
+        keyLight = new THREE.DirectionalLight(0xffffff, 0.6);
+        keyLight.position.set(10, 8, 12);
+        rimLight = new THREE.DirectionalLight(0x6e1428, 0.35);
+        rimLight.position.set(-12, 4, -6);
+        scene.add(ambientLight);
+        scene.add(keyLight);
+        scene.add(rimLight);
 
         controls = globe.controls();
         controls.enableDamping = true;
@@ -170,7 +315,7 @@ export function InteractiveGlobe() {
         controls.enableZoom = false;
         controls.enableRotate = false;
         controls.autoRotate = true;
-        controls.autoRotateSpeed = 3.0;
+        controls.autoRotateSpeed = viewportSettings.autoRotateSpeed;
 
         raycaster = new THREE.Raycaster();
         mouse = new THREE.Vector2(-2, -2);
@@ -180,8 +325,15 @@ export function InteractiveGlobe() {
         container.addEventListener('mousedown', handlePointerDown);
         window.addEventListener('mouseup', handlePointerUp);
         window.addEventListener('resize', handleResize);
+        if (typeof window.ResizeObserver === 'function') {
+          resizeObserver = new window.ResizeObserver(() => handleResize());
+          resizeObserver.observe(container);
+        }
 
-        globe.pointOfView({ lat: 30, lng: 40, altitude: 1.55 }, 2000);
+        globe.pointOfView({ lat: 30, lng: 40, altitude: viewportSettings.altitude }, 2000);
+        window.requestAnimationFrame(() => {
+          handleResize();
+        });
 
         const response = await fetch(GEOJSON_URL, { signal: geoAbortController.signal });
         const countries = await response.json();
@@ -190,12 +342,13 @@ export function InteractiveGlobe() {
           globe
             .hexPolygonsData(countries.features)
             .hexPolygonResolution(3)
-            .hexPolygonMargin(0.52)
-            .hexPolygonColor(() => 'rgba(255, 150, 182, 0.64)')
-            .hexPolygonAltitude(0.007);
+            .hexPolygonMargin(0.52);
+          countriesLoaded = true;
+          applyTheme(isDarkMode);
         }
 
         if (!cancelled) {
+          applyTheme(isDarkMode);
           animate();
         }
       } catch (error) {
@@ -207,9 +360,22 @@ export function InteractiveGlobe() {
 
     initializeGlobe();
 
+    const themeObserver = new MutationObserver(() => {
+      const nextDark = document.documentElement.classList.contains('dark');
+      if (nextDark !== isDarkMode) {
+        isDarkMode = nextDark;
+        applyTheme(isDarkMode);
+      }
+    });
+    themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+
     return () => {
       cancelled = true;
       geoAbortController.abort();
+      themeObserver.disconnect();
+      if (resizeObserver) {
+        resizeObserver.disconnect();
+      }
       window.cancelAnimationFrame(frameId);
       window.removeEventListener('resize', handleResize);
       window.removeEventListener('mouseup', handlePointerUp);
@@ -221,7 +387,7 @@ export function InteractiveGlobe() {
   }, []);
 
   return (
-    <div className="relative h-full w-full overflow-hidden bg-transparent">
+    <div className="relative h-full w-full overflow-visible bg-transparent">
       <div ref={containerRef} className="h-full w-full cursor-default" />
     </div>
   );

@@ -16,7 +16,7 @@ import {
   Users,
   X,
 } from 'lucide-react';
-import { useScrollAnimation } from '../hooks/useScrollAnimation';
+import useScrollAnimation from '../hooks/useScrollAnimation';
 
 const services = [
   {
@@ -352,6 +352,8 @@ const UniversitySolutionsModal = ({ isOpen, onClose }) => {
               <img
                 src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=1200&h=900&fit=crop&q=80"
                 alt="University partnership strategy session"
+                loading="lazy"
+                decoding="async"
                 className="h-full w-full object-cover opacity-90 transition-all duration-500 dark:opacity-80 dark:brightness-90"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/25 to-transparent" />
@@ -659,6 +661,7 @@ const EndToEndModal = ({ isOpen, onClose, item }) => {
 };
 
 const EndToEndSupportCard = ({ item, index, onClick }) => {
+  const cardRef = useScrollAnimation({ y: 32, duration: 500, delay: index * 80, scale: 0.98 });
   const detail = endToEndModalDetails[item.title] || {
     icon: Briefcase,
     gradient: 'from-[#2D1B69] via-[#5340B0] to-[#E8521A]',
@@ -668,45 +671,38 @@ const EndToEndSupportCard = ({ item, index, onClick }) => {
   const topTag = detail.outcomes?.[0] || 'Complete Support';
 
   return (
-    <div
-      onClick={() => onClick(item)}
-      onKeyDown={(event) => {
-        if (event.key === 'Enter' || event.key === ' ') {
-          event.preventDefault();
-          onClick(item);
-        }
-      }}
-      role="button"
-      tabIndex={0}
-      className={`group relative cursor-pointer rounded-2xl p-[1px] transition-all duration-500 hover:-translate-y-1 ${
-        index % 2 === 0 ? 'lg:-translate-y-2 lg:hover:-translate-y-3' : ''
-      }`}
-      style={{ animationDelay: `${index * 80}ms` }}
-    >
-      <div className={`absolute inset-0 rounded-2xl bg-gradient-to-br ${detail.gradient} opacity-35 blur-[0.5px] transition-all duration-500 group-hover:opacity-70 dark:opacity-20 dark:group-hover:opacity-45`} />
-
-      <div className="relative z-10 flex min-h-[280px] flex-col overflow-hidden rounded-2xl border border-[#E6E1F6]/70 bg-[#F5F3FF]/95 p-6 shadow-[0_14px_34px_rgba(45,27,105,0.12)] backdrop-blur-sm transition-colors duration-300 group-hover:border-[#5340B0]/60 dark:border-[#3A2A78] dark:bg-[#1A1033] dark:shadow-[0_22px_48px_rgba(0,0,0,0.55)] dark:group-hover:border-[#5340B0]">
-        <div className="pointer-events-none absolute right-0 top-0 h-24 w-24 -translate-y-2 translate-x-2 rounded-full bg-[#E8521A]/15 blur-2xl transition-opacity duration-500 group-hover:opacity-80 dark:bg-[#5340B0]/35" />
-
-        <div className="relative z-10 mb-6 flex items-center justify-between gap-3">
-          <div className={`inline-flex items-center rounded-full border border-white/25 bg-gradient-to-r ${detail.gradient} px-3 py-1 text-xs font-semibold text-white shadow-sm`}>
+    <div ref={cardRef}>
+      <div
+        onClick={() => onClick(item)}
+        onKeyDown={(event) => {
+          if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            onClick(item);
+          }
+        }}
+        role="button"
+        tabIndex={0}
+        className={`group relative flex cursor-pointer flex-col rounded-2xl border border-border bg-white/85 p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-primary/50 hover:shadow-md active:-translate-y-1 active:border-primary/50 active:shadow-md dark:border-[#2B2354] dark:bg-[#15112B] ${
+          index % 2 === 0 ? 'lg:-translate-y-1' : ''
+        }`}
+      >
+        <div className="mb-5 flex items-center justify-between gap-3">
+          <div className="inline-flex items-center rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.16em] text-primary dark:border-white/20 dark:bg-white/10 dark:text-white">
             {topTag}
           </div>
-          <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-[#5340B0]/30 bg-[#5340B0]/10 transition-all duration-300 group-hover:scale-105 group-hover:border-[#E8521A]/60 group-hover:bg-[#E8521A]/15 dark:border-[#5340B0]/60 dark:bg-[#2D1B69] dark:group-hover:border-[#E8521A]/70 dark:group-hover:bg-[#E8521A]/20">
-            <CardIcon className="h-5 w-5 text-[#2D1B69] dark:text-[#F5F3FF]" />
+          <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-border bg-white text-primary dark:border-[#2B2354] dark:bg-[#1C1634] dark:text-white">
+            <CardIcon className="h-5 w-5" />
           </div>
         </div>
 
-        <h4 className="text-2xl font-bold leading-tight text-[#2D1B69] transition-colors duration-300 group-hover:text-[#5340B0] dark:text-[#F5F3FF] dark:group-hover:text-[#E8521A]">
-          {item.title}
-        </h4>
-        <p className="mt-3 text-base leading-relaxed text-[#1A1033]/80 dark:text-[#F5F3FF]/85">{item.description}</p>
+        <h4 className="text-2xl font-semibold leading-tight text-foreground">{item.title}</h4>
+        <p className="mt-3 text-base leading-relaxed text-muted-foreground">{item.description}</p>
 
         <div className="mt-5 flex flex-wrap gap-2">
           {detail.outcomes?.slice(0, 2).map((value) => (
             <span
               key={value}
-              className="rounded-full border border-[#D9D3F0]/80 bg-white/70 px-3 py-1 text-xs font-medium text-[#2D1B69]/80 dark:border-[#5340B0]/40 dark:bg-[#22164A] dark:text-[#F5F3FF]/80"
+              className="rounded-full border border-border bg-white/80 px-3 py-1 text-xs font-medium text-muted-foreground dark:border-[#2B2354] dark:bg-[#1C1634]"
             >
               {value}
             </span>
@@ -714,7 +710,7 @@ const EndToEndSupportCard = ({ item, index, onClick }) => {
         </div>
 
         <div className="mt-auto pt-6">
-          <div className="inline-flex items-center gap-2 rounded-full border border-[#E8521A]/45 bg-[#E8521A]/12 px-4 py-2 text-sm font-semibold text-[#E8521A] transition-all duration-300 group-hover:bg-[#E8521A] group-hover:text-white dark:border-[#E8521A]/70 dark:bg-[#E8521A]/18 dark:text-[#E8521A] dark:group-hover:bg-[#E8521A] dark:group-hover:text-white">
+          <div className="inline-flex items-center gap-2 rounded-full border border-primary/30 px-4 py-2 text-sm font-semibold text-primary transition-all duration-300 group-hover:bg-primary group-hover:text-primary-foreground dark:border-white/30 dark:text-white dark:group-hover:bg-white/15">
             Learn more
             <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
           </div>
@@ -725,7 +721,7 @@ const EndToEndSupportCard = ({ item, index, onClick }) => {
 };
 
 const ServiceGridCard = ({ service, index, onClick }) => {
-  const [cardRef, cardIsVisible] = useScrollAnimation();
+  const cardRef = useScrollAnimation({ y: 32, duration: 500, delay: index * 80, scale: 0.97 });
   const meta = serviceCardMeta[service.title] || {
     tag: 'Core Service',
     outcomes: ['Global Reach', 'Student Support'],
@@ -744,46 +740,35 @@ const ServiceGridCard = ({ service, index, onClick }) => {
       }}
       role="button"
       tabIndex={0}
-      className={`group relative cursor-pointer rounded-2xl p-[1px] transition-all duration-500 hover:-translate-y-1 ${
-        index % 2 === 0 ? 'lg:-translate-y-2 lg:hover:-translate-y-3' : ''
-      } ${cardIsVisible ? 'animate-fade-in-up' : 'translate-y-[30px] opacity-0'}`}
-      style={{ transitionDelay: `${index * 100}ms` }}
+      className="group relative flex h-full cursor-pointer flex-col rounded-2xl border border-border bg-white/85 p-6 shadow-sm transition-all duration-300 ease-out hover:-translate-y-1.5 hover:scale-[1.01] hover:border-primary/50 hover:shadow-[0_20px_40px_rgba(45,27,105,0.12)] active:-translate-y-1.5 active:scale-[1.01] active:border-primary/50 active:shadow-[0_20px_40px_rgba(45,27,105,0.12)] dark:border-[#2B2354] dark:bg-[#15112B]"
     >
-      <div className={`absolute inset-0 rounded-2xl bg-gradient-to-br ${service.gradient} opacity-35 blur-[0.5px] transition-all duration-500 group-hover:opacity-70 dark:opacity-20 dark:group-hover:opacity-45`} />
-
-      <div className="relative z-10 flex min-h-[280px] flex-col overflow-hidden rounded-2xl border border-[#E6E1F6]/70 bg-[#F5F3FF]/95 p-6 shadow-[0_14px_34px_rgba(45,27,105,0.12)] backdrop-blur-sm transition-colors duration-300 group-hover:border-[#5340B0]/60 dark:border-[#3A2A78] dark:bg-[#1A1033] dark:shadow-[0_22px_48px_rgba(0,0,0,0.55)] dark:group-hover:border-[#5340B0]">
-        <div className="pointer-events-none absolute right-0 top-0 h-24 w-24 -translate-y-2 translate-x-2 rounded-full bg-white/60 blur-2xl transition-opacity duration-500 group-hover:opacity-80 dark:bg-[#5340B0]/35" />
-
-        <div className="relative z-10 mb-6 flex items-center justify-between gap-3">
-          <div className={`inline-flex items-center rounded-full border border-white/25 bg-gradient-to-r ${service.gradient} px-3 py-1 text-xs font-semibold text-white shadow-sm`}>
-            {meta.tag}
-          </div>
-          <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-white/30 bg-white/80 transition-all duration-300 group-hover:scale-105 group-hover:bg-white dark:border-[#5340B0]/60 dark:bg-[#2D1B69] dark:group-hover:border-white/40">
-            <Icon className="h-5 w-5 text-[#2D1B69] dark:text-[#F5F3FF]" />
-          </div>
+      <div className="mb-5 flex items-center justify-between gap-3">
+        <div className="inline-flex items-center rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.16em] text-primary dark:border-white/20 dark:bg-white/10 dark:text-white">
+          {meta.tag}
         </div>
-
-        <h3 className="text-2xl font-bold leading-tight text-[#2D1B69] transition-colors duration-300 group-hover:text-[#5340B0] dark:text-[#F5F3FF] dark:group-hover:text-[#E8521A]">
-          {service.title}
-        </h3>
-        <p className="mt-3 text-base leading-relaxed text-[#1A1033]/80 dark:text-[#F5F3FF]/85">{service.description}</p>
-
-        <div className="mt-5 flex flex-wrap gap-2">
-          {meta.outcomes.map((value) => (
-            <span
-              key={value}
-              className="rounded-full border border-[#D9D3F0]/80 bg-white/70 px-3 py-1 text-xs font-medium text-[#2D1B69]/80 dark:border-[#5340B0]/40 dark:bg-[#22164A] dark:text-[#F5F3FF]/80"
-            >
-              {value}
-            </span>
-          ))}
+        <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-border bg-white text-primary transition-all duration-200 ease-out group-hover:rotate-[8deg] group-hover:scale-110 group-hover:bg-[#E8521A] group-hover:text-white group-active:rotate-[8deg] group-active:scale-110 group-active:bg-[#E8521A] group-active:text-white dark:border-[#2B2354] dark:bg-[#1C1634] dark:text-white">
+          <Icon className="h-5 w-5" />
         </div>
+      </div>
 
-        <div className="mt-auto pt-6">
-          <div className="inline-flex items-center gap-2 rounded-full border border-[#E8521A]/45 bg-[#E8521A]/12 px-4 py-2 text-sm font-semibold text-[#E8521A] transition-all duration-300 group-hover:bg-[#E8521A] group-hover:text-white dark:border-[#E8521A]/70 dark:bg-[#E8521A]/18 dark:text-[#E8521A] dark:group-hover:bg-[#E8521A] dark:group-hover:text-white">
-            Learn more
-            <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
-          </div>
+      <h3 className="text-2xl font-semibold leading-tight text-foreground">{service.title}</h3>
+      <p className="mt-3 text-base leading-relaxed text-muted-foreground">{service.description}</p>
+
+      <div className="mt-5 flex flex-wrap gap-2">
+        {meta.outcomes.map((value) => (
+          <span
+            key={value}
+            className="rounded-full border border-border bg-white/80 px-3 py-1 text-xs font-medium text-muted-foreground dark:border-[#2B2354] dark:bg-[#1C1634]"
+          >
+            {value}
+          </span>
+        ))}
+      </div>
+
+      <div className="mt-auto pt-6">
+        <div className="inline-flex items-center gap-2 rounded-full border border-primary/30 px-4 py-2 text-sm font-semibold text-primary transition-all duration-300 group-hover:bg-primary group-hover:text-primary-foreground dark:border-white/30 dark:text-white dark:group-hover:bg-white/15">
+          Learn more
+          <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
         </div>
       </div>
     </div>
@@ -791,23 +776,19 @@ const ServiceGridCard = ({ service, index, onClick }) => {
 };
 
 export function Services() {
-  const [headerRef, headerIsVisible] = useScrollAnimation();
-  const [endRef, endIsVisible] = useScrollAnimation();
+  const headerRef = useScrollAnimation({ y: 20, duration: 600 });
+  const endRef = useScrollAnimation({ y: 20, duration: 600 });
   const [showUniversityModal, setShowUniversityModal] = useState(false);
   const [selectedService, setSelectedService] = useState(null);
   const [selectedEndToEnd, setSelectedEndToEnd] = useState(null);
 
   return (
-    <section id="services" className="relative overflow-hidden bg-muted/30 px-4 py-20">
-      <div className="absolute -top-40 -right-40 -z-10 h-80 w-80 rounded-full bg-secondary/10 blur-3xl" />
-      <div className="absolute -bottom-40 -left-40 -z-10 h-80 w-80 rounded-full bg-primary/10 blur-3xl" />
+    <section id="services" className="relative overflow-hidden bg-transparent px-4 py-20">
 
       <div className="mx-auto w-full max-w-7xl">
         <div
           ref={headerRef}
-          className={`mb-16 grid grid-cols-1 items-center gap-8 transition-all duration-1000 lg:grid-cols-2 ${
-            headerIsVisible ? 'animate-fade-in-up' : 'translate-y-[30px] opacity-0'
-          }`}
+          className="mb-16 grid grid-cols-1 items-center gap-8 lg:grid-cols-2"
         >
           <div className="text-center lg:text-left">
             <div className="inline-flex items-center rounded-full border border-primary/20 bg-white/70 px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-primary shadow-sm dark:border-white/15 dark:bg-white/10 dark:text-white">
@@ -816,11 +797,15 @@ export function Services() {
             <div className="mt-4">
               <h2 className="text-4xl font-bold text-foreground sm:text-5xl lg:text-6xl">
                 Comprehensive
-                <span className="block text-transparent bg-clip-text bg-gradient-to-r from-primary via-secondary to-accent">
-                  University Solutions
+                <span className="block">
+                  <span className="block w-fit bg-[linear-gradient(92deg,#2D1B69_0%,#5B45C6_38%,#8B63E5_58%,#D26BA8_76%,#E8521A_100%)] bg-clip-text text-transparent">
+                    University
+                  </span>
+                  <span className="block w-fit bg-[linear-gradient(92deg,#2D1B69_0%,#5B45C6_38%,#8B63E5_58%,#D26BA8_76%,#E8521A_100%)] bg-clip-text text-transparent">
+                    Solutions
+                  </span>
                 </span>
               </h2>
-              <div className="mt-4 h-1.5 w-16 rounded-full bg-gradient-to-r from-primary to-accent" />
             </div>
             <p className="mt-6 text-lg leading-relaxed text-muted-foreground">
               We provide end-to-end support to help higher education institutions expand their reach and recruit top-tier international students.
@@ -842,23 +827,6 @@ export function Services() {
               </a>
             </div>
 
-            <div className="mt-10 grid gap-3 sm:grid-cols-3">
-              {[
-                { title: 'Strategy', detail: 'Market entry design' },
-                { title: 'Recruitment', detail: 'Pipeline management' },
-                { title: 'Operations', detail: 'Student lifecycle care' },
-              ].map((item) => (
-                <div
-                  key={item.title}
-                  className="rounded-2xl border border-border/80 bg-white/80 px-4 py-3 text-sm shadow-sm dark:border-[#2B2354]/80 dark:bg-[#16122D]/70"
-                >
-                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-primary/80 dark:text-white/70">
-                    {item.title}
-                  </p>
-                  <p className="mt-1 text-sm font-semibold text-foreground">{item.detail}</p>
-                </div>
-              ))}
-            </div>
           </div>
 
           <div className="relative hidden lg:block">
@@ -867,29 +835,12 @@ export function Services() {
               <div className="relative overflow-hidden rounded-2xl">
                 <img
                   src="https://images.unsplash.com/photo-1552664730-d307ca884978?w=800&h=720&fit=crop&q=80"
-                  alt="Educational services"
+                  alt="University collaboration"
+                  loading="lazy"
+                  decoding="async"
                   className="h-[420px] w-full object-cover transition-transform duration-500 hover:scale-105"
                 />
                 <div className="absolute inset-0 bg-gradient-to-tr from-black/35 via-transparent to-transparent" />
-              </div>
-
-              <div className="absolute -bottom-6 left-6 right-6 rounded-2xl border border-white/40 bg-white/90 p-4 shadow-lg backdrop-blur-sm dark:border-white/10 dark:bg-[#140E2A]/90">
-                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary/70 dark:text-white/70">
-                  Trusted Execution
-                </p>
-                <p className="mt-2 text-sm font-semibold text-foreground">
-                  Global recruitment with local execution and measurable outcomes.
-                </p>
-                <div className="mt-3 flex flex-wrap gap-2">
-                  {['Institutional Growth', 'Student Success'].map((item) => (
-                    <span
-                      key={item}
-                      className="rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-[11px] font-semibold text-primary dark:border-white/15 dark:bg-white/10 dark:text-white"
-                    >
-                      {item}
-                    </span>
-                  ))}
-                </div>
               </div>
             </div>
           </div>
@@ -909,15 +860,13 @@ export function Services() {
         <div className="mt-24 border-t border-border pt-20">
           <div
             ref={endRef}
-            className={`mb-16 text-center transition-all duration-1000 ${
-              endIsVisible ? 'animate-fade-in-up' : 'translate-y-[30px] opacity-0'
-            }`}
+            className="mb-16 text-center"
           >
             <div className="mb-4 inline-block rounded-full bg-accent/10 px-4 py-2 text-sm font-semibold text-accent">
               Offering End-to-End Support
             </div>
             <h3 className="mb-4 text-4xl font-bold text-foreground lg:text-5xl">
-              Complete Educational Solutions
+              Complete <span className="section-title-classic-accent">Educational Solutions</span>
             </h3>
             <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
               From institutional representation to student success, we provide comprehensive support at every stage of the international education journey.

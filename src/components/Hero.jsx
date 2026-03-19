@@ -52,6 +52,8 @@ export function Hero() {
         src="https://images.unsplash.com/photo-1523240795612-9a054b0db644"
         className="absolute inset-0 w-full h-full object-cover"
         alt="Students"
+        loading="lazy"
+        decoding="async"
       />
 
       {/* Overlay */}

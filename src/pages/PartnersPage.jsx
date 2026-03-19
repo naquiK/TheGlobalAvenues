@@ -140,6 +140,8 @@ export default function PartnersPage() {
                     <motion.img
                       src={partner.image}
                       alt={partner.name}
+                      loading="lazy"
+                      decoding="async"
                       className="w-full h-full object-cover"
                       whileHover={{ scale: 1.1 }}
                       transition={{ duration: 0.4 }}

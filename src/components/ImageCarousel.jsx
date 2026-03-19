@@ -1,56 +1,78 @@
-import { useState, useEffect } from 'react';
-import { ChevronLeft, ChevronRight, Play } from 'lucide-react';
-import { useScrollAnimation } from '../hooks/useScrollAnimation';
+import { useEffect, useState } from 'react';
+import { BookOpenCheck, ChevronLeft, ChevronRight, Globe2, GraduationCap, Rocket } from 'lucide-react';
+import useScrollAnimation, { useScrollAnimation as useVisibility } from '../hooks/useScrollAnimation';
+
+const slides = [
+  {
+    id: 1,
+    image: 'https://images.unsplash.com/photo-1523580494863-6f3031224c94?w=1200&h=800&fit=crop&q=80',
+    title: 'Global University Network',
+    description: 'Connect with over 500+ prestigious universities across 50+ countries worldwide.',
+    icon: Globe2,
+    chip: 'Global Reach',
+  },
+  {
+    id: 2,
+    image: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=1200&h=800&fit=crop&q=80',
+    title: 'Expert Student Support',
+    description: 'Dedicated mentors guiding you through every step of your international education journey.',
+    icon: GraduationCap,
+    chip: 'Mentor-Led',
+  },
+  {
+    id: 3,
+    image: 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=1200&h=800&fit=crop&q=80',
+    title: 'Diverse Learning Programs',
+    description: 'Explore thousands of academic programs tailored to your goals and aspirations.',
+    icon: BookOpenCheck,
+    chip: 'Program Depth',
+  },
+  {
+    id: 4,
+    image: 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=1200&h=800&fit=crop&q=80',
+    title: 'Career Pathways',
+    description: 'Transform your future with world-class education and career opportunities.',
+    icon: Rocket,
+    chip: 'Career Outcomes',
+  },
+];
 
 export default function ImageCarousel() {
-  const [ref, isVisible] = useScrollAnimation();
+  const [visibilityRef, isVisible] = useVisibility();
+  const headingRef = useScrollAnimation({ y: 20, duration: 600 });
+  const contentRef = useScrollAnimation({ y: 24, duration: 600, delay: 120 });
   const [currentSlide, setCurrentSlide] = useState(0);
   const [autoPlay, setAutoPlay] = useState(true);
-
-  const slides = [
-    {
-      id: 1,
-      image: 'https://images.unsplash.com/photo-1523580494863-6f3031224c94?w=800&h=600&fit=crop&q=80',
-      title: 'Global University Network',
-      description: 'Connect with over 500+ prestigious universities across 50+ countries worldwide.',
-      color: 'from-blue-500 to-cyan-500',
-      icon: '🌍',
-    },
-    {
-      id: 2,
-      image: 'https://images.unsplash.com/photo-1542744095-fcf47deaf0ff?w=800&h=600&fit=crop&q=80',
-      title: 'Expert Student Support',
-      description: 'Dedicated mentors guiding you through every step of your international education journey.',
-      color: 'from-purple-500 to-pink-500',
-      icon: '👨‍🎓',
-    },
-    {
-      id: 3,
-      image: 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=800&h=600&fit=crop&q=80',
-      title: 'Diverse Learning Programs',
-      description: 'Explore thousands of academic programs tailored to your goals and aspirations.',
-      color: 'from-orange-500 to-red-500',
-      icon: '📚',
-    },
-    {
-      id: 4,
-      image: 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=800&h=600&fit=crop&q=80',
-      title: 'Career Pathways',
-      description: 'Transform your future with world-class education and career opportunities.',
-      color: 'from-green-500 to-emerald-500',
-      icon: '🚀',
-    },
-  ];
+  const [isMobile, setIsMobile] = useState(() =>
+    typeof window !== 'undefined' ? window.matchMedia('(max-width: 767px)').matches : false
+  );
 
   useEffect(() => {
-    if (!autoPlay) return;
+    if (!autoPlay) return undefined;
 
-    const interval = setInterval(() => {
+    const interval = window.setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % slides.length);
-    }, 6000);
+    }, 5800);
 
-    return () => clearInterval(interval);
-  }, [autoPlay, slides.length]);
+    return () => window.clearInterval(interval);
+  }, [autoPlay]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return undefined;
+    const mediaQuery = window.matchMedia('(max-width: 767px)');
+
+    const updateMobileState = (event) => {
+      setIsMobile(event.matches);
+    };
+
+    if (typeof mediaQuery.addEventListener === 'function') {
+      mediaQuery.addEventListener('change', updateMobileState);
+      return () => mediaQuery.removeEventListener('change', updateMobileState);
+    }
+
+    mediaQuery.addListener(updateMobileState);
+    return () => mediaQuery.removeListener(updateMobileState);
+  }, []);
 
   const nextSlide = () => {
     setCurrentSlide((prev) => (prev + 1) % slides.length);
@@ -67,178 +89,137 @@ export default function ImageCarousel() {
     setAutoPlay(false);
   };
 
-  return (
-    <section className="relative -mt-px overflow-hidden bg-gradient-to-br from-[#F2EEFF] via-[#FBFAFF] to-[#EEF3FF] py-20 sm:py-28 lg:py-32 dark:from-[#1A1033] dark:via-[#120F25] dark:to-[#0C1220]">
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-[#F2EEFF] to-transparent dark:from-[#1A1033]/90" />
-      {/* Decorative Background Elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-10 right-10 w-72 h-72 bg-blue-200/20 dark:bg-blue-900/20 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-10 left-10 w-96 h-96 bg-indigo-200/20 dark:bg-indigo-900/20 rounded-full blur-3xl"></div>
-      </div>
+  const activeSlide = slides[currentSlide];
+  const ActiveIcon = activeSlide.icon;
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        {/* Header */}
+  return (
+    <section
+      ref={visibilityRef}
+      className="relative -mt-px overflow-hidden bg-transparent px-4 py-16 sm:px-6 sm:py-20 lg:px-8 lg:py-24"
+    >
+      <div className="relative z-10 mx-auto w-full max-w-7xl">
         <div
-          ref={ref}
-          className={`text-center mb-16 sm:mb-20 transition-all duration-1000 ${
-            isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-          }`}
+          ref={headingRef}
+          className="mb-12 text-center sm:mb-16"
         >
-          <h2 className="text-5xl sm:text-6xl lg:text-7xl font-bold text-gray-900 dark:text-white mb-6">
-            Why Choose Us
+          <h2 className="section-title-classic mb-5">
+            Why <span className="section-title-classic-accent">Choose Us</span>
           </h2>
-          <p className="text-xl sm:text-2xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto leading-relaxed">
+          <p className="section-subtitle-classic">
             Explore the key aspects that make us your perfect education partner
           </p>
         </div>
 
-        {/* Unique 3D Card Carousel Layout */}
-        <div className="relative h-auto">
-          <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-12">
-            {/* Left Side - Main Featured Card */}
-            <div className="w-full lg:w-1/2">
-              <div
-                className={`relative rounded-3xl overflow-hidden shadow-2xl transform transition-all duration-700 h-96 sm:h-[450px]`}
-              >
-                {/* Main Image */}
-                <img
-                  src={slides[currentSlide].image}
-                  alt={slides[currentSlide].title}
-                  className="absolute inset-0 w-full h-full object-cover"
-                />
-                
-                {/* Gradient Overlay */}
-                <div className={`absolute inset-0 bg-gradient-to-br ${slides[currentSlide].color} opacity-30`}></div>
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
+        <div ref={contentRef} className="relative">
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1.05fr_0.95fr] lg:gap-7">
+            <article className="relative overflow-hidden rounded-3xl border border-border bg-white/85 shadow-[0_18px_36px_rgba(18,12,45,0.1)] dark:border-[#2B2354] dark:bg-[#15112B] dark:shadow-[0_22px_48px_rgba(0,0,0,0.55)]">
+              <img
+                src={activeSlide.image}
+                alt={activeSlide.title}
+                loading="lazy"
+                decoding="async"
+                className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-out"
+                style={{
+                  transform: isMobile ? 'scale(1)' : isVisible ? 'scale(1.02)' : 'scale(1.06)',
+                }}
+              />
+              <div className="absolute inset-0 bg-black/40 dark:bg-black/55" />
 
-                {/* Content */}
-                <div className="absolute inset-0 flex flex-col justify-between p-8">
-                  <div className="text-5xl">{slides[currentSlide].icon}</div>
-                  <div className={`transform transition-all duration-700 ${
-                    isVisible ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
-                  }`}>
-                    <h3 className="text-3xl sm:text-4xl font-bold text-white mb-4">
-                      {slides[currentSlide].title}
-                    </h3>
-                    <p className="text-lg text-gray-100">
-                      {slides[currentSlide].description}
-                    </p>
-                  </div>
+              <div className="relative flex min-h-[300px] flex-col justify-end p-6 text-white sm:min-h-[360px] sm:p-8 lg:min-h-[440px]">
+                <div className="mb-6 inline-flex w-fit items-center gap-2 rounded-full border border-white/30 bg-white/15 px-3 py-1 text-xs font-semibold uppercase tracking-[0.16em] text-white/90">
+                  <ActiveIcon className="h-4 w-4" />
+                  {activeSlide.chip}
                 </div>
 
-                {/* Play Button Indicator */}
-                <div className="absolute top-6 right-6 bg-white/20 backdrop-blur-md border border-white/50 rounded-full p-3 hover:bg-white/30 transition-all cursor-pointer">
-                  <Play className="w-5 h-5 text-white fill-white" />
-                </div>
+                <h3 className="text-2xl font-semibold leading-tight sm:text-3xl">{activeSlide.title}</h3>
+                <p className="mt-3 text-sm leading-relaxed text-white/85 sm:text-base lg:text-lg">
+                  {activeSlide.description}
+                </p>
               </div>
-            </div>
+            </article>
 
-            {/* Right Side - Stack of Cards */}
-            <div className="w-full lg:w-1/2 space-y-4">
-              {slides.map((slide, index) => (
-                <div
-                  key={slide.id}
-                  onClick={() => goToSlide(index)}
-                  className={`group relative rounded-2xl overflow-hidden cursor-pointer transition-all duration-500 transform hover:scale-105 ${
-                    index === currentSlide
-                      ? 'ring-4 ring-blue-500 shadow-2xl scale-105'
-                      : 'shadow-lg hover:shadow-xl'
-                  }`}
-                >
-                  {/* Card Background */}
-                  <div className={`absolute inset-0 bg-gradient-to-r ${slide.color} opacity-80`}></div>
-                  
-                  {/* Card Image Background */}
-                  <img
-                    src={slide.image}
-                    alt={slide.title}
-                    className="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:opacity-60 transition-opacity duration-300"
-                  />
+            <div className="space-y-4">
+              {slides.map((slide, index) => {
+                const Icon = slide.icon;
+                const isActive = index === currentSlide;
 
-                  {/* Card Content */}
-                  <div className="relative p-6 sm:p-8 h-32 sm:h-40 flex flex-col justify-between">
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <div className="text-4xl mb-3">{slide.icon}</div>
-                        <h4 className="text-xl sm:text-2xl font-bold text-white">
-                          {slide.title}
-                        </h4>
+                return (
+                  <button
+                    key={slide.id}
+                    type="button"
+                    onClick={() => goToSlide(index)}
+                    className={`group w-full rounded-2xl border p-4 text-left transition-all duration-300 sm:p-5 ${
+                      isActive
+                        ? 'border-primary/70 bg-primary/5 shadow-[0_16px_34px_rgba(33,25,84,0.16)] dark:bg-white/5'
+                        : 'border-border bg-white/80 shadow-sm hover:-translate-y-0.5 hover:border-primary/45 hover:bg-white dark:border-[#2B2354] dark:bg-[#15112B] dark:hover:border-white/30'
+                    }`}
+                    aria-label={`Show ${slide.title}`}
+                  >
+                    <div className="flex items-center gap-4">
+                      <div
+                        className={`flex h-11 w-11 items-center justify-center rounded-xl border ${
+                          isActive
+                            ? 'border-primary/40 bg-primary/10 text-primary'
+                            : 'border-border bg-white text-primary dark:border-[#2B2354] dark:bg-[#1C1634] dark:text-white'
+                        }`}
+                      >
+                        <Icon className="h-5 w-5" />
                       </div>
-                      {index === currentSlide && (
-                        <div className="text-white text-opacity-70 text-3xl">→</div>
-                      )}
+                      <div className="flex-1">
+                        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+                          {slide.chip}
+                        </p>
+                        <h4 className="mt-1 text-lg font-semibold text-foreground sm:text-xl">{slide.title}</h4>
+                        <p className="mt-1 text-sm text-muted-foreground sm:text-base">{slide.description}</p>
+                      </div>
+                      <ChevronRight
+                        className={`h-5 w-5 flex-shrink-0 ${
+                          isActive ? 'text-primary' : 'text-muted-foreground group-hover:text-primary'
+                        }`}
+                      />
                     </div>
-                  </div>
-
-                  {/* Hover Indicator */}
-                  <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-white to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                </div>
-              ))}
+                  </button>
+                );
+              })}
             </div>
           </div>
 
-          {/* Navigation Controls - Bottom */}
-          <div className="flex items-center justify-center gap-4 mt-12 sm:mt-16">
-            <button
-              onClick={prevSlide}
-              className="p-3 rounded-full bg-blue-600 hover:bg-blue-700 text-white transition-all duration-300 transform hover:scale-110 shadow-lg"
-              aria-label="Previous"
-            >
-              <ChevronLeft className="w-6 h-6" />
-            </button>
-
-            {/* Progress Indicator */}
-            <div className="flex items-center gap-2">
+          <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
+            <div className="order-2 flex items-center gap-2 sm:order-1">
               {slides.map((_, index) => (
-                <div
+                <button
                   key={index}
-                  className={`transition-all duration-300 rounded-full ${
-                    index === currentSlide
-                      ? 'bg-blue-600 w-12 h-3'
-                      : 'bg-gray-300 dark:bg-gray-600 w-3 h-3 hover:bg-gray-400 cursor-pointer'
-                  }`}
+                  type="button"
                   onClick={() => goToSlide(index)}
+                  className={`h-2.5 rounded-full transition-all duration-300 ${
+                    index === currentSlide
+                      ? 'w-10 bg-gradient-to-r from-primary to-accent'
+                      : 'w-2.5 bg-primary/25 hover:bg-primary/45 dark:bg-white/20 dark:hover:bg-white/40'
+                  }`}
+                  aria-label={`Go to slide ${index + 1}`}
                 />
               ))}
             </div>
 
-            <button
-              onClick={nextSlide}
-              className="p-3 rounded-full bg-blue-600 hover:bg-blue-700 text-white transition-all duration-300 transform hover:scale-110 shadow-lg"
-              aria-label="Next"
-            >
-              <ChevronRight className="w-6 h-6" />
-            </button>
-          </div>
-
-          {/* Counter */}
-          <div className="text-center mt-6 text-gray-600 dark:text-gray-400">
-            <span className="text-lg font-semibold">
-              {currentSlide + 1} / {slides.length}
-            </span>
-          </div>
-        </div>
-
-        {/* Stats Section */}
-        <div className="mt-24 sm:mt-32 grid grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
-          {[
-            { number: '500+', label: 'Universities' },
-            { number: '50+', label: 'Countries' },
-            { number: '10K+', label: 'Students' },
-            { number: '24/7', label: 'Support' },
-          ].map((stat, index) => (
-            <div
-              key={index}
-              className={`text-center p-8 sm:p-10 rounded-2xl bg-white dark:bg-slate-800 shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105 border-2 border-transparent hover:border-blue-500`}
-            >
-              <p className="text-4xl sm:text-5xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400 bg-clip-text text-transparent mb-3">
-                {stat.number}
-              </p>
-              <p className="text-gray-600 dark:text-gray-300 text-lg font-medium">
-                {stat.label}
-              </p>
+            <div className="order-1 flex items-center gap-2 sm:order-2">
+              <button
+                onClick={prevSlide}
+                className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-primary/30 bg-white/70 text-primary transition-all duration-300 hover:-translate-y-0.5 hover:border-primary hover:bg-white dark:border-white/20 dark:bg-white/10 dark:text-white dark:hover:bg-white/18"
+                aria-label="Previous"
+                type="button"
+              >
+                <ChevronLeft className="h-5 w-5" />
+              </button>
+              <button
+                onClick={nextSlide}
+                className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-primary/30 bg-white/70 text-primary transition-all duration-300 hover:-translate-y-0.5 hover:border-primary hover:bg-white dark:border-white/20 dark:bg-white/10 dark:text-white dark:hover:bg-white/18"
+                aria-label="Next"
+                type="button"
+              >
+                <ChevronRight className="h-5 w-5" />
+              </button>
             </div>
-          ))}
+          </div>
         </div>
       </div>
     </section>

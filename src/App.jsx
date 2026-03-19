@@ -5,6 +5,7 @@ import { SettingsProvider } from './context/SettingsContext';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 import { ScrollRestoration } from './components/ScrollRestoration';
+import PageLoader from './components/ui/PageLoader';
 
 // Pages
 const HomePage = lazy(() => import('./pages/HomePage'));
@@ -30,9 +31,7 @@ function App() {
         <main className="flex-grow">
           <Suspense
             fallback={
-              <div className="container mx-auto px-4 py-20 text-center text-text-muted">
-                Loading page...
-              </div>
+              <PageLoader />
             }
           >
             <Routes>
