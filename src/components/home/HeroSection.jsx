@@ -7,6 +7,45 @@ const statCards = [
   { value: '10K+', label: 'Students Guided' },
   { value: '95%', label: 'Visa Success Rate' },
 ];
+const HERO_VIDEO_DEBUG_KEY = 'tga-hero-video-debug';
+
+const shouldDebugHeroVideo = () => {
+  if (!import.meta.env.DEV || typeof window === 'undefined') return false;
+  const urlEnabled = new URLSearchParams(window.location.search).get('heroVideoDebug') === '1';
+  const storageEnabled = window.localStorage.getItem(HERO_VIDEO_DEBUG_KEY) === '1';
+  return urlEnabled || storageEnabled;
+};
+
+const logHeroVideo = (...args) => {
+  if (!shouldDebugHeroVideo()) return;
+  console.info('[HeroVideo]', ...args);
+};
+
+const getPreferredHeroVideoTier = () => {
+  if (typeof window === 'undefined') return '720';
+
+  const connection =
+    navigator.connection || navigator.mozConnection || navigator.webkitConnection || null;
+  const effectiveType = connection?.effectiveType || '';
+  const saveData = Boolean(connection?.saveData);
+  const isSlowConnection = saveData || effectiveType.includes('2g') || effectiveType.includes('3g');
+
+  if (isSlowConnection) return '720';
+
+  const viewportWidth = window.innerWidth || 0;
+  const devicePixelRatio = window.devicePixelRatio || 1;
+  const shouldUse1080 = viewportWidth >= 1280 || (viewportWidth >= 1024 && devicePixelRatio >= 1.5);
+
+  return shouldUse1080 ? '1080' : '720';
+};
+
+const getVideoSources = (tier = '720') => {
+  const safeTier = tier === '1080' ? '1080' : '720';
+  return {
+    webm: `/videos/hero-${safeTier}.webm`,
+    mp4: `/videos/hero-${safeTier}.mp4`,
+  };
+};
 
 const countUp = (el, target, duration = 1500) => {
   let start = 0;
@@ -31,7 +70,8 @@ export default function HeroSection() {
   const sectionRef = useRef(null);
   const mediaRef = useRef(null);
   const videoRef = useRef(null);
-  const sourceRef = useRef(null);
+  const sourceWebmRef = useRef(null);
+  const sourceMp4Ref = useRef(null);
   const textRef = useRef(null);
   const fogRef = useRef(null);
   const statsRef = useRef(null);
@@ -87,22 +127,37 @@ export default function HeroSection() {
 
     const section = sectionRef.current;
     const video = videoRef.current;
-    const source = sourceRef.current;
+    const sourceWebm = sourceWebmRef.current;
+    const sourceMp4 = sourceMp4Ref.current;
 
-    if (!section || !video || !source) return undefined;
+    if (!section || !video || !sourceWebm || !sourceMp4) return undefined;
 
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (!entry.isIntersecting) return;
 
-        const dataSrc = source.dataset.src;
-        if (dataSrc && !source.src) {
-          source.src = dataSrc;
+        const preferredTier = getPreferredHeroVideoTier();
+        const preferredSources = getVideoSources(preferredTier);
+        logHeroVideo('Selecting tier', preferredTier, preferredSources);
+
+        if (
+          sourceWebm.getAttribute('src') !== preferredSources.webm ||
+          sourceMp4.getAttribute('src') !== preferredSources.mp4
+        ) {
+          sourceWebm.setAttribute('src', preferredSources.webm);
+          sourceMp4.setAttribute('src', preferredSources.mp4);
           video.load();
-          const playPromise = video.play();
-          if (playPromise && typeof playPromise.catch === 'function') {
-            playPromise.catch(() => {});
-          }
+          logHeroVideo('Sources applied + load()', {
+            webm: sourceWebm.getAttribute('src'),
+            mp4: sourceMp4.getAttribute('src'),
+          });
+        }
+
+        const playPromise = video.play();
+        if (playPromise && typeof playPromise.catch === 'function') {
+          playPromise.catch((error) => {
+            logHeroVideo('Initial play() blocked', error?.message || error);
+          });
         }
 
         observer.disconnect();
@@ -121,21 +176,56 @@ export default function HeroSection() {
     const video = videoRef.current;
     if (!video) return undefined;
 
-    const handleTimeUpdate = () => {
-      if (!Number.isFinite(video.duration) || video.duration <= 0) return;
+    // Force critical attributes/properties for consistent autoplay + looping behavior.
+    video.muted = true;
+    video.defaultMuted = true;
+    video.loop = true;
+    video.playsInline = true;
+    video.setAttribute('muted', '');
+    video.setAttribute('loop', '');
+    video.setAttribute('playsinline', '');
+    video.setAttribute('webkit-playsinline', '');
 
-      // Restart just before the end to avoid visible blank/gray frame between loops.
-      if (video.duration - video.currentTime <= 0.08) {
-        video.currentTime = 0.03;
-        const playPromise = video.play();
-        if (playPromise && typeof playPromise.catch === 'function') {
-          playPromise.catch(() => {});
-        }
+    const resumePlayback = () => {
+      const playPromise = video.play();
+      if (playPromise && typeof playPromise.catch === 'function') {
+        playPromise.catch((error) => {
+          logHeroVideo('resumePlayback play() blocked', error?.message || error);
+        });
       }
     };
 
-    video.addEventListener('timeupdate', handleTimeUpdate);
-    return () => video.removeEventListener('timeupdate', handleTimeUpdate);
+    const handlePlaying = () => {
+      setIsVideoReady(true);
+      logHeroVideo('playing', { src: video.currentSrc, t: video.currentTime.toFixed(2) });
+    };
+    const handleCanPlay = () => {
+      setIsVideoReady(true);
+      logHeroVideo('canplay', { src: video.currentSrc, readyState: video.readyState });
+      resumePlayback();
+    };
+    const handleWaiting = () => {
+      setIsVideoReady(false);
+      logHeroVideo('waiting', { src: video.currentSrc, t: video.currentTime.toFixed(2) });
+    };
+    const handleEnded = () => {
+      // Safety fallback for browsers/devices where `loop` can intermittently fail.
+      logHeroVideo('ended fallback triggered');
+      video.currentTime = 0;
+      resumePlayback();
+    };
+
+    video.addEventListener('playing', handlePlaying);
+    video.addEventListener('canplay', handleCanPlay);
+    video.addEventListener('waiting', handleWaiting);
+    video.addEventListener('ended', handleEnded);
+
+    return () => {
+      video.removeEventListener('playing', handlePlaying);
+      video.removeEventListener('canplay', handleCanPlay);
+      video.removeEventListener('waiting', handleWaiting);
+      video.removeEventListener('ended', handleEnded);
+    };
   }, []);
 
   useEffect(() => {
@@ -227,7 +317,7 @@ export default function HeroSection() {
         style={{ willChange: 'transform' }}
       >
         <img
-          src="/videos/hero-poster.png"
+          src="/videos/hero-poster.jpg"
           alt=""
           aria-hidden="true"
           loading="lazy"
@@ -238,22 +328,61 @@ export default function HeroSection() {
         <video
           ref={videoRef}
           autoPlay
+          loop
           muted
           playsInline
           preload="auto"
-          poster="/videos/hero-poster.png"
-            onLoadedData={() => {
-              setIsVideoReady(true);
-              const playPromise = videoRef.current?.play();
+          poster="/videos/hero-poster.jpg"
+          onLoadedData={() => {
+            const video = videoRef.current;
+            if (!video) return;
+            setIsVideoReady(true);
+            logHeroVideo('loadeddata', {
+              src: video.currentSrc,
+              width: video.videoWidth,
+              height: video.videoHeight,
+            });
+            const playPromise = video.play();
+            if (playPromise && typeof playPromise.catch === 'function') {
+              playPromise.catch((error) => {
+                logHeroVideo('onLoadedData play() blocked', error?.message || error);
+              });
+            }
+          }}
+          onEmptied={() => setIsVideoReady(false)}
+          onError={() => {
+            const video = videoRef.current;
+            const sourceWebm = sourceWebmRef.current;
+            const sourceMp4 = sourceMp4Ref.current;
+            if (!video || !sourceWebm || !sourceMp4) return;
+
+            const fallbackSources = getVideoSources('720');
+
+            if (
+              sourceWebm.getAttribute('src') !== fallbackSources.webm ||
+              sourceMp4.getAttribute('src') !== fallbackSources.mp4
+            ) {
+              logHeroVideo('source error; switching fallback to 720', {
+                previous: video.currentSrc,
+                fallbackSources,
+              });
+              sourceWebm.setAttribute('src', fallbackSources.webm);
+              sourceMp4.setAttribute('src', fallbackSources.mp4);
+              video.load();
+              const playPromise = video.play();
               if (playPromise && typeof playPromise.catch === 'function') {
-                playPromise.catch(() => {});
+                playPromise.catch((error) => {
+                  logHeroVideo('fallback play() blocked', error?.message || error);
+                });
               }
-            }}
+            }
+          }}
           className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-700 ease-out ${
             isVideoReady ? 'opacity-100' : 'opacity-0'
           }`}
         >
-          <source ref={sourceRef} data-src="/videos/hero.mp4" type="video/mp4" />
+          <source ref={sourceWebmRef} type="video/webm" />
+          <source ref={sourceMp4Ref} type="video/mp4" />
         </video>
       </div>
 
