@@ -22,15 +22,9 @@
           var storedTheme = typeof window !== 'undefined'
             ? window.localStorage.getItem('tga-theme')
             : null;
-          var prefersDark =
-            typeof window !== 'undefined' &&
-            window.matchMedia &&
-            window.matchMedia('(prefers-color-scheme: dark)').matches;
           var theme = storedTheme === 'light' || storedTheme === 'dark'
             ? storedTheme
-            : prefersDark
-              ? 'dark'
-              : 'light';
+            : 'dark';
 
           if (theme === 'dark') {
             document.documentElement.classList.add('dark');
@@ -38,7 +32,7 @@
             document.documentElement.classList.remove('dark');
           }
         } catch (error) {
-          document.documentElement.classList.remove('dark');
+          document.documentElement.classList.add('dark');
         }
       })();
     </script>

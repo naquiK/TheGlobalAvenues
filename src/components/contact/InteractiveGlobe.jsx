@@ -79,6 +79,12 @@ export function InteractiveGlobe() {
     const container = containerRef.current;
     const geoAbortController = new AbortController();
     let viewportSettings = { altitude: 1.55, autoRotateSpeed: 3.0 };
+    const isCoarsePointer =
+      typeof window.matchMedia === 'function' &&
+      (window.matchMedia('(pointer: coarse)').matches || window.matchMedia('(hover: none)').matches);
+
+    container.style.touchAction = isCoarsePointer ? 'pan-y' : 'auto';
+    container.style.pointerEvents = isCoarsePointer ? 'none' : 'auto';
 
     const getResponsiveSettings = () => {
       const width = container?.clientWidth || window.innerWidth;
@@ -158,9 +164,13 @@ export function InteractiveGlobe() {
       }
 
       hoveringMesh = hoveringGlobe;
-      controls.autoRotate = !hoveringGlobe;
-      controls.enableRotate = hoveringGlobe;
-      container.style.cursor = hoveringGlobe ? (pointerDown ? 'grabbing' : 'grab') : 'default';
+      controls.autoRotate = isCoarsePointer ? true : !hoveringGlobe;
+      controls.enableRotate = isCoarsePointer ? false : hoveringGlobe;
+      container.style.cursor = isCoarsePointer
+        ? 'default'
+        : hoveringGlobe
+          ? (pointerDown ? 'grabbing' : 'grab')
+          : 'default';
       frameId = window.requestAnimationFrame(animate);
     };
 
@@ -320,10 +330,12 @@ export function InteractiveGlobe() {
         raycaster = new THREE.Raycaster();
         mouse = new THREE.Vector2(-2, -2);
 
-        container.addEventListener('mousemove', handleMouseMove);
-        container.addEventListener('mouseleave', handleMouseLeave);
-        container.addEventListener('mousedown', handlePointerDown);
-        window.addEventListener('mouseup', handlePointerUp);
+        if (!isCoarsePointer) {
+          container.addEventListener('mousemove', handleMouseMove);
+          container.addEventListener('mouseleave', handleMouseLeave);
+          container.addEventListener('mousedown', handlePointerDown);
+          window.addEventListener('mouseup', handlePointerUp);
+        }
         window.addEventListener('resize', handleResize);
         if (typeof window.ResizeObserver === 'function') {
           resizeObserver = new window.ResizeObserver(() => handleResize());

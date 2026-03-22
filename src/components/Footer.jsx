@@ -21,6 +21,12 @@ const SOCIAL_ICON_PATHS = {
       <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none" />
     </svg>
   ),
+  youtube: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="h-4 w-4">
+      <path d="M21 12.2c0 2.5-.3 4.2-.7 5.1c-.3.7-.8 1.2-1.5 1.5c-.9.4-3.3.7-6.8.7s-5.9-.3-6.8-.7a2.5 2.5 0 0 1-1.5-1.5C3.3 16.4 3 14.7 3 12.2s.3-4.2.7-5.1c.3-.7.8-1.2 1.5-1.5C6.1 5.2 8.5 5 12 5s5.9.2 6.8.6c.7.3 1.2.8 1.5 1.5c.4.9.7 2.6.7 5.1Z" />
+      <path d="m10 9 5 3-5 3V9Z" fill="currentColor" stroke="none" />
+    </svg>
+  ),
   twitter: (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="h-4 w-4">
       <path d="M22 5.92c-.74.33-1.53.55-2.36.65a4.14 4.14 0 0 0 1.82-2.28a8.22 8.22 0 0 1-2.61 1A4.1 4.1 0 0 0 11.9 9.03A11.65 11.65 0 0 1 3.46 4.8a4.1 4.1 0 0 0 1.27 5.47a4.07 4.07 0 0 1-1.86-.51v.05a4.11 4.11 0 0 0 3.29 4.03a4.12 4.12 0 0 1-1.85.07a4.11 4.11 0 0 0 3.84 2.85A8.25 8.25 0 0 1 2 18.39A11.64 11.64 0 0 0 8.29 20c7.55 0 11.68-6.26 11.68-11.69c0-.18-.01-.35-.02-.53A8.34 8.34 0 0 0 22 5.92Z" />
@@ -63,7 +69,7 @@ export function Footer() {
   const links = Object.entries(siteConfig.footerLinks);
   const [firstLinkGroup, secondLinkGroup, thirdLinkGroup] = links;
   const footerLogoSrc = '/logo-footer-white-transparent.png';
-  const socialIcons = ['facebook', 'twitter', 'instagram', 'linkedin'];
+  const socialIcons = ['facebook', 'instagram', 'youtube', 'linkedin'];
   const partnerLogos = [
     { src: '/21.jpg', top: '8%', left: '4%', rotate: '-12deg', size: 'h-32 w-32', hotspot: 'h-72 w-72' },
     { src: '/22.jpg', top: '14%', left: '78%', rotate: '8deg', size: 'h-36 w-36', hotspot: 'h-80 w-80' },

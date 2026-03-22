@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import useTheme from '../../hooks/useTheme';
-import { useSettings } from '../../context/SettingsContext';
 import { useHomeContent } from '../../context/HomeContentContext';
 
 const HERO_VIDEO_DEBUG_KEY = 'tga-hero-video-debug';
@@ -50,6 +49,11 @@ const getSafeInternalPath = (value, fallback) => {
   return trimmed.startsWith('/') ? trimmed : fallback;
 };
 
+const stripTrailingFullStop = (value, fallback) => {
+  const base = typeof value === 'string' && value.trim() ? value.trim() : fallback;
+  return base.replace(/[.\u0964]+$/u, '');
+};
+
 const countUp = (el, target, duration = 1500) => {
   let start = 0;
   const isPercent = String(target).includes('%');
@@ -70,7 +74,6 @@ const countUp = (el, target, duration = 1500) => {
 
 export default function HeroSection() {
   const { isDark } = useTheme();
-  const { siteConfig } = useSettings();
   const { homeContent } = useHomeContent();
   const sectionRef = useRef(null);
   const mediaRef = useRef(null);
@@ -312,13 +315,13 @@ export default function HeroSection() {
   const heroOpacity = prefersReducedMotion ? 1 : 0;
   const heroSlide = homeContent.hero[0];
   const statCards = [
-    { value: siteConfig.stats.partnerUniversities, label: 'University Partners' },
-    { value: siteConfig.stats.studentsRecruited, label: 'Applications Managed' },
-    { value: siteConfig.stats.visaSuccessRate, label: 'Offer Conversion Success' },
+    { value: '100+', label: 'Partner Universities' },
+    { value: '600+', label: 'Active Channel Partners in SAMEA' },
+    { value: '4K+', label: 'Students Recruited' },
   ];
   const heroBadge = heroSlide?.badge || "\u{1F30D} India's Trusted Global Education Partner";
-  const heroTitleLine1 = heroSlide?.titleLine1 || 'Expand Your University.';
-  const heroTitleLine2 = heroSlide?.titleLine2 || 'Strengthen Your Enrolment Pipeline.';
+  const heroTitleLine1 = stripTrailingFullStop(heroSlide?.titleLine1, 'Expand Your University');
+  const heroTitleLine2 = stripTrailingFullStop(heroSlide?.titleLine2, 'Strengthen Your Enrolment Pipeline');
   const heroDescription =
     heroSlide?.description ||
     'We help universities build visibility in India, activate high-quality recruitment channels, and convert demand into sustained enrolment growth.';
