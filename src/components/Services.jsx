@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
+import { createPortal } from 'react-dom';
+import { Link } from 'react-router-dom';
 import {
   ArrowRight,
   BarChart3,
@@ -186,6 +188,29 @@ const endToEndModalDetails = {
   },
 };
 
+const useLockBodyScroll = (isLocked) => {
+  useEffect(() => {
+    if (!isLocked || typeof document === 'undefined') {
+      return undefined;
+    }
+
+    const { body, documentElement } = document;
+    const previousOverflow = body.style.overflow;
+    const previousPaddingRight = body.style.paddingRight;
+    const scrollbarWidth = window.innerWidth - documentElement.clientWidth;
+
+    body.style.overflow = 'hidden';
+    if (scrollbarWidth > 0) {
+      body.style.paddingRight = `${scrollbarWidth}px`;
+    }
+
+    return () => {
+      body.style.overflow = previousOverflow;
+      body.style.paddingRight = previousPaddingRight;
+    };
+  }, [isLocked]);
+};
+
 const ModalShell = ({ title, accentClass, isOpen, onClose, children }) => {
   if (!isOpen) {
     return null;
@@ -243,14 +268,15 @@ const UniversitySolutionsModal = ({ isOpen, onClose }) => {
     window.addEventListener('keydown', handleEscape);
     return () => window.removeEventListener('keydown', handleEscape);
   }, [isOpen, onClose]);
+  useLockBodyScroll(isOpen);
 
   if (!isOpen) {
     return null;
   }
 
-  return (
+  const modalContent = (
     <motion.div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/55 p-4 backdrop-blur-[3px] sm:p-6"
+      className="fixed inset-0 z-[60] flex items-start justify-center bg-black/55 px-4 pb-4 pt-24 backdrop-blur-[3px] sm:px-6 sm:pb-6 sm:pt-28 lg:pt-24"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
@@ -338,12 +364,12 @@ const UniversitySolutionsModal = ({ isOpen, onClose }) => {
               >
                 Close Overview
               </button>
-              <a
-                href="/portfolio"
+              <Link
+                to="/portfolio"
                 className="inline-flex items-center justify-center rounded-full border border-primary/30 px-6 py-3 text-sm font-semibold text-primary transition-all duration-300 hover:border-primary hover:bg-primary/10 dark:border-white/20 dark:text-white dark:hover:bg-white/10"
               >
                 View Partner Institutions
-              </a>
+              </Link>
             </div>
           </div>
 
@@ -391,6 +417,12 @@ const UniversitySolutionsModal = ({ isOpen, onClose }) => {
       </motion.div>
     </motion.div>
   );
+
+  if (typeof document === 'undefined') {
+    return null;
+  }
+
+  return createPortal(modalContent, document.body);
 };
 
 const ServiceCardModal = ({ isOpen, onClose, service }) => {
@@ -408,6 +440,7 @@ const ServiceCardModal = ({ isOpen, onClose, service }) => {
     window.addEventListener('keydown', handleEscape);
     return () => window.removeEventListener('keydown', handleEscape);
   }, [isOpen, onClose]);
+  useLockBodyScroll(isOpen);
 
   if (!isOpen || !service) {
     return null;
@@ -419,9 +452,9 @@ const ServiceCardModal = ({ isOpen, onClose, service }) => {
   };
   const Icon = service.icon;
 
-  return (
+  const modalContent = (
     <motion.div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/55 p-4 backdrop-blur-[3px] sm:p-6"
+      className="fixed inset-0 z-[60] flex items-start justify-center overflow-hidden bg-black/55 px-4 pb-4 pt-24 backdrop-blur-[3px] sm:px-6 sm:pb-6 sm:pt-28 lg:pt-24"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
@@ -429,7 +462,7 @@ const ServiceCardModal = ({ isOpen, onClose, service }) => {
       onClick={onClose}
     >
       <motion.div
-        className="relative w-full max-w-3xl overflow-hidden rounded-3xl p-[1px]"
+        className="relative w-full max-w-[min(760px,calc(100vw-2rem))] overflow-hidden rounded-3xl p-[1px] sm:max-w-[min(760px,calc(100vw-3rem))]"
         initial={{ opacity: 0, scale: 0.96, y: 16 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.96, y: 16 }}
@@ -439,7 +472,7 @@ const ServiceCardModal = ({ isOpen, onClose, service }) => {
         <div
           className={`absolute inset-0 rounded-3xl bg-gradient-to-br ${service.gradient} opacity-45 blur-[0.6px]`}
         />
-        <div className="relative z-10 rounded-3xl border border-[#E6E1F6]/80 bg-[#F5F3FF]/95 p-7 shadow-[0_24px_60px_rgba(45,27,105,0.2)] backdrop-blur-sm dark:border-[#3A2A78] dark:bg-[#1A1033]/95 dark:shadow-[0_30px_70px_rgba(0,0,0,0.6)] sm:p-9">
+        <div className="relative z-10 max-h-[min(82vh,680px)] overflow-y-auto overscroll-contain rounded-3xl border border-[#E6E1F6]/80 bg-[#F5F3FF]/95 p-7 shadow-[0_24px_60px_rgba(45,27,105,0.2)] backdrop-blur-sm dark:border-[#3A2A78] dark:bg-[#1A1033]/95 dark:shadow-[0_30px_70px_rgba(0,0,0,0.6)] sm:p-8">
           <button
             onClick={onClose}
             className="absolute right-4 top-4 rounded-full border border-white/40 bg-white/80 p-2 text-[#2D1B69] shadow-sm transition-all hover:bg-white dark:border-white/20 dark:bg-[#191230] dark:text-white"
@@ -505,17 +538,23 @@ const ServiceCardModal = ({ isOpen, onClose, service }) => {
             >
               Close
             </button>
-            <a
-              href="/collaborate"
+            <Link
+              to="/collaborate"
               className="inline-flex items-center justify-center rounded-full border border-primary/30 px-6 py-3 text-sm font-semibold text-primary transition-all duration-300 hover:border-primary hover:bg-primary/10 dark:border-white/20 dark:text-white dark:hover:bg-white/10"
             >
               Talk to Us
-            </a>
+            </Link>
           </div>
         </div>
       </motion.div>
     </motion.div>
   );
+
+  if (typeof document === 'undefined') {
+    return null;
+  }
+
+  return createPortal(modalContent, document.body);
 };
 
 const EndToEndModal = ({ isOpen, onClose, item }) => {
@@ -533,6 +572,7 @@ const EndToEndModal = ({ isOpen, onClose, item }) => {
     window.addEventListener('keydown', handleEscape);
     return () => window.removeEventListener('keydown', handleEscape);
   }, [isOpen, onClose]);
+  useLockBodyScroll(isOpen);
 
   if (!isOpen || !item) {
     return null;
@@ -551,9 +591,9 @@ const EndToEndModal = ({ isOpen, onClose, item }) => {
   };
   const DetailIcon = detail.icon;
 
-  return (
+  const modalContent = (
     <motion.div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/55 p-3 backdrop-blur-[3px] sm:p-6"
+      className="fixed inset-0 z-[60] flex items-start justify-center overflow-hidden bg-black/55 px-3 pb-3 pt-24 backdrop-blur-[3px] sm:px-6 sm:pb-6 sm:pt-28 lg:pt-24"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
@@ -561,7 +601,7 @@ const EndToEndModal = ({ isOpen, onClose, item }) => {
       onClick={onClose}
     >
       <motion.div
-        className="relative w-full max-w-4xl overflow-hidden rounded-3xl border border-white/15 bg-white shadow-[0_26px_70px_rgba(16,15,40,0.42)] dark:border-[#2B2354] dark:bg-[#0F0C1E]"
+        className="relative w-full max-w-[min(980px,calc(100vw-1.5rem))] overflow-hidden rounded-3xl border border-white/15 bg-white shadow-[0_26px_70px_rgba(16,15,40,0.42)] sm:max-w-[min(980px,calc(100vw-3rem))] dark:border-[#2B2354] dark:bg-[#0F0C1E]"
         initial={{ opacity: 0, scale: 0.96, y: 18 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.96, y: 18 }}
@@ -577,7 +617,7 @@ const EndToEndModal = ({ isOpen, onClose, item }) => {
           <X className="h-5 w-5" />
         </button>
 
-        <div className="max-h-[88vh] overflow-y-auto">
+        <div className="max-h-[calc(100dvh-7rem)] overflow-y-auto overscroll-contain sm:max-h-[calc(100dvh-8rem)]">
           <div className="grid grid-cols-1 lg:grid-cols-[1.05fr_0.95fr]">
             <div className={`relative overflow-hidden bg-gradient-to-br ${detail.gradient} p-6 text-white sm:p-8`}>
               <div className="pointer-events-none absolute -right-14 -top-12 h-40 w-40 rounded-full bg-white/12" />
@@ -658,6 +698,12 @@ const EndToEndModal = ({ isOpen, onClose, item }) => {
       </motion.div>
     </motion.div>
   );
+
+  if (typeof document === 'undefined') {
+    return null;
+  }
+
+  return createPortal(modalContent, document.body);
 };
 
 const EndToEndSupportCard = ({ item, index, onClick }) => {
@@ -798,10 +844,10 @@ export function Services() {
               <h2 className="text-4xl font-bold text-foreground sm:text-5xl lg:text-6xl">
                 Comprehensive
                 <span className="block">
-                  <span className="block w-fit bg-[linear-gradient(92deg,#2D1B69_0%,#5B45C6_38%,#8B63E5_58%,#D26BA8_76%,#E8521A_100%)] bg-clip-text text-transparent">
+                  <span className="mx-auto block w-fit bg-[linear-gradient(92deg,#2D1B69_0%,#5B45C6_38%,#8B63E5_58%,#D26BA8_76%,#E8521A_100%)] bg-clip-text text-transparent lg:mx-0">
                     University
                   </span>
-                  <span className="block w-fit bg-[linear-gradient(92deg,#2D1B69_0%,#5B45C6_38%,#8B63E5_58%,#D26BA8_76%,#E8521A_100%)] bg-clip-text text-transparent">
+                  <span className="mx-auto block w-fit bg-[linear-gradient(92deg,#2D1B69_0%,#5B45C6_38%,#8B63E5_58%,#D26BA8_76%,#E8521A_100%)] bg-clip-text text-transparent lg:mx-0">
                     Solutions
                   </span>
                 </span>
@@ -811,7 +857,7 @@ export function Services() {
               We provide end-to-end support to help higher education institutions expand their reach and recruit top-tier international students.
             </p>
 
-            <div className="mt-8 flex flex-wrap items-center gap-3">
+            <div className="mt-8 flex flex-wrap items-center justify-center gap-3 lg:justify-start">
               <button
                 onClick={() => setShowUniversityModal(true)}
                 className="rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-lg shadow-primary/25 transition-all duration-300 hover:-translate-y-0.5 hover:brightness-110"
@@ -819,12 +865,12 @@ export function Services() {
               >
                 Learn More
               </button>
-              <a
-                href="/portfolio"
+              <Link
+                to="/portfolio"
                 className="rounded-full border border-primary/30 px-6 py-3 text-sm font-semibold text-primary transition-all duration-300 hover:border-primary hover:bg-primary/10 dark:border-white/20 dark:text-white dark:hover:bg-white/10"
               >
                 View Portfolio
-              </a>
+              </Link>
             </div>
 
           </div>

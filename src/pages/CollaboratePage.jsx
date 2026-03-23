@@ -314,44 +314,6 @@ export default function CollaboratePage() {
         </div>
       </section>
 
-      <div ref={flowRef}>
-        {flowVisible ? (
-          <section className="collaborate-section-shell px-4 py-16 sm:px-6 lg:px-8">
-            <div className="mx-auto max-w-7xl">
-              <div className="text-center">
-                <div className="section-kicker-classic mb-4 inline-flex">How We Collaborate</div>
-                <h2 className="text-3xl font-bold text-foreground sm:text-4xl">A clear process. Predictable outcomes.</h2>
-              </div>
-
-              <div className="mt-10 grid grid-cols-1 gap-6 md:grid-cols-3">
-                {collaborationFlow.map((step, index) => {
-                  const Icon = step.icon;
-                  return (
-                    <div
-                      key={step.title}
-                      className="rounded-2xl border border-[#D8D0EF] bg-white/85 p-6 shadow-[0_18px_44px_rgba(16,12,40,0.08)] dark:border-[#32265F] dark:bg-[#120D25]/85"
-                    >
-                      <div className="flex items-center justify-between">
-                        <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-primary/20 bg-primary/10 text-primary">
-                          <Icon className="h-5 w-5" />
-                        </div>
-                        <span className="text-xs font-semibold uppercase tracking-[0.24em] text-muted-foreground">
-                          0{index + 1}
-                        </span>
-                      </div>
-                      <h3 className="mt-5 text-xl font-semibold text-foreground">{step.title}</h3>
-                      <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{step.description}</p>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          </section>
-        ) : (
-          <SectionSkeleton height="h-[420px]" />
-        )}
-      </div>
-
       <div ref={teamsRef}>
         {teamsVisible ? (
           <section className="collaborate-section-shell px-4 py-16 sm:px-6 lg:px-8">
@@ -424,6 +386,44 @@ export default function CollaboratePage() {
           </div>
         </div>
       </section>
+
+      <div ref={flowRef}>
+        {flowVisible ? (
+          <section className="collaborate-section-shell px-4 py-16 sm:px-6 lg:px-8">
+            <div className="mx-auto max-w-7xl">
+              <div className="text-center">
+                <div className="section-kicker-classic mb-4 inline-flex">How We Collaborate</div>
+                <h2 className="text-3xl font-bold text-foreground sm:text-4xl">A clear process. Predictable outcomes.</h2>
+              </div>
+
+              <div className="mt-10 grid grid-cols-1 gap-6 md:grid-cols-3">
+                {collaborationFlow.map((step, index) => {
+                  const Icon = step.icon;
+                  return (
+                    <div
+                      key={step.title}
+                      className="rounded-2xl border border-[#D8D0EF] bg-white/85 p-6 shadow-[0_18px_44px_rgba(16,12,40,0.08)] dark:border-[#32265F] dark:bg-[#120D25]/85"
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-primary/20 bg-primary/10 text-primary">
+                          <Icon className="h-5 w-5" />
+                        </div>
+                        <span className="text-xs font-semibold uppercase tracking-[0.24em] text-muted-foreground">
+                          0{index + 1}
+                        </span>
+                      </div>
+                      <h3 className="mt-5 text-xl font-semibold text-foreground">{step.title}</h3>
+                      <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{step.description}</p>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </section>
+        ) : (
+          <SectionSkeleton height="h-[420px]" />
+        )}
+      </div>
     </div>
   );
 }

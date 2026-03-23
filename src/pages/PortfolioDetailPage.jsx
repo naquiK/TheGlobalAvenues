@@ -1,10 +1,11 @@
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useState, useEffect, useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowLeft, MapPin, Trophy, Target, Users, Star, Globe, Zap, ChevronRight } from 'lucide-react';
+import { MapPin, Trophy, Target, Users, Star, Globe, Zap, ChevronRight } from 'lucide-react';
 import { getPortfolioById, getPortfolios } from '../services/portfolioService';
 import { getUniversityDetail } from '../services/contentApi';
 import { resolveMediaUrl } from '../services/apiClient';
+import BackNavButton from '../components/ui/BackNavButton';
 
 export default function PortfolioDetailPage() {
   const { id } = useParams();
@@ -134,7 +135,7 @@ export default function PortfolioDetailPage() {
 
   if (isLoading) {
     return (
-      <div className="pt-16 min-h-screen flex items-center justify-center">
+      <div className="pt-20 min-h-screen flex items-center justify-center">
         <div className="w-12 h-12 border-4 border-muted border-t-primary rounded-full animate-spin" />
       </div>
     );
@@ -142,11 +143,9 @@ export default function PortfolioDetailPage() {
 
   if (!portfolio) {
     return (
-      <div className="pt-16 min-h-screen flex flex-col items-center justify-center">
+      <div className="pt-20 min-h-screen flex flex-col items-center justify-center">
         <h1 className="text-4xl font-bold mb-4">Portfolio Not Found</h1>
-        <Link to="/portfolio" className="text-primary hover:text-secondary">
-          Back to Portfolio
-        </Link>
+        <BackNavButton label="Back to Portfolio" onClick={() => navigate('/portfolio')} />
       </div>
     );
   }
@@ -170,22 +169,16 @@ export default function PortfolioDetailPage() {
   };
 
   return (
-    <div className="pt-16 min-h-screen bg-gradient-to-b from-background to-muted/20">
+    <div className="pt-20 min-h-screen bg-gradient-to-b from-background to-muted/20">
       {/* Back Button */}
       <motion.div
-        className="sticky top-20 z-40 px-4 sm:px-6 lg:px-8 py-4 bg-background/80 backdrop-blur-md border-b border-border"
+        className="sticky top-16 z-40 border-b border-border/70 bg-background/70 px-4 py-2 backdrop-blur-xl supports-[backdrop-filter]:bg-background/55 sm:px-6 lg:px-8"
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.3 }}
       >
         <div className="max-w-7xl mx-auto">
-          <button
-            onClick={() => navigate('/portfolio')}
-            className="inline-flex items-center gap-2 text-primary hover:text-secondary transition-colors"
-          >
-            <ArrowLeft className="w-5 h-5" />
-            Back to Portfolio
-          </button>
+          <BackNavButton label="Back to Portfolio" onClick={() => navigate('/portfolio')} />
         </div>
       </motion.div>
 

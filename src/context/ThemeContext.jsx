@@ -4,7 +4,7 @@ export const ThemeContext = createContext(undefined);
 
 const getInitialTheme = () => {
   if (typeof window === 'undefined') {
-    return 'light';
+    return 'dark';
   }
 
   try {
@@ -13,14 +13,10 @@ const getInitialTheme = () => {
       return storedTheme;
     }
   } catch (error) {
-    // Ignore storage access failures and continue to system preference fallback.
+    // Ignore storage access failures and continue to default dark mode.
   }
 
-  if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-    return 'dark';
-  }
-
-  return 'light';
+  return 'dark';
 };
 
 export function ThemeProvider({ children }) {

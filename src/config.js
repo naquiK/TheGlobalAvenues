@@ -35,10 +35,10 @@ export const SITE_CONFIG = {
   },
 
   social: {
-    facebook: null,
-    linkedin: null,
-    youtube: null,
-    instagram: null,
+    facebook: 'https://www.facebook.com/TheGlobalAvenues/',
+    linkedin: 'https://www.linkedin.com/company/the-global-avenues/posts/?feedView=all',
+    youtube: 'https://www.youtube.com/channel/UCh9cYYFdhMLJx6BfSUNJfUw',
+    instagram: 'https://www.instagram.com/theglobalavenues/',
     twitter: null,
     whatsapp: 'https://wa.me/919319831133',
   },

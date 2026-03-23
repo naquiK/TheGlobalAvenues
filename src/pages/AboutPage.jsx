@@ -10,7 +10,6 @@ import {
   Users,
   Zap,
 } from 'lucide-react';
-import { useSettings } from '../context/SettingsContext';
 import useScrollAnimation from '../hooks/useScrollAnimation';
 import useLazySection from '../hooks/useLazySection';
 import SectionSkeleton from '../components/ui/SectionSkeleton';
@@ -76,7 +75,6 @@ const ValueCard = ({ item, index }) => {
 };
 
 export default function AboutPage() {
-  const { siteConfig } = useSettings();
   const badgeRef = useRef(null);
   const [isBadgeReady, setIsBadgeReady] = useState(false);
 
@@ -150,49 +148,49 @@ export default function AboutPage() {
       {
         name: 'Neetu Verma Gupta',
         role: 'Director',
-        image: '/team/neetu-verma-gupta.jpg',
+        image: '/team/neetu-verma-gupta.webp',
         bio: 'Visionary leader with extensive experience in international education partnerships and institutional development',
       },
       {
         name: 'Deepshikha Chauhan',
         role: 'International Recruitment Head',
-        image: '/team/deepshikha-chauhan.jpg',
+        image: '/team/deepshikha-chauhan.webp',
         bio: 'Strategic recruitment expert overseeing institutional partnerships and high-impact enrollment campaigns',
       },
       {
         name: 'Bhawna',
         role: 'International Recruitment',
-        image: '/team/bhawna.jpg',
+        image: '/team/bhawna.jpeg',
         bio: 'Dedicated recruitment specialist focused on institutional outreach, conversion quality, and partner success',
       },
       {
         name: 'Shabana Azmi',
         role: 'International Recruitment',
-        image: '/team/shabana-azmi.jpg',
+        image: '/team/shabana-azmi.webp',
         bio: 'Experienced recruitment professional with strong focus on international market mobility and university relations',
       },
       {
         name: 'Vaamika Sinha',
         role: 'International Recruitment',
-        image: '/team/vaamika-sinha.jpg',
+        image: '/team/vaamika-sinha.jpeg',
         bio: 'Passionate recruitment specialist committed to bridging educational opportunities for institutions and regional stakeholders',
       },
       {
         name: 'Naman Sharma',
         role: 'Marketing & Promotions',
-        image: '/team/naman-sharma.jpg',
+        image: '/team/naman-sharma.jpeg',
         bio: 'Creative marketing professional driving brand presence and institutional visibility in key markets',
       },
       {
         name: 'Ambar Johar',
         role: 'Admissions Coordinator',
-        image: '/team/ambar-johar.jpg',
+        image: '/team/ambar-johar.webp',
         bio: 'Efficient coordinator ensuring smooth application processing and institutional onboarding workflows',
       },
       {
         name: 'Suraj Kumar Soni',
         role: 'Admissions Coordinator',
-        image: '/team/suraj-kumar-soni.jpg',
+        image: '/team/suraj-kumar-soni.webp',
         bio: 'Dedicated professional managing admissions workflows, documentation quality, and partner compliance',
       },
     ],
@@ -201,12 +199,12 @@ export default function AboutPage() {
 
   const stats = useMemo(
     () => [
-      { number: siteConfig.stats.partnerUniversities, label: 'Partner Universities' },
-      { number: siteConfig.stats.countriesCovered, label: 'Countries Covered' },
-      { number: '15+', label: 'Active Channel Partners' },
-      { number: siteConfig.stats.studentsRecruited, label: 'Applications Managed' },
+      { number: '12+', label: 'Years of Experience' },
+      { number: '100+', label: 'Partner Universities' },
+      { number: '600+', label: 'Active Channel Partners in SAMEA' },
+      { number: '4K+', label: 'Students Recruited' },
     ],
-    [siteConfig]
+    []
   );
 
   const heroRef = useScrollAnimation({ y: 20, duration: 600 });
@@ -241,10 +239,16 @@ export default function AboutPage() {
             visibility with a strong emphasis on transparency, innovation, and long-term
             impact.
           </p>
-          <div className="mt-8 flex flex-wrap items-center justify-center gap-3 text-xs font-semibold uppercase tracking-[0.22em] text-muted-foreground">
-            <span className="rounded-full border border-border/60 bg-white/70 px-4 py-2">ICEF Accredited</span>
-            <span className="rounded-full border border-border/60 bg-white/70 px-4 py-2">Global University Network</span>
-            <span className="rounded-full border border-border/60 bg-white/70 px-4 py-2">Partner First</span>
+          <div className="mt-8 flex flex-wrap items-center justify-center gap-3 text-xs font-semibold uppercase tracking-[0.22em]">
+            <span className="rounded-full border border-border/60 bg-white/75 px-4 py-2 text-primary/80 dark:border-white/30 dark:bg-white/12 dark:text-white">
+              ICEF Accredited
+            </span>
+            <span className="rounded-full border border-border/60 bg-white/75 px-4 py-2 text-primary/80 dark:border-white/30 dark:bg-white/12 dark:text-white">
+              Global University Network
+            </span>
+            <span className="rounded-full border border-border/60 bg-white/75 px-4 py-2 text-primary/80 dark:border-white/30 dark:bg-white/12 dark:text-white">
+              Partner First
+            </span>
           </div>
         </div>
       </section>

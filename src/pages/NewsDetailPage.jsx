@@ -1,35 +1,90 @@
 import { useEffect, useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ArrowLeft, Calendar, Clock, Eye, MessageCircle, Share2, User } from 'lucide-react';
+import { Calendar, Clock, Eye, User } from 'lucide-react';
 import { getBlogDetail } from '../services/contentApi';
 import { resolveMediaUrl } from '../services/apiClient';
 import { newsItems as fallbackNewsItems } from '../data/newsData';
+import BackNavButton from '../components/ui/BackNavButton';
 
 const getCardImage = (item) => item.thumbnail || item.image;
+const INVALID_MEDIA_VALUES = new Set(['', 'null', 'undefined', 'false', 'none', 'n/a', 'na', '#']);
+const VIDEO_DISABLED_ARTICLE_KEY = 'how-universities-can-improve-offer-conversion-in-india';
+const IMAGE_OVERRIDE_BY_ARTICLE = {
+  'partnership-expansion-across-the-uk':
+    'https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?auto=format&fit=crop&w=1600&q=80',
+};
+
 const normalizeText = (value) =>
   String(value || '')
     .replace(/<[^>]*>/g, '')
     .trim();
 
-const mapFallbackPost = (item) => ({
-  id: item.id,
-  slug: item.slug || String(item.id),
-  type: item.type || 'blog',
-  title: item.title || 'Untitled',
-  excerpt: normalizeText(item.excerpt || item.summary || ''),
-  content: normalizeText(item.content || item.body || item.description || item.excerpt || ''),
-  image: item.image || item.thumbnail || '',
-  author: item.author || 'The Global Avenues',
-  date: item.date || '',
-  readTime: item.readTime || '5 min read',
-  category: item.category || 'General',
-  views: item.views ? Number(item.views) : 0,
-  videoUrl: item.videoUrl || '',
-});
+const normalizeIdentity = (value) =>
+  String(value || '')
+    .toLowerCase()
+    .replace(/<[^>]*>/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
 
-const findFallbackPostBySlugOrId = (id) =>
-  fallbackNewsItems.find((item) => item.slug === id || String(item.id) === String(id));
+const sanitizeMediaUrl = (value) => {
+  const raw = String(value || '').trim();
+  if (!raw || INVALID_MEDIA_VALUES.has(raw.toLowerCase())) return '';
+  return resolveMediaUrl(raw);
+};
+
+const sanitizeVideoUrl = (value) => {
+  const raw = String(value || '').trim();
+  if (!raw || INVALID_MEDIA_VALUES.has(raw.toLowerCase())) return '';
+  return raw;
+};
+
+const shouldDisableVideo = (item) => {
+  const slugKey = normalizeIdentity(item?.slug);
+  const titleKey = normalizeIdentity(item?.title);
+  return slugKey === VIDEO_DISABLED_ARTICLE_KEY || titleKey === VIDEO_DISABLED_ARTICLE_KEY;
+};
+
+const applyVideoPolicy = (item) =>
+  shouldDisableVideo(item) ? { ...item, videoUrl: '' } : item;
+
+const applyImagePolicy = (item) => {
+  const slugKey = normalizeIdentity(item?.slug);
+  const titleKey = normalizeIdentity(item?.title);
+  const overrideImage = IMAGE_OVERRIDE_BY_ARTICLE[slugKey] || IMAGE_OVERRIDE_BY_ARTICLE[titleKey];
+  if (!overrideImage) return item;
+  return { ...item, image: overrideImage, thumbnail: overrideImage };
+};
+
+const applyContentPolicy = (item) => applyVideoPolicy(applyImagePolicy(item));
+
+const mapFallbackPost = (item) =>
+  applyContentPolicy({
+    id: item.id,
+    slug: item.slug || normalizeIdentity(item.title) || String(item.id),
+    type: item.type || 'blog',
+    title: item.title || 'Untitled',
+    excerpt: normalizeText(item.excerpt || item.summary || ''),
+    content: normalizeText(item.content || item.body || item.description || item.excerpt || ''),
+    image: sanitizeMediaUrl(item.image || item.thumbnail),
+    thumbnail: sanitizeMediaUrl(item.thumbnail || item.image),
+    author: item.author || 'The Global Avenues',
+    date: item.date || '',
+    readTime: item.readTime || '5 min read',
+    category: item.category || 'General',
+    views: item.views ? Number(item.views) : 0,
+    videoUrl: sanitizeVideoUrl(item.videoUrl),
+  });
+
+const findFallbackPostBySlugOrId = (id) => {
+  const target = normalizeIdentity(id);
+  return fallbackNewsItems.find((item) => {
+    const itemSlug = normalizeIdentity(item.slug || item.title || item.id);
+    return itemSlug === target || String(item.id) === String(id);
+  });
+};
 
 const getFallbackRelated = (source) =>
   fallbackNewsItems
@@ -37,17 +92,17 @@ const getFallbackRelated = (source) =>
     .slice(0, 4)
     .map((item) => ({
       id: item.id,
-      slug: item.slug || String(item.id),
+      slug: item.slug || normalizeIdentity(item.title) || String(item.id),
       title: item.title,
       category: item.category || 'General',
       date: item.date || null,
-      image: item.image || item.thumbnail || '',
+      image: sanitizeMediaUrl(item.image || item.thumbnail),
+      thumbnail: sanitizeMediaUrl(item.thumbnail || item.image),
     }));
 
 export default function NewsDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [liked, setLiked] = useState(false);
   const [newsItem, setNewsItem] = useState(null);
   const [relatedArticles, setRelatedArticles] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -80,30 +135,39 @@ export default function NewsDetailPage() {
           return;
         }
 
-        const mappedPost = {
+        const fallbackPost = fallbackBySlugOrId ? mapFallbackPost(fallbackBySlugOrId) : null;
+        const mappedPost = applyContentPolicy({
           id: post.id,
-          slug: post.slug || String(post.id),
-          type: 'blog',
-          title: post.title,
-          excerpt: normalizeText(post.excerpt || post.summary || ''),
-          content: normalizeText(post.content || post.body || post.description || ''),
-          image: resolveMediaUrl(post.featured_image),
-          author: post.author || 'The Global Avenues',
-          date: post.created_at,
-          readTime: post.read_time || '5 min read',
-          category: post.category || 'General',
-          views: post.views ? Number(post.views) : 0,
-          videoUrl: post.video_url || post.videoUrl || '',
-        };
+          slug: post.slug || normalizeIdentity(post.title) || String(post.id),
+          type: post.type || post.content_type || 'blog',
+          title: post.title || fallbackPost?.title || 'Untitled',
+          excerpt: normalizeText(post.excerpt || post.summary || fallbackPost?.excerpt || ''),
+          content: normalizeText(post.content || post.body || post.description || fallbackPost?.content || ''),
+          image: sanitizeMediaUrl(post.featured_image || post.image || post.thumbnail) || fallbackPost?.image || '',
+          thumbnail:
+            sanitizeMediaUrl(post.thumbnail || post.featured_image || post.image) ||
+            fallbackPost?.thumbnail ||
+            fallbackPost?.image ||
+            '',
+          author: post.author || fallbackPost?.author || 'The Global Avenues',
+          date: post.created_at || post.date || fallbackPost?.date || '',
+          readTime: post.read_time || post.readTime || fallbackPost?.readTime || '5 min read',
+          category: post.category || fallbackPost?.category || 'General',
+          views: post.views ? Number(post.views) : fallbackPost?.views || 0,
+          videoUrl: sanitizeVideoUrl(post.video_url || post.videoUrl || post.video || fallbackPost?.videoUrl || ''),
+        });
 
-        const mappedRelated = related.map((item) => ({
-          id: item.id,
-          slug: item.slug || String(item.id),
-          title: item.title,
-          category: mappedPost.category,
-          date: null,
-          image: '',
-        }));
+        const mappedRelated = related.map((item) =>
+          applyImagePolicy({
+            id: item.id,
+            slug: item.slug || normalizeIdentity(item.title) || String(item.id),
+            title: item.title,
+            category: item.category || mappedPost.category,
+            date: item.created_at || item.date || null,
+            image: sanitizeMediaUrl(item.featured_image || item.image || item.thumbnail),
+            thumbnail: sanitizeMediaUrl(item.thumbnail || item.featured_image || item.image),
+          })
+        );
 
         setNewsItem(mappedPost);
         setRelatedArticles(mappedRelated);
@@ -151,14 +215,7 @@ export default function NewsDetailPage() {
                 ? 'This article is unavailable right now.'
                 : 'The article you\'re looking for doesn\'t exist.'}
           </p>
-          <button
-            onClick={() => navigate('/news-blog')}
-            className="inline-flex items-center gap-2 rounded-lg bg-primary px-6 py-3 text-primary-foreground transition-all duration-300 hover:bg-primary/90"
-            type="button"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            Back to News & Blog
-          </button>
+          <BackNavButton label="Back to News & Blog" onClick={() => navigate('/news-blog')} />
         </motion.div>
       </motion.div>
     );
@@ -180,20 +237,13 @@ export default function NewsDetailPage() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-muted/20 pt-16">
       <motion.div
-        className="sticky top-20 z-40 border-b border-border bg-background/80 px-4 py-4 backdrop-blur-md sm:px-6 lg:px-8"
+        className="sticky top-16 z-40 border-b border-border/70 bg-background/70 px-4 py-2 backdrop-blur-xl supports-[backdrop-filter]:bg-background/55 sm:px-6 lg:px-8"
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.3 }}
       >
         <div className="mx-auto max-w-4xl">
-          <button
-            onClick={() => navigate('/news-blog')}
-            className="inline-flex items-center gap-2 font-medium text-primary transition-colors hover:text-secondary"
-            type="button"
-          >
-            <ArrowLeft className="h-5 w-5" />
-            Back to News & Blog
-          </button>
+          <BackNavButton label="Back to News & Blog" onClick={() => navigate('/news-blog')} />
         </div>
       </motion.div>
 
@@ -249,7 +299,7 @@ export default function NewsDetailPage() {
             variants={itemVariants}
             className="relative h-96 overflow-hidden rounded-xl bg-gradient-to-br from-primary/20 to-secondary/20"
           >
-            {newsItem.type === 'blog' && (
+            {newsItem.videoUrl && (
               <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/20">
                 <motion.div
                   className="flex h-20 w-20 items-center justify-center rounded-full bg-accent/80"
@@ -302,40 +352,6 @@ export default function NewsDetailPage() {
                 />
               </div>
             )}
-          </motion.div>
-
-          <motion.div variants={itemVariants} className="flex items-center gap-4 border-y border-border py-6">
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => setLiked((value) => !value)}
-              className={`inline-flex items-center gap-2 rounded-lg px-4 py-2 transition-all duration-300 ${
-                liked ? 'bg-red-500/20 text-red-500' : 'bg-muted text-muted-foreground hover:bg-muted/80'
-              }`}
-              type="button"
-            >
-              <span className="text-sm font-medium">{liked ? 'Liked' : 'Like'}</span>
-            </motion.button>
-
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="inline-flex items-center gap-2 rounded-lg bg-muted px-4 py-2 text-muted-foreground transition-all duration-300 hover:bg-muted/80"
-              type="button"
-            >
-              <Share2 className="h-4 w-4" />
-              <span className="text-sm font-medium">Share</span>
-            </motion.button>
-
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="inline-flex items-center gap-2 rounded-lg bg-muted px-4 py-2 text-muted-foreground transition-all duration-300 hover:bg-muted/80"
-              type="button"
-            >
-              <MessageCircle className="h-4 w-4" />
-              <span className="text-sm font-medium">Comment</span>
-            </motion.button>
           </motion.div>
 
           {relatedArticles.length > 0 && (

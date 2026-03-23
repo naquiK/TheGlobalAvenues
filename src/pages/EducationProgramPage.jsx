@@ -1,9 +1,10 @@
 import { motion } from 'framer-motion';
 import { useEffect, useMemo, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Users, Award, Building2, Globe, Clock, BookOpen } from 'lucide-react';
+import { Users, Building2, Globe, Clock, BookOpen } from 'lucide-react';
 import { getProgramById, getDegreeDetails } from '../data/educationProgramsData';
 import { getOfferingDetail } from '../services/contentApi';
+import BackNavButton from '../components/ui/BackNavButton';
 
 export default function EducationProgramPage() {
   const { programType, degreeLevel } = useParams();
@@ -89,13 +90,7 @@ export default function EducationProgramPage() {
       <div className="min-h-screen pt-24 pb-20 px-4 sm:px-6 lg:px-8 bg-background flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-4xl font-bold text-foreground mb-4">Program Not Found</h1>
-          <button
-            onClick={() => navigate('/')}
-            className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
-          >
-            <ArrowLeft className="w-5 h-5" />
-            Back to Home
-          </button>
+          <BackNavButton label="Back to Home" onClick={() => navigate('/')} />
         </div>
       </div>
     );
@@ -132,13 +127,11 @@ export default function EducationProgramPage() {
     <div className="min-h-screen pt-24 pb-20 px-4 sm:px-6 lg:px-8 bg-background">
       <div className="max-w-7xl mx-auto">
         {/* Back Button */}
-        <button
+        <BackNavButton
+          label="Back to Programs"
           onClick={() => navigate('/what-we-offer')}
-          className="inline-flex items-center gap-2 px-4 py-2 text-primary hover:bg-primary/10 rounded-lg transition-colors mb-8"
-        >
-          <ArrowLeft className="w-5 h-5" />
-          Back to Programs
-        </button>
+          className="mb-8"
+        />
 
         {/* Hero Section */}
         <motion.div
