@@ -328,7 +328,9 @@ export default function HeroSection() {
   const primaryCtaLabel = heroSlide?.primaryCtaLabel || 'Partner With Us';
   const primaryCtaUrl = getSafeInternalPath(heroSlide?.primaryCtaUrl, '/collaborate');
   const secondaryCtaLabel = heroSlide?.secondaryCtaLabel || 'View Our Network';
-  const secondaryCtaUrl = getSafeInternalPath(heroSlide?.secondaryCtaUrl, '/about');
+  const resolvedSecondaryCtaUrl = getSafeInternalPath(heroSlide?.secondaryCtaUrl, '/portfolio');
+  const secondaryCtaUrl =
+    resolvedSecondaryCtaUrl === '/about' ? '/portfolio' : resolvedSecondaryCtaUrl;
 
   return (
     <section
@@ -344,7 +346,8 @@ export default function HeroSection() {
           src="/videos/hero-poster.jpg"
           alt=""
           aria-hidden="true"
-          loading="lazy"
+          loading="eager"
+          fetchPriority="high"
           decoding="async"
           className="absolute inset-0 h-full w-full object-cover"
         />
@@ -355,7 +358,7 @@ export default function HeroSection() {
           loop
           muted
           playsInline
-          preload="auto"
+          preload="metadata"
           poster="/videos/hero-poster.jpg"
           onLoadedData={() => {
             const video = videoRef.current;

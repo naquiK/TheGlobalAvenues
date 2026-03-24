@@ -77,11 +77,20 @@ const ValueCard = ({ item, index }) => {
 export default function AboutPage() {
   const badgeRef = useRef(null);
   const [isBadgeReady, setIsBadgeReady] = useState(false);
+  const { ref: valuesRef, isVisible: valuesVisible } = useLazySection();
+  const { ref: teamRef, isVisible: teamVisible } = useLazySection();
+  const { ref: accreditationRef, isVisible: accreditationVisible } = useLazySection();
 
   useEffect(() => {
+    if (!accreditationVisible || !badgeRef.current) {
+      return undefined;
+    }
+
+    setIsBadgeReady(false);
     let mounted = true;
     let checkTimer;
     let stopTimer;
+    const scriptSrc = 'https://www-cdn.icef.com/scripts/iasbadgeid.js';
 
     const checkBadge = () => {
       if (!mounted || !badgeRef.current) return;
@@ -93,8 +102,14 @@ export default function AboutPage() {
       }
     };
 
+    badgeRef.current.innerHTML = '';
+    const existingScript = document.querySelector(`script[src="${scriptSrc}"]`);
+    if (existingScript) {
+      existingScript.remove();
+    }
+
     const script = document.createElement('script');
-    script.src = 'https://www-cdn.icef.com/scripts/iasbadgeid.js';
+    script.src = scriptSrc;
     script.async = true;
     script.defer = true;
     script.crossOrigin = 'anonymous';
@@ -109,9 +124,11 @@ export default function AboutPage() {
       mounted = false;
       if (checkTimer) window.clearInterval(checkTimer);
       if (stopTimer) window.clearTimeout(stopTimer);
-      document.body.removeChild(script);
+      if (script.parentNode) {
+        script.parentNode.removeChild(script);
+      }
     };
-  }, []);
+  }, [accreditationVisible]);
 
   const values = useMemo(
     () => [
@@ -158,22 +175,10 @@ export default function AboutPage() {
         bio: 'Strategic recruitment expert overseeing institutional partnerships and high-impact enrollment campaigns',
       },
       {
-        name: 'Bhawna',
-        role: 'International Recruitment',
-        image: '/team/bhawna.jpeg',
-        bio: 'Dedicated recruitment specialist focused on institutional outreach, conversion quality, and partner success',
-      },
-      {
         name: 'Shabana Azmi',
         role: 'International Recruitment',
         image: '/team/shabana-azmi.webp',
         bio: 'Experienced recruitment professional with strong focus on international market mobility and university relations',
-      },
-      {
-        name: 'Vaamika Sinha',
-        role: 'International Recruitment',
-        image: '/team/vaamika-sinha.jpeg',
-        bio: 'Passionate recruitment specialist committed to bridging educational opportunities for institutions and regional stakeholders',
       },
       {
         name: 'Naman Sharma',
@@ -211,10 +216,6 @@ export default function AboutPage() {
   const statsRef = useScrollAnimation({ y: 20, duration: 600, delay: 120 });
   const storyRef = useScrollAnimation({ y: 20, duration: 600 });
   const promiseRef = useScrollAnimation({ y: 20, duration: 600, delay: 120 });
-
-  const { ref: valuesRef, isVisible: valuesVisible } = useLazySection();
-  const { ref: teamRef, isVisible: teamVisible } = useLazySection();
-  const { ref: accreditationRef, isVisible: accreditationVisible } = useLazySection();
 
   return (
     <div className="about-page-gradient min-h-screen pt-16 text-foreground">
@@ -386,20 +387,15 @@ export default function AboutPage() {
                   </div>
                   <div className="mt-6 flex min-h-[180px] items-center justify-center rounded-2xl border border-[#DAD3F0] bg-[#F6F4FD] p-6 dark:border-[#3A2E72] dark:bg-[#17122D]">
                     {!isBadgeReady ? (
-                      <img
-                        src="/icef-badge-fallback.svg"
-                        alt="ICEF accredited badge"
-                        loading="lazy"
-                        decoding="async"
-                        className="h-36 w-auto object-contain"
-                      />
+                      <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                        Loading ICEF badge...
+                      </p>
                     ) : null}
                     <span
                       ref={badgeRef}
                       id="iasBadge"
                       data-account-id="5944"
-                      className={`relative z-10 block ${isBadgeReady ? 'opacity-100' : 'opacity-0'}`}
-                      style={{ transform: 'scale(1.15)', transformOrigin: 'top left' }}
+                      className={`relative z-10 block max-w-full transition-opacity duration-300 ${isBadgeReady ? 'opacity-100' : 'opacity-0'}`}
                     />
                   </div>
                 </div>

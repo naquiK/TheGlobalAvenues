@@ -243,22 +243,6 @@ export default function PortfolioPage() {
                         </p>
                       )}
 
-                      {/* Stats */}
-                      <div className="grid grid-cols-3 gap-3 mb-4 pb-4 border-b border-border/50">
-                        <div className="text-center">
-                          <div className="text-lg font-bold text-primary">{portfolio.studentsPlaced}+</div>
-                          <div className="text-xs text-muted-foreground">Applications</div>
-                        </div>
-                        <div className="text-center">
-                          <div className="text-lg font-bold text-primary">{portfolio.programs}</div>
-                          <div className="text-xs text-muted-foreground">Programs</div>
-                        </div>
-                        <div className="text-center">
-                          <div className="text-lg font-bold text-accent">{portfolio.successRate}%</div>
-                          <div className="text-xs text-muted-foreground">Success</div>
-                        </div>
-                      </div>
-
                       {/* View Details Button */}
                       <Link
                         to={`/portfolio/${portfolio.slug || portfolio.id}`}

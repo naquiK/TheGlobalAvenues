@@ -443,6 +443,57 @@ html.dark {
       linear-gradient(180deg, #0b0915 0%, #0f0b1f 100%);
   }
 
+  .home-page-gradient--textured::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.52;
+    background-image:
+      radial-gradient(circle at 1px 1px, rgba(88, 70, 170, 0.1) 1px, transparent 1.2px),
+      linear-gradient(
+        118deg,
+        rgba(255, 255, 255, 0.18) 0%,
+        rgba(123, 107, 204, 0.03) 50%,
+        rgba(232, 82, 26, 0.05) 100%
+      );
+    background-size:
+      26px 26px,
+      auto;
+  }
+
+  .home-page-gradient--textured::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    background-image:
+      radial-gradient(560px 320px at 18% 30%, rgba(255, 255, 255, 0.22), transparent 70%),
+      radial-gradient(560px 340px at 82% 72%, rgba(232, 82, 26, 0.08), transparent 72%);
+    opacity: 0.42;
+  }
+
+  .dark .home-page-gradient--textured::before {
+    opacity: 0.36;
+    background-image:
+      radial-gradient(circle at 1px 1px, rgba(151, 138, 220, 0.2) 1px, transparent 1.2px),
+      linear-gradient(
+        118deg,
+        rgba(255, 255, 255, 0.04) 0%,
+        rgba(123, 107, 204, 0.08) 50%,
+        rgba(232, 82, 26, 0.09) 100%
+      );
+  }
+
+  .dark .home-page-gradient--textured::after {
+    background-image:
+      radial-gradient(620px 360px at 20% 28%, rgba(123, 107, 204, 0.12), transparent 72%),
+      radial-gradient(620px 360px at 84% 74%, rgba(232, 82, 26, 0.11), transparent 74%);
+    opacity: 0.34;
+  }
+
   .about-page-gradient {
     position: relative;
     isolation: isolate;
@@ -571,6 +622,107 @@ html.dark {
       radial-gradient(circle at 14% 24%, rgba(255, 255, 255, 0.03), transparent 34%),
       radial-gradient(circle at 84% 78%, rgba(232, 82, 26, 0.11), transparent 30%),
       linear-gradient(to right, transparent 0%, rgba(255, 255, 255, 0.035) 50%, transparent 100%);
+  }
+
+  .summer-hot-blink-btn {
+    border-color: rgb(245 124 70 / 0.58);
+    background: linear-gradient(
+      96deg,
+      rgb(var(--color-brand-orange-rgb) / 0.2) 0%,
+      rgb(255 202 40 / 0.2) 52%,
+      rgb(var(--color-brand-orange-rgb) / 0.2) 100%
+    );
+    color: #b84516;
+    box-shadow:
+      0 10px 24px rgb(232 82 26 / 0.2),
+      inset 0 1px 0 rgb(255 255 255 / 0.5);
+    animation: summerHotBlink 1.15s steps(1, end) infinite;
+  }
+
+  .dark .summer-hot-blink-btn {
+    border-color: rgb(245 124 70 / 0.42);
+    background: linear-gradient(
+      96deg,
+      rgb(69 31 18 / 0.84) 0%,
+      rgb(88 63 18 / 0.72) 52%,
+      rgb(69 31 18 / 0.84) 100%
+    );
+    color: #ffc39e;
+    box-shadow:
+      0 10px 24px rgb(15 10 27 / 0.45),
+      inset 0 1px 0 rgb(255 255 255 / 0.1);
+  }
+
+  .summer-highlight-shell::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    border-radius: inherit;
+    border: 1px solid rgb(255 255 255 / 0.22);
+    opacity: 0.6;
+  }
+
+  .summer-highlight-ribbon {
+    height: 3px;
+    width: min(420px, 100%);
+    border-radius: 999px;
+    background: linear-gradient(90deg, rgb(245 124 70 / 0.95) 0%, rgb(255 202 40 / 0.88) 45%, rgb(123 107 204 / 0.9) 100%);
+    box-shadow: 0 0 18px rgb(245 124 70 / 0.24);
+    animation: summerRibbonSweep 2.8s ease-in-out infinite;
+  }
+
+  .summer-highlight-emphasis {
+    background: linear-gradient(96deg, #ff7f50 0%, #ffcb51 48%, #f57c46 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .dark .summer-highlight-emphasis {
+    background: linear-gradient(96deg, #ffad82 0%, #ffd37a 52%, #ffb48f 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+}
+
+@keyframes summerHotBlink {
+  0%,
+  24% {
+    opacity: 1;
+    color: #e53935;
+    transform: translateZ(0) scale(1);
+  }
+  25%,
+  49% {
+    opacity: 0.92;
+    color: #ffca28;
+    transform: translateZ(0) scale(1.01);
+  }
+  50%,
+  74% {
+    opacity: 1;
+    color: #f57c00;
+    transform: translateZ(0) scale(1);
+  }
+  75%,
+  100% {
+    opacity: 0.92;
+    color: #ff7043;
+    transform: translateZ(0) scale(1.01);
+  }
+}
+
+@keyframes summerRibbonSweep {
+  0%,
+  100% {
+    transform: translateX(0);
+    opacity: 0.92;
+  }
+  50% {
+    transform: translateX(8px);
+    opacity: 1;
   }
 }
 

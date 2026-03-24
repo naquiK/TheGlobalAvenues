@@ -276,7 +276,7 @@ const UniversitySolutionsModal = ({ isOpen, onClose }) => {
 
   const modalContent = (
     <motion.div
-      className="fixed inset-0 z-[60] flex items-start justify-center bg-black/55 px-4 pb-4 pt-24 backdrop-blur-[3px] sm:px-6 sm:pb-6 sm:pt-28 lg:pt-24"
+      className="fixed inset-0 z-[60] overflow-y-auto bg-black/55 px-3 py-4 backdrop-blur-[3px] sm:px-6 sm:py-6 lg:py-8"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
@@ -284,7 +284,7 @@ const UniversitySolutionsModal = ({ isOpen, onClose }) => {
       onClick={onClose}
     >
       <motion.div
-        className="relative w-full max-w-5xl overflow-hidden rounded-[32px] border border-white/25 bg-white/95 shadow-[0_30px_80px_rgba(20,16,45,0.38)] backdrop-blur-sm dark:border-[#2B2354] dark:bg-[#0F0C1E]/95 dark:shadow-[0_40px_90px_rgba(5,4,18,0.65)]"
+        className="relative mx-auto w-full max-w-5xl overflow-hidden rounded-[32px] border border-white/25 bg-white/95 shadow-[0_30px_80px_rgba(20,16,45,0.38)] backdrop-blur-sm dark:border-[#2B2354] dark:bg-[#0F0C1E]/95 dark:shadow-[0_40px_90px_rgba(5,4,18,0.65)]"
         initial={{ opacity: 0, scale: 0.96, y: 16 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.96, y: 16 }}
@@ -300,7 +300,8 @@ const UniversitySolutionsModal = ({ isOpen, onClose }) => {
           <X className="h-5 w-5" />
         </button>
 
-        <div className="grid grid-cols-1 lg:grid-cols-[1.1fr_0.9fr]">
+        <div className="max-h-[calc(100dvh-2rem)] overflow-y-auto sm:max-h-[calc(100dvh-3rem)]">
+          <div className="grid grid-cols-1 lg:grid-cols-[1.1fr_0.9fr]">
           <div className="space-y-6 p-7 sm:p-10">
             <div className="inline-flex items-center rounded-full border border-primary/20 bg-primary/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-primary dark:border-white/15 dark:bg-white/10 dark:text-white">
               Comprehensive University Solutions
@@ -373,7 +374,7 @@ const UniversitySolutionsModal = ({ isOpen, onClose }) => {
             </div>
           </div>
 
-          <div className="relative min-h-[320px] overflow-hidden bg-gradient-to-br from-primary/10 via-white to-accent/10 p-6 dark:from-[#1B1238] dark:via-[#120C24] dark:to-[#2A1408] sm:p-8">
+          <div className="relative min-h-[220px] overflow-hidden bg-gradient-to-br from-primary/10 via-white to-accent/10 p-6 dark:from-[#1B1238] dark:via-[#120C24] dark:to-[#2A1408] sm:min-h-[320px] sm:p-8">
             <div className="absolute inset-0">
               <img
                 src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=1200&h=900&fit=crop&q=80"
@@ -413,6 +414,7 @@ const UniversitySolutionsModal = ({ isOpen, onClose }) => {
               </div>
             </div>
           </div>
+        </div>
         </div>
       </motion.div>
     </motion.div>

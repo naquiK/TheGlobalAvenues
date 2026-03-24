@@ -4,6 +4,7 @@ import useLazySection from '../hooks/useLazySection';
 
 const HeroSection = lazy(() => import('../components/home/HeroSection'));
 const UniversityTrustBar = lazy(() => import('../components/home/UniversityTrustBar'));
+const SummerSchoolHighlightSection = lazy(() => import('../components/home/SummerSchoolHighlightSection'));
 const ImageCarousel = lazy(() => import('../components/ImageCarousel'));
 const Services = lazy(() =>
   import('../components/Services').then((module) => ({ default: module.Services }))
@@ -15,6 +16,7 @@ const Testimonials = lazy(() =>
   import('../components/Testimonials').then((module) => ({ default: module.Testimonials }))
 );
 const PortfolioSection = lazy(() => import('../components/PortfolioSection'));
+const ENABLE_HOME_TEXTURED_BG = true; // Undo option: set to false if you prefer the previous plain home background.
 
 export default function HomePage() {
   const { ref: carouselRef, isVisible: carouselVisible } = useLazySection();
@@ -24,12 +26,19 @@ export default function HomePage() {
   const { ref: contactRef, isVisible: contactVisible } = useLazySection();
 
   return (
-    <div className="home-page-gradient relative pt-16">
+    <div
+      className={`home-page-gradient relative pt-16 ${
+        ENABLE_HOME_TEXTURED_BG ? 'home-page-gradient--textured' : ''
+      }`}
+    >
       <Suspense fallback={<SectionSkeleton height="h-screen" />}>
         <HeroSection />
       </Suspense>
       <Suspense fallback={<SectionSkeleton height="h-24" />}>
         <UniversityTrustBar />
+      </Suspense>
+      <Suspense fallback={<SectionSkeleton height="h-[640px]" />}>
+        <SummerSchoolHighlightSection />
       </Suspense>
       <div ref={servicesRef}>
         {servicesVisible ? (
