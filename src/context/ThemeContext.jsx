@@ -1,6 +1,7 @@
 import { createContext, useEffect, useMemo, useState } from 'react';
 
 export const ThemeContext = createContext(undefined);
+const THEME_SESSION_KEY = 'tga-theme-session';
 
 const getInitialTheme = () => {
   if (typeof window === 'undefined') {
@@ -8,12 +9,12 @@ const getInitialTheme = () => {
   }
 
   try {
-    const storedTheme = window.localStorage.getItem('tga-theme');
+    const storedTheme = window.sessionStorage.getItem(THEME_SESSION_KEY);
     if (storedTheme === 'light' || storedTheme === 'dark') {
       return storedTheme;
     }
   } catch (error) {
-    // Ignore storage access failures and continue to default dark mode.
+    // Ignore storage access issues and fall back to default dark.
   }
 
   return 'dark';
@@ -31,9 +32,9 @@ export function ThemeProvider({ children }) {
     root.classList.toggle('dark', theme === 'dark');
 
     try {
-      window.localStorage.setItem('tga-theme', theme);
+      window.sessionStorage.setItem(THEME_SESSION_KEY, theme);
     } catch (error) {
-      // Ignore storage access failures; the DOM theme still updates correctly.
+      // Ignore storage access issues; theme still updates in DOM.
     }
   }, [theme]);
 

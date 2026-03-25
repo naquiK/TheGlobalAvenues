@@ -1,42 +1,5 @@
 export const newsItems = [
   {
-    id: 1,
-    slug: 'partnership-expansion-across-the-uk',
-    type: 'news',
-    title: 'Partnership Expansion Across the UK',
-    excerpt:
-      'The Global Avenues has expanded UK partnerships to deliver higher-quality applications, faster admissions coordination, and stronger student outcomes.',
-    content:
-      'The Global Avenues has expanded collaboration with UK institutions through a structured partnership model focused on quality, transparency, and long-term enrollment goals.\n\nOur work now includes targeted student outreach, counselor training, and pre-screening workflows that improve application quality before submission. This helps admissions teams spend less time on incomplete files and more time on high-intent candidates.\n\nWe also support multi-intake planning with regular reporting on lead quality, application progress, and conversion trends. With clear visibility at every stage, partner universities can make faster, more accurate decisions.\n\nThis expansion strengthens UK institutions\' presence in key South Asian markets while maintaining academic fit and recruitment standards.',
-    image:
-      'https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?auto=format&fit=crop&w=1600&q=80',
-    date: '2024-03-15',
-    author: 'Neetu Verma Gupta',
-    category: 'Partnership',
-    featured: true,
-    views: 2500,
-    readTime: '4 min read',
-  },
-  {
-    id: 2,
-    slug: 'how-universities-can-improve-offer-conversion-in-india',
-    type: 'blog',
-    title: 'How Universities Can Improve Offer Conversion in India',
-    excerpt:
-      'A practical and focused playbook to improve offer acceptance by improving speed, communication, and post-offer engagement.',
-    content:
-      'Improving offer conversion in India is not only about generating more applications. It is about converting the right applicants through a faster and better student journey.\n\nFirst, reduce decision timelines. When students wait too long, they commit elsewhere. Institutions that publish clear service-level timelines and maintain quick offer turnaround generally retain stronger intent.\n\nSecond, improve application quality at source. A simple pre-submission checklist for documents, academic fit, and English requirements significantly reduces rework and delays.\n\nThird, treat post-offer communication as a structured process. Students need clear next steps on deposits, visas, accommodation, and deadlines. Timely follow-ups from trained counselors increase confidence and reduce drop-off.\n\nUniversities that align these three areas usually see more predictable conversion rates and stronger final enrollments across intakes.',
-    thumbnail:
-      'https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=1200&h=800&fit=crop&q=80',
-    duration: '12:45',
-    date: '2024-03-10',
-    author: 'The Global Avenues',
-    category: 'Growth Strategy',
-    featured: true,
-    views: 5800,
-    readTime: '5 min read',
-  },
-  {
     id: 3,
     slug: 'study-in-cyprus-mba-opportunities-at-kes-college-nicosia',
     type: 'blog',
@@ -68,6 +31,24 @@ export const newsItems = [
     date: '2026-03-23',
     author: 'The Global Avenues',
     category: 'Game Design',
+    featured: false,
+    views: 0,
+    readTime: '8 min read',
+  },
+  {
+    id: 5,
+    slug: 'study-in-cyprus-opportunities-at-mesoyios-college-limassol',
+    type: 'blog',
+    title: 'Study in Cyprus: Opportunities at Mesoyios College, Limassol',
+    excerpt:
+      'Scholarships, industry exposure, and career support make Mesoyios College in Limassol a practical path for Indian students seeking affordable European education.',
+    content:
+      'Cyprus is becoming an increasingly attractive destination for Indian students looking for a European degree with affordable costs and strong career opportunities. One institution that stands out in this space is Mesoyios College in Limassol, known for its industry-focused programs, hands-on training, and strong placement support.\n\nFor students and parents exploring study abroad options, the biggest concerns usually revolve around affordability, job prospects, and student support. Here is how studying in Cyprus, and specifically at Mesoyios College, addresses these concerns.\n\nProblem 1: Many Indian families hesitate because tuition fees and living expenses abroad can be overwhelming.\n\nSolution: Cyprus has actively encouraged universities and colleges to make international education more accessible. Many institutions offer significant tuition fee reductions and scholarships, which can reduce fees by around 50% or even more depending on the student profile. At Mesoyios College, students can also benefit from Study & Work scholarship programs, which combine education with practical industry experience and financial benefits during studies.\n\nThese initiatives help students pursue European education without the extremely high financial burden seen in some traditional study destinations.\n\nProblem 2: Many students graduate with degrees but limited real-world experience, which can make it difficult to find employment.\n\nSolution: Mesoyios College focuses heavily on practical training alongside academic learning. Students gain hands-on experience through internships and industry placements during their studies. The college also collaborates with luxury hotels and hospitality businesses, offering students opportunities for paid practice placements while studying.\n\nSuch exposure helps students build professional skills and industry connections before graduation.\n\nProblem 3: Parents and students often worry about employment prospects after completing their studies abroad.\n\nSolution: Mesoyios College provides structured career support to help students transition into the workforce. Services include career counseling to help students plan their professional path, resume and cover letter workshops, interview preparation sessions, job fairs and networking events with employers, and internship and job placement opportunities through industry partnerships.\n\nThe college also works closely with industry partners to help graduates secure job placements in the hospitality and tourism sectors.\n\nProblem 4: Moving abroad can be challenging for students, especially when it comes to accommodation, lifestyle, and settling in.\n\nSolution: Mesoyios College offers dedicated services for international students, including help with accommodation, orientation, and ongoing student support throughout their studies. The campus is located in Limassol, a vibrant coastal city known for its multicultural environment and welcoming student community.\n\nWhy Mesoyios College is Worth Considering\n\nStudying at Mesoyios College offers students several advantages: affordable European education, scholarships and financial support options, practical training and industry exposure, career guidance and placement support, and international student assistance throughout the journey.\n\nFor Indian students looking for an affordable pathway to European education with strong industry exposure, Cyprus is becoming an increasingly practical choice. Institutions like Mesoyios College combine academic learning with real-world experience, helping students graduate with both knowledge and employable skills.\n\nAt The Global Avenues, we help students explore universities in Cyprus, identify scholarship opportunities, and guide them through the entire study abroad journey, from university selection to visa and pre-departure support.\n\nWith the right guidance, studying in Cyprus can be a smart and rewarding step toward a global career.',
+    image: '/universities/mesoyios-college-hero.webp',
+    thumbnail: '/universities/mesoyios-college-hero.webp',
+    date: '2026-03-25',
+    author: 'The Global Avenues',
+    category: 'Study in Cyprus',
     featured: false,
     views: 0,
     readTime: '8 min read',

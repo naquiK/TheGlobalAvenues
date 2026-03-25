@@ -394,7 +394,7 @@ export function InteractiveGlobe() {
       container.removeEventListener('mousemove', handleMouseMove);
       container.removeEventListener('mouseleave', handleMouseLeave);
       container.removeEventListener('mousedown', handlePointerDown);
-      container.innerHTML = '';
+      container.replaceChildren();
     };
   }, []);
 

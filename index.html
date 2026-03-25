@@ -23,12 +23,8 @@
     <script>
       (function () {
         try {
-          var storedTheme = typeof window !== 'undefined'
-            ? window.localStorage.getItem('tga-theme')
-            : null;
-          var theme = storedTheme === 'light' || storedTheme === 'dark'
-            ? storedTheme
-            : 'dark';
+          var storedTheme = window.sessionStorage.getItem('tga-theme-session');
+          var theme = storedTheme === 'light' || storedTheme === 'dark' ? storedTheme : 'dark';
 
           if (theme === 'dark') {
             document.documentElement.classList.add('dark');

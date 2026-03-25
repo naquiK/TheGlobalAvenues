@@ -1,5 +1,6 @@
 const DEFAULT_API_BASE_URL = 'https://admin.theglobalavenues.com/public/api?route=';
 const DEFAULT_MEDIA_BASE_URL = 'https://admin.theglobalavenues.com/public/';
+const DEFAULT_REQUEST_TIMEOUT_MS = 12000;
 
 export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || DEFAULT_API_BASE_URL;
 export const MEDIA_BASE_URL = import.meta.env.VITE_API_MEDIA_BASE_URL || DEFAULT_MEDIA_BASE_URL;
@@ -51,11 +52,68 @@ export const resolveMediaUrl = (path) => {
   return joinUrl(MEDIA_BASE_URL, path);
 };
 
+const createRequestSignal = (externalSignal, timeoutMs) => {
+  const controller = new AbortController();
+  let timeoutId = null;
+  let timedOut = false;
+  let onExternalAbort = null;
+
+  if (Number.isFinite(timeoutMs) && timeoutMs > 0) {
+    timeoutId = globalThis.setTimeout(() => {
+      timedOut = true;
+      controller.abort();
+    }, timeoutMs);
+  }
+
+  if (externalSignal) {
+    if (externalSignal.aborted) {
+      controller.abort();
+    } else {
+      onExternalAbort = () => controller.abort();
+      externalSignal.addEventListener('abort', onExternalAbort, { once: true });
+    }
+  }
+
+  return {
+    signal: controller.signal,
+    didTimeout: () => timedOut,
+    cleanup: () => {
+      if (timeoutId) {
+        globalThis.clearTimeout(timeoutId);
+      }
+      if (externalSignal && onExternalAbort) {
+        externalSignal.removeEventListener('abort', onExternalAbort);
+      }
+    },
+  };
+};
+
 export async function fetchJson(url, options = {}) {
-  const response = await fetch(url, {
-    headers: { Accept: 'application/json', ...(options.headers || {}) },
-    ...options,
-  });
+  const {
+    headers: optionHeaders = {},
+    signal: externalSignal,
+    timeoutMs = DEFAULT_REQUEST_TIMEOUT_MS,
+    ...fetchOptions
+  } = options;
+
+  const requestControl = createRequestSignal(externalSignal, timeoutMs);
+  let response;
+
+  try {
+    response = await fetch(url, {
+      headers: { Accept: 'application/json', ...optionHeaders },
+      ...fetchOptions,
+      signal: requestControl.signal,
+    });
+  } catch (error) {
+    requestControl.cleanup();
+    if (requestControl.didTimeout()) {
+      throw new Error(`Request timed out (${timeoutMs}ms)`);
+    }
+    throw error;
+  }
+
+  requestControl.cleanup();
 
   const payload = await response.json().catch(() => null);
 

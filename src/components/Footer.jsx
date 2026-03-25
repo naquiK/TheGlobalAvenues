@@ -214,7 +214,7 @@ export function Footer() {
                         key={key}
                         href={socialUrl}
                         target="_blank"
-                        rel="noreferrer"
+                        rel="noopener noreferrer"
                         className="flex h-9 w-9 items-center justify-center rounded-full border border-white/20 text-white/60 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-110 hover:border-brand-orange hover:bg-brand-orange hover:text-white active:-translate-y-0.5 active:scale-110 active:border-brand-orange active:bg-brand-orange active:text-white"
                         aria-label={`Visit our ${key} page`}
                       >

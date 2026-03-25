@@ -236,7 +236,7 @@ export function Header() {
               loading="lazy"
               decoding="async"
               className={`w-auto transition-all duration-200 ease-out ${
-                hasScrolled ? 'h-8 lg:h-10' : 'h-8 lg:h-10'
+                hasScrolled ? 'h-10 lg:h-12' : 'h-11 lg:h-14'
               }`}
             />
           </Link>

@@ -79,10 +79,10 @@ export default function SummerSchoolHighlightSection() {
       <div className="mx-auto max-w-7xl">
         <div
           ref={spotlightRef}
-          className="summer-highlight-shell relative overflow-hidden rounded-[32px] border border-[#E3C7B2] bg-[linear-gradient(112deg,#FFF8F3_0%,#F8F1FF_44%,#FFF3E8_100%)] p-6 shadow-[0_26px_62px_rgba(20,14,45,0.14)] dark:border-[#4A3A85] dark:bg-[linear-gradient(112deg,#1A1432_0%,#120D24_54%,#24140E_100%)] sm:p-8 lg:p-10"
+          className="summer-highlight-shell relative overflow-hidden rounded-[32px] border border-[#E3C7B2] bg-[linear-gradient(112deg,#FFF8F3_0%,#F8F1FF_44%,#FFF3E8_100%)] p-6 shadow-[0_14px_26px_-20px_rgba(20,14,45,0.22)] dark:border-[#4A3A85] dark:bg-[linear-gradient(112deg,#1A1432_0%,#120D24_54%,#24140E_100%)] dark:shadow-[0_26px_62px_rgba(20,14,45,0.14)] sm:p-8 lg:p-10"
         >
-          <div className="pointer-events-none absolute -right-24 -top-24 h-56 w-56 rounded-full bg-primary/12 blur-3xl dark:bg-primary/16" />
-          <div className="pointer-events-none absolute -bottom-24 -left-20 h-56 w-56 rounded-full bg-accent/14 blur-3xl dark:bg-accent/14" />
+          <div className="pointer-events-none absolute -right-24 -top-24 h-56 w-56 rounded-full bg-primary/6 opacity-40 blur-3xl dark:bg-primary/16 dark:opacity-100" />
+          <div className="pointer-events-none absolute -bottom-24 -left-20 h-56 w-56 rounded-full bg-accent/8 opacity-35 blur-3xl dark:bg-accent/14 dark:opacity-100" />
 
           <div
             className="relative z-10"
@@ -145,7 +145,7 @@ export default function SummerSchoolHighlightSection() {
                           </div>
                         </div>
 
-                        <div className="rounded-2xl border border-[#E6CEBF] bg-[linear-gradient(145deg,rgba(255,255,255,0.86)_0%,rgba(250,245,255,0.88)_58%,rgba(255,240,230,0.84)_100%)] p-5 shadow-[0_16px_34px_rgba(20,14,45,0.1)] dark:border-[#4A3A85] dark:bg-[linear-gradient(150deg,rgba(26,20,52,0.94)_0%,rgba(17,13,35,0.96)_58%,rgba(33,19,14,0.86)_100%)] dark:shadow-[0_18px_34px_rgba(6,4,16,0.52)]">
+                        <div className="rounded-2xl border border-[#E6CEBF] bg-[linear-gradient(145deg,rgba(255,255,255,0.86)_0%,rgba(250,245,255,0.88)_58%,rgba(255,240,230,0.84)_100%)] p-5 shadow-none dark:border-[#4A3A85] dark:bg-[linear-gradient(150deg,rgba(26,20,52,0.94)_0%,rgba(17,13,35,0.96)_58%,rgba(33,19,14,0.86)_100%)] dark:shadow-[0_18px_34px_rgba(6,4,16,0.52)]">
                           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
                             Quick Info
                           </p>
@@ -186,7 +186,7 @@ export default function SummerSchoolHighlightSection() {
                           {slide.shortCourses.map((course) => (
                             <article
                               key={course.title}
-                              className="rounded-2xl border border-[#D8D1EF] bg-[linear-gradient(150deg,#FFFFFF_0%,#F9F6FF_100%)] p-5 shadow-[0_14px_32px_rgba(16,12,40,0.08)] transition-transform duration-300 hover:-translate-y-1 dark:border-[#4C3B88] dark:bg-[linear-gradient(150deg,#1B1435_0%,#120D24_100%)]"
+                              className="rounded-2xl border border-[#D8D1EF] bg-[linear-gradient(150deg,#FFFFFF_0%,#F9F6FF_100%)] p-5 shadow-none transition-transform duration-300 hover:-translate-y-1 dark:border-[#4C3B88] dark:bg-[linear-gradient(150deg,#1B1435_0%,#120D24_100%)] dark:shadow-[0_14px_32px_rgba(16,12,40,0.24)]"
                             >
                               <span className="mb-3 block h-[2px] w-14 rounded-full bg-[linear-gradient(90deg,#FF7F50_0%,#FFC84E_100%)] opacity-80" aria-hidden="true" />
                               <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
