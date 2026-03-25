@@ -1,25 +1,21 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Calendar, Clock, Eye, User } from 'lucide-react';
-import { getBlogDetail } from '../services/contentApi';
-import { resolveMediaUrl } from '../services/apiClient';
 import { newsItems as fallbackNewsItems } from '../data/newsData';
 import BackNavButton from '../components/ui/BackNavButton';
 
 const getCardImage = (item) => item.thumbnail || item.image;
 const INVALID_MEDIA_VALUES = new Set(['', 'null', 'undefined', 'false', 'none', 'n/a', 'na', '#']);
-const VIDEO_DISABLED_ARTICLE_KEY = 'how-universities-can-improve-offer-conversion-in-india';
 const IMAGE_FALLBACK_URL = '/videos/hero-poster.jpg';
 const IMAGE_OVERRIDE_BY_ARTICLE = {
+  'study-in-cyprus-opportunities-at-mesoyios-college-limassol':
+    '/universities/mesoyios-college-hero.webp',
   'study-in-cyprus-mba-opportunities-at-kes-college-nicosia':
     '/universities/kes-college-nicosia-hero.jpg',
   'building-the-future-of-gaming-study-game-design-and-development-at-euas-estonia':
     'https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1600&q=80',
-  'partnership-expansion-across-the-uk':
-    'https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?auto=format&fit=crop&w=1600&q=80',
 };
-const isPublicAssetPath = (value) => /^\/(universities|gallery|team|videos)\//i.test(value);
 
 const normalizeText = (value) =>
   String(value || '')
@@ -39,8 +35,8 @@ const sanitizeMediaUrl = (value) => {
   const raw = String(value || '').trim();
   if (!raw || INVALID_MEDIA_VALUES.has(raw.toLowerCase())) return '';
   if (/^(https?:\/\/|data:|blob:)/i.test(raw)) return raw;
-  if (isPublicAssetPath(raw)) return raw;
-  return resolveMediaUrl(raw);
+  if (raw.startsWith('/')) return raw;
+  return '';
 };
 
 const sanitizeVideoUrl = (value) => {
@@ -48,15 +44,6 @@ const sanitizeVideoUrl = (value) => {
   if (!raw || INVALID_MEDIA_VALUES.has(raw.toLowerCase())) return '';
   return raw;
 };
-
-const shouldDisableVideo = (item) => {
-  const slugKey = normalizeIdentity(item?.slug);
-  const titleKey = normalizeIdentity(item?.title);
-  return slugKey === VIDEO_DISABLED_ARTICLE_KEY || titleKey === VIDEO_DISABLED_ARTICLE_KEY;
-};
-
-const applyVideoPolicy = (item) =>
-  shouldDisableVideo(item) ? { ...item, videoUrl: '' } : item;
 
 const applyImagePolicy = (item) => {
   const slugKey = normalizeIdentity(item?.slug);
@@ -66,13 +53,7 @@ const applyImagePolicy = (item) => {
   return { ...item, image: overrideImage, thumbnail: overrideImage };
 };
 
-const applyContentPolicy = (item) => applyVideoPolicy(applyImagePolicy(item));
-const handleImageError = (event) => {
-  const target = event.currentTarget;
-  if (target.dataset.fallbackApplied === 'true') return;
-  target.dataset.fallbackApplied = 'true';
-  target.src = IMAGE_FALLBACK_URL;
-};
+const applyContentPolicy = (item) => applyImagePolicy(item);
 
 const mapFallbackPost = (item) =>
   applyContentPolicy({
@@ -93,123 +74,57 @@ const mapFallbackPost = (item) =>
   });
 
 const findFallbackPostBySlugOrId = (id) => {
-  const target = normalizeIdentity(id);
+  const raw = String(id || '').trim();
+  const decoded = (() => {
+    try {
+      return decodeURIComponent(raw);
+    } catch {
+      return raw;
+    }
+  })();
+  const normalizedTarget = normalizeIdentity(decoded.replace(/\/+$/g, ''));
+  if (!normalizedTarget) return null;
+
   return fallbackNewsItems.find((item) => {
-    const itemSlug = normalizeIdentity(item.slug || item.title || item.id);
-    return itemSlug === target || String(item.id) === String(id);
+    const itemSlug = normalizeIdentity(item.slug || '');
+    const itemTitle = normalizeIdentity(item.title || '');
+    const itemId = String(item.id || '');
+
+    if (itemId && itemId === decoded) return true;
+    if (itemSlug && itemSlug === normalizedTarget) return true;
+    if (itemTitle && itemTitle === normalizedTarget) return true;
+    if (itemSlug && (itemSlug.includes(normalizedTarget) || normalizedTarget.includes(itemSlug))) {
+      return true;
+    }
+    if (itemTitle && (itemTitle.includes(normalizedTarget) || normalizedTarget.includes(itemTitle))) {
+      return true;
+    }
+    return false;
   });
 };
 
-const getFallbackRelated = (source) =>
-  fallbackNewsItems
-    .filter((item) => item.id !== source?.id && item.category === source?.category)
-    .slice(0, 4)
-    .map((item) => ({
-      id: item.id,
-      slug: item.slug || normalizeIdentity(item.title) || String(item.id),
-      title: item.title,
-      category: item.category || 'General',
-      date: item.date || null,
-      image: sanitizeMediaUrl(item.image || item.thumbnail),
-      thumbnail: sanitizeMediaUrl(item.thumbnail || item.image),
-    }));
+const handleImageError = (event) => {
+  const target = event.currentTarget;
+  if (target.dataset.fallbackApplied === 'true') return;
+  target.dataset.fallbackApplied = 'true';
+  target.src = IMAGE_FALLBACK_URL;
+};
 
 export default function NewsDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [newsItem, setNewsItem] = useState(null);
-  const [relatedArticles, setRelatedArticles] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [errorMessage, setErrorMessage] = useState(false);
 
-  useEffect(() => {
-    if (!id) return;
-
-    const controller = new AbortController();
-
-    const loadPost = async () => {
-      setIsLoading(true);
-      setErrorMessage(false);
-      const fallbackBySlugOrId = findFallbackPostBySlugOrId(id);
-
-      try {
-        const data = await getBlogDetail(id, { signal: controller.signal });
-        const post = data?.post || null;
-        const related = data?.related || [];
-
-        if (!post) {
-          if (fallbackBySlugOrId) {
-            const fallbackPost = mapFallbackPost(fallbackBySlugOrId);
-            setNewsItem(fallbackPost);
-            setRelatedArticles(getFallbackRelated(fallbackBySlugOrId));
-          } else {
-            setNewsItem(null);
-            setRelatedArticles([]);
-          }
-          return;
-        }
-
-        const fallbackPost = fallbackBySlugOrId ? mapFallbackPost(fallbackBySlugOrId) : null;
-        const mappedPost = applyContentPolicy({
-          id: post.id,
-          slug: post.slug || normalizeIdentity(post.title) || String(post.id),
-          type: post.type || post.content_type || 'blog',
-          title: post.title || fallbackPost?.title || 'Untitled',
-          excerpt: normalizeText(post.excerpt || post.summary || fallbackPost?.excerpt || ''),
-          content: normalizeText(post.content || post.body || post.description || fallbackPost?.content || ''),
-          image: sanitizeMediaUrl(post.featured_image || post.image || post.thumbnail) || fallbackPost?.image || '',
-          thumbnail:
-            sanitizeMediaUrl(post.thumbnail || post.featured_image || post.image) ||
-            fallbackPost?.thumbnail ||
-            fallbackPost?.image ||
-            '',
-          author: post.author || fallbackPost?.author || 'The Global Avenues',
-          date: post.created_at || post.date || fallbackPost?.date || '',
-          readTime: post.read_time || post.readTime || fallbackPost?.readTime || '5 min read',
-          category: post.category || fallbackPost?.category || 'General',
-          views: post.views ? Number(post.views) : fallbackPost?.views || 0,
-          videoUrl: sanitizeVideoUrl(post.video_url || post.videoUrl || post.video || fallbackPost?.videoUrl || ''),
-        });
-
-        const mappedRelated = related.map((item) =>
-          applyImagePolicy({
-            id: item.id,
-            slug: item.slug || normalizeIdentity(item.title) || String(item.id),
-            title: item.title,
-            category: item.category || mappedPost.category,
-            date: item.created_at || item.date || null,
-            image: sanitizeMediaUrl(item.featured_image || item.image || item.thumbnail),
-            thumbnail: sanitizeMediaUrl(item.thumbnail || item.featured_image || item.image),
-          })
-        );
-
-        setNewsItem(mappedPost);
-        setRelatedArticles(mappedRelated);
-      } catch (error) {
-        if (error.name !== 'AbortError') {
-          if (fallbackBySlugOrId) {
-            const fallbackPost = mapFallbackPost(fallbackBySlugOrId);
-            setNewsItem(fallbackPost);
-            setRelatedArticles(getFallbackRelated(fallbackBySlugOrId));
-          } else {
-            setErrorMessage(true);
-          }
-        }
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    loadPost();
-
-    return () => controller.abort();
-  }, [id]);
+  const sourcePost = useMemo(() => findFallbackPostBySlugOrId(id), [id]);
+  const newsItem = useMemo(() => (sourcePost ? mapFallbackPost(sourcePost) : null), [sourcePost]);
 
   const contentBlocks = useMemo(() => {
     if (!newsItem) return [];
     const content = newsItem.content || newsItem.excerpt;
     if (!content) return [];
-    return content.split(/\n{2,}/).map((block) => block.trim()).filter(Boolean);
+    return content
+      .split(/\n{2,}/)
+      .map((block) => block.trim())
+      .filter(Boolean);
   }, [newsItem]);
 
   if (!newsItem) {
@@ -221,14 +136,8 @@ export default function NewsDetailPage() {
         transition={{ duration: 0.6 }}
       >
         <motion.div initial={{ scale: 0.8 }} animate={{ scale: 1 }} transition={{ duration: 0.4 }}>
-          <h1 className="mb-4 text-4xl font-bold">{isLoading ? 'Loading...' : 'Article Not Found'}</h1>
-          <p className="mb-8 text-muted-foreground">
-            {isLoading
-              ? 'Fetching the latest article.'
-              : errorMessage
-                ? 'This article is unavailable right now.'
-                : 'The article you\'re looking for doesn\'t exist.'}
-          </p>
+          <h1 className="mb-4 text-4xl font-bold">Article Not Found</h1>
+          <p className="mb-8 text-muted-foreground">The article you're looking for doesn't exist.</p>
           <BackNavButton label="Back to News & Blog" onClick={() => navigate('/news-blog')} />
         </motion.div>
       </motion.div>
@@ -343,9 +252,7 @@ export default function NewsDetailPage() {
           </motion.div>
 
           <motion.div variants={itemVariants} className="max-w-none space-y-6">
-            {newsItem.excerpt && (
-              <p className="text-xl leading-relaxed text-muted-foreground">{newsItem.excerpt}</p>
-            )}
+            {newsItem.excerpt && <p className="text-xl leading-relaxed text-muted-foreground">{newsItem.excerpt}</p>}
 
             <div className="space-y-4 leading-relaxed text-foreground/90">
               {contentBlocks.length > 0 ? (
@@ -369,52 +276,6 @@ export default function NewsDetailPage() {
             )}
           </motion.div>
 
-          {relatedArticles.length > 0 && (
-            <motion.div variants={itemVariants} className="space-y-6">
-              <h2 className="text-2xl font-bold">Related Articles</h2>
-              <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-                {relatedArticles.map((article, index) => (
-                  <motion.div
-                    key={article.id}
-                    whileHover={{ translateY: -4 }}
-                    onClick={() => navigate(`/news/${article.slug}`)}
-                    className="group cursor-pointer overflow-hidden rounded-xl border border-border bg-background transition-all duration-300 hover:border-primary/50 hover:shadow-lg"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, delay: index * 0.1 }}
-                  >
-                    <div className="relative h-40 overflow-hidden bg-gradient-to-br from-primary/20 to-secondary/20">
-                      {article.image ? (
-                        <img
-                          src={getCardImage(article)}
-                          alt={article.title}
-                          loading="lazy"
-                          decoding="async"
-                          onError={handleImageError}
-                          className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-                        />
-                      ) : (
-                        <div className="flex h-full w-full items-center justify-center text-xs text-muted-foreground">
-                          No image
-                        </div>
-                      )}
-                    </div>
-                    <div className="p-4">
-                      <p className="mb-2 text-xs font-semibold text-primary">{article.category}</p>
-                      <h3 className="line-clamp-2 font-bold transition-colors group-hover:text-primary">
-                        {article.title}
-                      </h3>
-                      {article.date && (
-                        <p className="mt-2 text-xs text-muted-foreground">
-                          {new Date(article.date).toLocaleDateString()}
-                        </p>
-                      )}
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
-            </motion.div>
-          )}
         </motion.div>
       </div>
     </div>

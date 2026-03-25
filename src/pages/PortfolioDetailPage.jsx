@@ -563,7 +563,7 @@ export default function PortfolioDetailPage() {
                   <a
                     href={portfolio.website}
                     target="_blank"
-                    rel="noreferrer"
+                    rel="noopener noreferrer"
                     className={`inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-semibold transition-colors ${
                       isIcnBusinessSchoolProfile
                         ? 'bg-[linear-gradient(95deg,#9A3412_0%,#EA580C_55%,#F59E0B_100%)] text-white hover:brightness-110'

@@ -95,14 +95,14 @@ export default function AboutPage() {
     const checkBadge = () => {
       if (!mounted || !badgeRef.current) return;
       const hasBadgeContent =
-        badgeRef.current.children.length > 0 || badgeRef.current.innerHTML.trim().length > 0;
+        badgeRef.current.children.length > 0 || badgeRef.current.textContent.trim().length > 0;
       if (hasBadgeContent) {
         setIsBadgeReady(true);
         if (checkTimer) window.clearInterval(checkTimer);
       }
     };
 
-    badgeRef.current.innerHTML = '';
+    badgeRef.current.replaceChildren();
     const existingScript = document.querySelector(`script[src="${scriptSrc}"]`);
     if (existingScript) {
       existingScript.remove();

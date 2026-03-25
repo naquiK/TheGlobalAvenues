@@ -2,26 +2,18 @@ import { useEffect, useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { ArrowRight, Calendar, Flame, Newspaper, Play, Sparkles, User } from 'lucide-react';
-import { getBlogList } from '../services/contentApi';
-import { resolveMediaUrl } from '../services/apiClient';
 import { newsItems as fallbackNewsItems } from '../data/newsData';
 
 const getCardImage = (item) => item.thumbnail || item.image;
 const INVALID_MEDIA_VALUES = new Set(['', 'null', 'undefined', 'false', 'none', 'n/a', 'na', '#']);
-const VIDEO_DISABLED_ARTICLE_KEY = 'how-universities-can-improve-offer-conversion-in-india';
 const IMAGE_FALLBACK_URL = '/videos/hero-poster.jpg';
-const ALLOWED_ARTICLE_ORDER = [
-  'study-in-cyprus-mba-opportunities-at-kes-college-nicosia',
-  'building-the-future-of-gaming-study-game-design-and-development-at-euas-estonia',
-];
-const ALLOWED_ARTICLE_SET = new Set(ALLOWED_ARTICLE_ORDER);
 const IMAGE_OVERRIDE_BY_ARTICLE = {
+  'study-in-cyprus-opportunities-at-mesoyios-college-limassol':
+    '/universities/mesoyios-college-hero.webp',
   'study-in-cyprus-mba-opportunities-at-kes-college-nicosia':
     '/universities/kes-college-nicosia-hero.jpg',
   'building-the-future-of-gaming-study-game-design-and-development-at-euas-estonia':
     'https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1600&q=80',
-  'partnership-expansion-across-the-uk':
-    'https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?auto=format&fit=crop&w=1600&q=80',
 };
 
 const normalizeText = (value) =>
@@ -36,15 +28,27 @@ const normalizeIdentity = (value) =>
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '');
 
-const hasValue = (value) => value !== undefined && value !== null && String(value).trim() !== '';
-const isPublicAssetPath = (value) => /^\/(universities|gallery|team|videos)\//i.test(value);
+const normalizeType = (value) => {
+  const text = String(value || '').trim().toLowerCase();
+  if (!text) return 'blog';
+  if (text.includes('news') || text.includes('update') || text.includes('press')) return 'news';
+  if (
+    text.includes('blog') ||
+    text.includes('article') ||
+    text.includes('vlog') ||
+    text.includes('video')
+  ) {
+    return 'blog';
+  }
+  return 'blog';
+};
 
 const sanitizeMediaUrl = (value) => {
   const raw = String(value || '').trim();
   if (!raw || INVALID_MEDIA_VALUES.has(raw.toLowerCase())) return '';
   if (/^(https?:\/\/|data:|blob:)/i.test(raw)) return raw;
-  if (isPublicAssetPath(raw)) return raw;
-  return resolveMediaUrl(raw);
+  if (raw.startsWith('/')) return raw;
+  return '';
 };
 
 const sanitizeVideoUrl = (value) => {
@@ -52,15 +56,6 @@ const sanitizeVideoUrl = (value) => {
   if (!raw || INVALID_MEDIA_VALUES.has(raw.toLowerCase())) return '';
   return raw;
 };
-
-const shouldDisableVideo = (item) => {
-  const slugKey = normalizeIdentity(item?.slug);
-  const titleKey = normalizeIdentity(item?.title);
-  return slugKey === VIDEO_DISABLED_ARTICLE_KEY || titleKey === VIDEO_DISABLED_ARTICLE_KEY;
-};
-
-const applyVideoPolicy = (item) =>
-  shouldDisableVideo(item) ? { ...item, videoUrl: '' } : item;
 
 const applyImagePolicy = (item) => {
   const slugKey = normalizeIdentity(item?.slug);
@@ -70,20 +65,43 @@ const applyImagePolicy = (item) => {
   return { ...item, image: overrideImage, thumbnail: overrideImage };
 };
 
-const applyContentPolicy = (item) => applyVideoPolicy(applyImagePolicy(item));
+const applyContentPolicy = (item) => applyImagePolicy(item);
+
+const mapFallbackItem = (item) =>
+  applyContentPolicy({
+    id: item.id,
+    slug: item.slug || normalizeIdentity(item.title) || String(item.id),
+    type: normalizeType(item.type || 'blog'),
+    title: item.title || 'Untitled',
+    excerpt: normalizeText(item.excerpt || item.summary || ''),
+    image: sanitizeMediaUrl(item.image || item.thumbnail),
+    thumbnail: sanitizeMediaUrl(item.thumbnail || item.image),
+    author: item.author || 'The Global Avenues',
+    date: item.date || '',
+    readTime: item.readTime || '5 min read',
+    category: item.category || 'General',
+    views: item.views ? Number(item.views) : 0,
+    videoUrl: sanitizeVideoUrl(item.videoUrl),
+  });
+
+const parseDateValue = (value) => {
+  const parsed = new Date(value || '');
+  return Number.isNaN(parsed.getTime()) ? 0 : parsed.getTime();
+};
+
+const sortByNewest = (items) =>
+  [...items].sort((a, b) => {
+    const dateDiff = parseDateValue(b.date) - parseDateValue(a.date);
+    if (dateDiff !== 0) return dateDiff;
+    return Number(b.id || 0) - Number(a.id || 0);
+  });
+
 const handleImageError = (event) => {
   const target = event.currentTarget;
   if (target.dataset.fallbackApplied === 'true') return;
   target.dataset.fallbackApplied = 'true';
   target.src = IMAGE_FALLBACK_URL;
 };
-
-const getArticleKey = (item) => normalizeIdentity(item?.slug || item?.title || item?.id);
-const isAllowedArticle = (item) => ALLOWED_ARTICLE_SET.has(getArticleKey(item));
-const sortByAllowedOrder = (items) =>
-  [...items].sort(
-    (a, b) => ALLOWED_ARTICLE_ORDER.indexOf(getArticleKey(a)) - ALLOWED_ARTICLE_ORDER.indexOf(getArticleKey(b))
-  );
 
 const formatDate = (value) => {
   if (!value) return '-';
@@ -92,138 +110,17 @@ const formatDate = (value) => {
   return parsed.toLocaleDateString();
 };
 
-const normalizeType = (value) => {
-  const text = String(value || '').trim().toLowerCase();
-  if (!text) return 'blog';
-  if (text.includes('news') || text.includes('update') || text.includes('press')) return 'news';
-  if (text.includes('blog') || text.includes('article') || text.includes('vlog') || text.includes('video')) return 'blog';
-  return 'blog';
-};
-
-const getContentArray = (payload) => {
-  if (Array.isArray(payload)) return payload;
-  if (Array.isArray(payload?.items)) return payload.items;
-  if (Array.isArray(payload?.posts)) return payload.posts;
-  if (Array.isArray(payload?.blogs)) return payload.blogs;
-  return [];
-};
-
-const mapBlogItem = (item) => ({
-  id: item.id || item.slug || item.title,
-  slug: item.slug || normalizeIdentity(item.title) || String(item.id || item.title || ''),
-  type: normalizeType(item.type || item.content_type || item.post_type || 'blog'),
-  title: item.title || 'Untitled',
-  excerpt: normalizeText(item.excerpt || item.summary || 'Read the full story and insights from our team.'),
-  image: sanitizeMediaUrl(item.featured_image || item.image || item.thumbnail),
-  thumbnail: sanitizeMediaUrl(item.featured_image || item.thumbnail || item.image),
-  author: item.author || 'The Global Avenues',
-  date: item.created_at || item.date || '',
-  readTime: item.read_time || item.readTime || '5 min read',
-  category: item.category || 'General',
-  views: item.views ? Number(item.views) : 0,
-  videoUrl: sanitizeVideoUrl(item.video_url || item.videoUrl || item.video),
-});
-
-const mapFallbackItem = (item) => ({
-  id: item.id,
-  slug: item.slug || normalizeIdentity(item.title) || String(item.id),
-  type: normalizeType(item.type || 'blog'),
-  title: item.title || 'Untitled',
-  excerpt: normalizeText(item.excerpt || item.summary || ''),
-  image: sanitizeMediaUrl(item.image || item.thumbnail),
-  thumbnail: sanitizeMediaUrl(item.thumbnail || item.image),
-  author: item.author || 'The Global Avenues',
-  date: item.date || '',
-  readTime: item.readTime || '5 min read',
-  category: item.category || 'General',
-  views: item.views ? Number(item.views) : 0,
-  videoUrl: sanitizeVideoUrl(item.videoUrl),
-});
-
-const getMergeKey = (item, index) => item.slug || String(item.id || `item-${index}`);
-
-const pickFirst = (...values) => {
-  for (const value of values) {
-    if (hasValue(value)) return value;
-  }
-  return '';
-};
-
-const mergeNewsItems = (preferredItem, fallbackItem) =>
-  applyContentPolicy({
-    ...fallbackItem,
-    ...preferredItem,
-    title: pickFirst(preferredItem.title, fallbackItem.title, 'Untitled'),
-    excerpt: pickFirst(preferredItem.excerpt, fallbackItem.excerpt),
-    image: pickFirst(preferredItem.image, fallbackItem.image),
-    thumbnail: pickFirst(
-      preferredItem.thumbnail,
-      fallbackItem.thumbnail,
-      preferredItem.image,
-      fallbackItem.image
-    ),
-    author: pickFirst(preferredItem.author, fallbackItem.author, 'The Global Avenues'),
-    date: pickFirst(preferredItem.date, fallbackItem.date),
-    readTime: pickFirst(preferredItem.readTime, fallbackItem.readTime, '5 min read'),
-    category: pickFirst(preferredItem.category, fallbackItem.category, 'General'),
-    type: pickFirst(preferredItem.type, fallbackItem.type, 'blog'),
-    videoUrl: pickFirst(preferredItem.videoUrl, fallbackItem.videoUrl),
-  });
-
 export default function NewsVlogPage() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('all');
-  const [newsItems, setNewsItems] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    const controller = new AbortController();
-
-    const loadBlog = async () => {
-      setIsLoading(true);
-
-      try {
-        const data = await getBlogList({ signal: controller.signal });
-        const apiItems = getContentArray(data);
-        const mapped = apiItems.map((item) => applyContentPolicy(mapBlogItem(item))).filter((item) => item.title);
-        const fallbackMapped = fallbackNewsItems.map((item) => applyContentPolicy(mapFallbackItem(item)));
-
-        const fallbackMap = new Map();
-        fallbackMapped.forEach((item, index) => {
-          fallbackMap.set(getMergeKey(item, index), item);
-        });
-
-        const mergedMap = new Map();
-        mapped.forEach((item, index) => {
-          const key = getMergeKey(item, index);
-          mergedMap.set(key, mergeNewsItems(item, fallbackMap.get(key) || {}));
-        });
-
-        fallbackMapped.forEach((item, index) => {
-          const key = getMergeKey(item, index);
-          if (!mergedMap.has(key)) {
-            mergedMap.set(key, item);
-          }
-        });
-
-        const mergedItems = Array.from(mergedMap.values());
-        const curatedItems = sortByAllowedOrder(mergedItems.filter(isAllowedArticle));
-        setNewsItems(curatedItems);
-      } catch (error) {
-        if (error.name !== 'AbortError') {
-          const fallbackMapped = fallbackNewsItems.map((item) => applyContentPolicy(mapFallbackItem(item)));
-          const curatedFallback = sortByAllowedOrder(fallbackMapped.filter(isAllowedArticle));
-          setNewsItems(curatedFallback);
-        }
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    loadBlog();
-
-    return () => controller.abort();
-  }, []);
+  const newsItems = useMemo(
+    () =>
+      sortByNewest(
+        fallbackNewsItems.map((item) => mapFallbackItem(item)).filter((item) => item.title && item.slug)
+      ),
+    []
+  );
 
   const filteredItems = useMemo(
     () => newsItems.filter((item) => activeTab === 'all' || item.type === activeTab),
@@ -431,7 +328,6 @@ export default function NewsVlogPage() {
               ))}
             </div>
           </motion.div>
-
         </div>
       </section>
 
@@ -444,95 +340,80 @@ export default function NewsVlogPage() {
             </span>
           </div>
 
-          {isLoading && (
+          {filteredItems.length > 0 ? (
+            <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+              {filteredItems.map((item) => (
+                <div
+                  key={item.id}
+                  className="group cursor-pointer overflow-hidden rounded-2xl border border-border/70 bg-background transition-all duration-300 hover:-translate-y-1 hover:border-primary/45 hover:shadow-[0_18px_42px_rgba(20,14,45,0.18)]"
+                  onClick={() => navigate(`/news/${item.slug}`)}
+                >
+                  <div className="relative h-48 overflow-hidden bg-gradient-to-br from-primary/20 to-secondary/20">
+                    {item.videoUrl && (
+                      <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/20 transition-colors group-hover:bg-black/40">
+                        <div className="flex h-14 w-14 items-center justify-center rounded-full bg-accent/80 transition-transform group-hover:scale-110">
+                          <Play className="ml-1 h-6 w-6 fill-white text-white" />
+                        </div>
+                      </div>
+                    )}
+                    {getCardImage(item) ? (
+                      <img
+                        src={getCardImage(item)}
+                        alt={item.title}
+                        loading="lazy"
+                        decoding="async"
+                        onError={handleImageError}
+                        className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                      />
+                    ) : (
+                      <div className="flex h-full w-full items-center justify-center px-5 text-center text-sm font-medium text-muted-foreground">
+                        {item.title}
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="p-6">
+                    <div className="mb-2 flex items-center gap-2">
+                      <span className="rounded bg-primary/10 px-2 py-1 text-xs font-semibold text-primary">
+                        {item.category}
+                      </span>
+                      {item.videoUrl && (
+                        <span className="text-xs text-muted-foreground">{item.readTime}</span>
+                      )}
+                    </div>
+
+                    <h3 className="mb-2 line-clamp-2 text-lg font-bold transition-colors group-hover:text-primary">
+                      {item.title}
+                    </h3>
+                    <p className="mb-4 line-clamp-2 text-sm text-muted-foreground">{item.excerpt}</p>
+
+                    <div className="flex items-center justify-between text-xs text-muted-foreground">
+                      <span>{formatDate(item.date)}</span>
+                      {item.views ? <span>{item.views.toLocaleString()} views</span> : <span>&nbsp;</span>}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
             <motion.div
-              className="rounded-2xl border border-border/70 bg-muted/20 py-20 text-center"
+              className="rounded-2xl border border-border/70 bg-muted/20 py-12 text-center"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.55 }}
             >
-              <p className="text-lg text-muted-foreground">Loading content...</p>
-            </motion.div>
-          )}
-
-          {!isLoading && (
-            <>
-              {filteredItems.length > 0 ? (
-                <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-                  {filteredItems.map((item) => (
-                    <div
-                      key={item.id}
-                      className="group cursor-pointer overflow-hidden rounded-2xl border border-border/70 bg-background transition-all duration-300 hover:-translate-y-1 hover:border-primary/45 hover:shadow-[0_18px_42px_rgba(20,14,45,0.18)]"
-                      onClick={() => navigate(`/news/${item.slug}`)}
-                    >
-                      <div className="relative h-48 overflow-hidden bg-gradient-to-br from-primary/20 to-secondary/20">
-                        {item.videoUrl && (
-                          <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/20 transition-colors group-hover:bg-black/40">
-                            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-accent/80 transition-transform group-hover:scale-110">
-                              <Play className="ml-1 h-6 w-6 fill-white text-white" />
-                            </div>
-                          </div>
-                        )}
-                        {getCardImage(item) ? (
-                          <img
-                            src={getCardImage(item)}
-                            alt={item.title}
-                            loading="lazy"
-                            decoding="async"
-                            onError={handleImageError}
-                            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-                          />
-                        ) : (
-                          <div className="flex h-full w-full items-center justify-center px-5 text-center text-sm font-medium text-muted-foreground">
-                            {item.title}
-                          </div>
-                        )}
-                      </div>
-
-                      <div className="p-6">
-                        <div className="mb-2 flex items-center gap-2">
-                          <span className="rounded bg-primary/10 px-2 py-1 text-xs font-semibold text-primary">
-                            {item.category}
-                          </span>
-                          {item.videoUrl && (
-                            <span className="text-xs text-muted-foreground">{item.readTime}</span>
-                          )}
-                        </div>
-
-                        <h3 className="mb-2 line-clamp-2 text-lg font-bold transition-colors group-hover:text-primary">
-                          {item.title}
-                        </h3>
-                        <p className="mb-4 line-clamp-2 text-sm text-muted-foreground">{item.excerpt}</p>
-
-                        <div className="flex items-center justify-between text-xs text-muted-foreground">
-                          <span>{formatDate(item.date)}</span>
-                          {item.views ? <span>{item.views.toLocaleString()} views</span> : <span>&nbsp;</span>}
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <motion.div
-                  className="rounded-2xl border border-border/70 bg-muted/20 py-12 text-center"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ duration: 0.55 }}
+              <p className="mb-3 text-2xl font-bold text-foreground">No exact match for this filter</p>
+              <p className="mb-6 text-muted-foreground">Try a different type filter.</p>
+              {activeTab !== 'all' && (
+                <button
+                  onClick={resetFilters}
+                  className="rounded-full border border-primary/35 bg-primary/10 px-5 py-2 text-sm font-semibold text-primary transition-colors hover:bg-primary/20"
+                  type="button"
                 >
-                  <p className="mb-3 text-2xl font-bold text-foreground">No exact match for this filter</p>
-                  <p className="mb-6 text-muted-foreground">Try a different type filter.</p>
-                  {activeTab !== 'all' && (
-                    <button
-                      onClick={resetFilters}
-                      className="rounded-full border border-primary/35 bg-primary/10 px-5 py-2 text-sm font-semibold text-primary transition-colors hover:bg-primary/20"
-                      type="button"
-                    >
-                      Reset Filters
-                    </button>
-                  )}
-                </motion.div>
+                  Reset Filters
+                </button>
               )}
-            </>
+            </motion.div>
           )}
         </div>
       </section>

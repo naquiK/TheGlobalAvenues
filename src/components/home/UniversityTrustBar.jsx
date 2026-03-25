@@ -44,7 +44,7 @@ export default function UniversityTrustBar() {
                 key={`${item.id}-${index}`}
                 href={item.href}
                 target="_blank"
-                rel="noreferrer"
+                rel="noopener noreferrer"
                 className="group flex h-9 min-w-[90px] flex-shrink-0 items-center justify-center rounded-[10px] border border-[#2D1B69]/14 bg-gradient-to-b from-white/96 to-[#F7F4FF]/96 px-4 text-[11px] text-[#3E316E] opacity-95 shadow-[0_2px_10px_rgba(45,27,105,0.05)] transition-[background-color,border-color,color,box-shadow] duration-200 hover:border-[#5340B0]/35 hover:bg-white hover:shadow-[0_8px_18px_rgba(83,64,176,0.14)] dark:border-white/20 dark:bg-gradient-to-b dark:from-white/[0.12] dark:to-white/[0.06] dark:text-white/90 dark:shadow-[0_10px_24px_rgba(4,2,20,0.46)] dark:hover:border-white/30 dark:hover:bg-white/[0.1] sm:h-12 sm:min-w-[120px]"
               >
                 {/* TODO: replace with university <img> logo */}

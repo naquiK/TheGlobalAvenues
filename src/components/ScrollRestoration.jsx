@@ -25,6 +25,7 @@ export function ScrollRestoration() {
     const key = `scroll-pos:${pathname}${search}`;
     let rafId = 0;
     const shouldRestore = navigationType.current === 'reload' && isFirstRender.current;
+    const prefersReducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
 
     if ('scrollRestoration' in window.history) {
       window.history.scrollRestoration = 'manual';
@@ -55,7 +56,12 @@ export function ScrollRestoration() {
           }
         }
       }
-      window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+      const shouldSmoothScrollToTop = !isFirstRender.current && !prefersReducedMotion;
+      window.scrollTo({
+        top: 0,
+        left: 0,
+        behavior: shouldSmoothScrollToTop ? 'smooth' : 'auto',
+      });
     };
 
     const savePosition = () => {
