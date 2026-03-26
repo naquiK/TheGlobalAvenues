@@ -44,10 +44,10 @@ export const SITE_CONFIG = {
   },
 
   stats: {
-    studentsRecruited: '600+',
-    partnerUniversities: '215+',
+    studentsRecruited: '4000+',
+    partnerUniversities: '15+',
     countriesCovered: '12+',
-    visaSuccessRate: '84%',
+    visaSuccessRate: '86%',
   },
 
   navigation: {

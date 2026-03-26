@@ -57,7 +57,7 @@ export default function CollaboratePage() {
 
   const highlightChips = useMemo(
     () => [
-      `${siteConfig.stats.partnerUniversities} University Links`,
+      `${siteConfig.stats.partnerUniversities} Exclusive Universities`,
       `${siteConfig.stats.studentsRecruited} Applications Managed`,
       `${siteConfig.stats.visaSuccessRate} Conversion Performance`,
     ],
@@ -162,7 +162,7 @@ export default function CollaboratePage() {
             </span>
           </h3>
           <p className="mx-auto mt-6 max-w-3xl text-base leading-relaxed text-muted-foreground sm:text-lg">
-            Collaborate with us to build effective recruitment pathways, strenthen admissions support, and grow your enrolment footprint across South Asia.
+            Collaborate with us to build effective recruitment pathways, strengthen admissions support, and grow your enrolment footprint across South Asia.
           </p>
         </div>
 

@@ -326,7 +326,7 @@ export default function HeroSection() {
   );
   const heroTitleLine2 = stripTrailingFullStop(
     heroSlide?.titleLine2,
-    'Strenthening Global Student Recruitment'
+    'Strengthening Global Student Recruitment'
   );
   const heroDescription =
     heroSlide?.description ||
