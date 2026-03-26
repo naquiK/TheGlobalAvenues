@@ -45,7 +45,7 @@ export const SITE_CONFIG = {
 
   stats: {
     studentsRecruited: '600+',
-    partnerUniversities: '213+',
+    partnerUniversities: '215+',
     countriesCovered: '12+',
     visaSuccessRate: '84%',
   },

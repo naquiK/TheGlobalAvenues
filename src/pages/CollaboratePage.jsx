@@ -16,6 +16,7 @@ import { useSettings } from '../context/SettingsContext';
 import useScrollAnimation from '../hooks/useScrollAnimation';
 import useLazySection from '../hooks/useLazySection';
 import SectionSkeleton from '../components/ui/SectionSkeleton';
+import { CONTACT_FORM_RECIPIENT_EMAIL, submitContactForm } from '../services/contactFormService';
 
 const inputClassName =
   'w-full rounded-xl border border-[#D8D2EE] bg-white/85 px-4 py-3 text-sm text-foreground shadow-[inset_0_1px_0_rgba(255,255,255,0.75)] outline-none transition-all duration-200 ease-out placeholder:text-muted-foreground/70 focus:border-primary/40 focus:ring-2 focus:ring-primary/20 dark:border-[#3B2C73] dark:bg-[#181231]/80 dark:shadow-none dark:placeholder:text-white/45';
@@ -35,7 +36,9 @@ export default function CollaboratePage() {
     subject: '',
     message: '',
   });
-  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState('idle');
+  const [submitMessage, setSubmitMessage] = useState('');
 
   const heroRef = useScrollAnimation({ y: 20, duration: 650 });
   const heroMetaRef = useScrollAnimation({ y: 20, duration: 650, delay: 120 });
@@ -114,15 +117,37 @@ export default function CollaboratePage() {
     setFormData((previous) => ({ ...previous, [name]: value }));
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    window.setTimeout(() => {
-      setIsSubmitted(true);
-      window.setTimeout(() => {
-        setFormData({ name: '', email: '', phone: '', subject: '', message: '' });
-        setIsSubmitted(false);
-      }, 2800);
-    }, 450);
+    if (isSubmitting) return;
+
+    setIsSubmitting(true);
+    setSubmitStatus('idle');
+    setSubmitMessage('');
+
+    try {
+      await submitContactForm({
+        toEmail: CONTACT_FORM_RECIPIENT_EMAIL,
+        formName: 'Collaborate Form',
+        source: '/collaborate',
+        fields: {
+          Name: formData.name,
+          Email: formData.email,
+          Phone: formData.phone,
+          Subject: formData.subject,
+          Message: formData.message,
+        },
+      });
+
+      setSubmitStatus('success');
+      setSubmitMessage('Message sent.');
+      setFormData({ name: '', email: '', phone: '', subject: '', message: '' });
+    } catch (error) {
+      setSubmitStatus('error');
+      setSubmitMessage('Message failed. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -130,15 +155,14 @@ export default function CollaboratePage() {
       <section className="collaborate-section-shell px-4 py-20 sm:px-6 lg:px-8">
         <div ref={heroRef} className="mx-auto max-w-5xl text-center">
           <div className="section-kicker-classic mb-5 inline-flex">Collaborate With Us</div>
-          <h1 className="text-4xl font-bold leading-tight sm:text-5xl lg:text-6xl">
-            Build Global Education
+          <h3 className="text-4xl font-bold leading-tight sm:text-5xl lg:text-5xl">
+            {/* Build Global Education */}
             <span className="block bg-[linear-gradient(96deg,#2D1B69_0%,#5B45C6_45%,#E8521A_100%)] bg-clip-text text-transparent">
-              Partnerships That Scale
+              Scale Your International Student Enrolment
             </span>
-          </h1>
+          </h3>
           <p className="mx-auto mt-6 max-w-3xl text-base leading-relaxed text-muted-foreground sm:text-lg">
-            Reach our collaboration desk to discuss university representation, market expansion, admissions operations, and
-            long-term institutional growth across India and beyond.
+            Collaborate with us to build effective recruitment pathways, strenthen admissions support, and grow your enrolment footprint across South Asia.
           </p>
         </div>
 
@@ -210,6 +234,7 @@ export default function CollaboratePage() {
                       name="phone"
                       value={formData.phone}
                       onChange={handleChange}
+                      required
                       className={inputClassName}
                       placeholder={primaryPhone}
                     />
@@ -249,13 +274,13 @@ export default function CollaboratePage() {
 
                 <button
                   type="submit"
-                  disabled={isSubmitted}
+                  disabled={isSubmitting}
                   className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[linear-gradient(92deg,#2D1B69_0%,#5B45C6_54%,#E8521A_100%)] px-5 py-3 text-sm font-semibold uppercase tracking-[0.14em] text-white transition-all duration-300 ease-out hover:-translate-y-0.5 hover:shadow-[0_14px_30px_rgba(45,27,105,0.35)] disabled:cursor-not-allowed disabled:opacity-60"
                 >
-                  {isSubmitted ? (
+                  {isSubmitting ? (
                     <>
-                      <CheckCircle2 className="h-5 w-5" />
-                      Message Sent
+                      <Clock3 className="h-5 w-5 animate-pulse" />
+                      Sending...
                     </>
                   ) : (
                     <>
@@ -264,6 +289,25 @@ export default function CollaboratePage() {
                     </>
                   )}
                 </button>
+
+                {submitStatus !== 'idle' && (
+                  <div
+                    className={`rounded-xl border px-4 py-3 text-sm font-medium ${
+                      submitStatus === 'success'
+                        ? 'border-emerald-300 bg-emerald-50 text-emerald-800 dark:border-emerald-700/60 dark:bg-emerald-900/20 dark:text-emerald-200'
+                        : 'border-red-300 bg-red-50 text-red-800 dark:border-red-700/60 dark:bg-red-900/20 dark:text-red-200'
+                    }`}
+                  >
+                    <div className="flex items-start gap-2">
+                      {submitStatus === 'success' ? (
+                        <CheckCircle2 className="mt-0.5 h-4 w-4 flex-shrink-0" />
+                      ) : (
+                        <ShieldCheck className="mt-0.5 h-4 w-4 flex-shrink-0" />
+                      )}
+                      <p>{submitMessage}</p>
+                    </div>
+                  </div>
+                )}
               </form>
             </div>
           </div>

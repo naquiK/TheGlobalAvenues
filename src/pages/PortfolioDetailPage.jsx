@@ -372,6 +372,9 @@ export default function PortfolioDetailPage() {
   const relatedPortfolios = allPortfolios
     .filter(p => p.id !== portfolio.id && p.category === portfolio.category)
     .slice(0, 3);
+  const catalogDocuments = Array.isArray(portfolio.details?.catalogs)
+    ? portfolio.details.catalogs.filter((item) => item && typeof item.file === 'string' && item.file.trim())
+    : [];
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -1006,6 +1009,49 @@ export default function PortfolioDetailPage() {
                   </div>
                 </div>
               </div>
+            </div>
+          </motion.div>
+        )}
+
+        {catalogDocuments.length > 0 && (
+          <motion.div
+            className="bg-muted/20 border border-border/50 rounded-2xl p-8 mb-16"
+            variants={itemVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+          >
+            <h3 className="text-2xl font-bold text-foreground mb-2 flex items-center gap-2">
+              <FileText className="w-5 h-5 text-primary" />
+              Official Program Catalogs
+            </h3>
+            <p className="text-sm text-muted-foreground mb-5">
+              Download the official university catalogs for complete program structures, curriculum information, and policy details.
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {catalogDocuments.map((catalog) => (
+                <a
+                  key={`${catalog.title || 'catalog'}-${catalog.file}`}
+                  href={catalog.file}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="rounded-xl border border-border/50 bg-background/80 p-4 transition-all hover:border-primary/40 hover:-translate-y-0.5"
+                >
+                  <p className="text-xs font-semibold uppercase tracking-[0.12em] text-primary mb-1">
+                    PDF Catalog
+                  </p>
+                  <h4 className="text-base font-semibold text-foreground mb-2">
+                    {catalog.title || 'Program Catalog'}
+                  </h4>
+                  {catalog.description && (
+                    <p className="text-sm text-muted-foreground mb-3">{catalog.description}</p>
+                  )}
+                  <span className="inline-flex items-center gap-2 text-sm font-semibold text-primary">
+                    Open PDF
+                    <ExternalLink className="w-4 h-4" />
+                  </span>
+                </a>
+              ))}
             </div>
           </motion.div>
         )}

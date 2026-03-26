@@ -5,7 +5,7 @@ export const portfolioData = [
     slug: 'fh-kufstein-tirol',
     category: 'University of Applied Sciences',
     country: 'Austria',
-    image: '/universities/fh-kufstein-tirol-hero.jpg',
+    image: '/universities/fh-kufstein-tirol-hero.webp',
     logo: '/universities/fh-kufstein-tirol-logo.png',
     studentsPlaced: 3000,
     programs: 6,
@@ -31,7 +31,7 @@ export const portfolioData = [
       eligibility:
         'For bachelor pathways: around 70%+ in Higher Secondary with English and Mathematics. For master pathways: typically 65%+ in graduation (60% may be considered with relevant work profile).',
       scholarshipAvailable: true,
-      partnerUniversities: 213,
+      partnerUniversities: 215,
       studentTestimonials: [
         {
           name: 'Aditya Kumar',
@@ -49,7 +49,7 @@ export const portfolioData = [
     },
     longDescription: 'The University of Applied Sciences Kufstein Tirol (FH Kufstein) is a leading institution in Austria, offering internationally recognized degree programs that integrate innovation, sustainability, and global business practices. With state-of-the-art facilities and strong industry connections, FH Kufstein provides students with the skills and knowledge needed to succeed in their careers.',
     highlights: [
-      '213+ partner universities worldwide',
+      '215+ partner universities worldwide',
       'English-taught programs available',
       'Strong post-study work visa opportunities',
       'Central European hub location',
@@ -121,12 +121,77 @@ export const portfolioData = [
     website: 'https://euas.eu/'
   },
   {
+    id: 16,
+    title: "St. George's University",
+    slug: 'st-georges-university',
+    category: 'Medical University',
+    country: 'Grenada',
+    image: '/universities/st-georges-university-hero.webp',
+    logo: '/universities/st-georges-university-logo.jpg',
+    studentsPlaced: 1049,
+    programs: 5,
+    successRate: 95,
+    description: 'Caribbean medical university in Grenada offering multiple Doctor of Medicine entry tracks with global clinical training pathways.',
+    details: {
+      founded: 1976,
+      location: "True Blue, St. George's, Grenada",
+      ranking: '#1 in Grenada',
+      specializations: [
+        'Doctor of Medicine/Master of Public Health (MD/MPH)',
+        'Doctor of Medicine/Master of Science (MD/MSc)',
+        'BSc/MD Dual Degree',
+        'Medical PhD Degree'
+      ],
+      visaSuccessRate: 92,
+      avgTuition: 'Tuition and fees are program-specific; verify the latest annual costs from official SGU fee pages',
+      intakeWindows: 'January, April, and August terms (program-specific)',
+      programDuration: '4 years (MD) with 5-, 6-, and 7-year entry-track options',
+      campusLocations: ['True Blue, Grenada'],
+      eligibility:
+        'Admissions are profile-based by track; requirements vary for 4-year MD and the 5-, 6-, and 7-year pathways.',
+      scholarshipAvailable: true,
+      catalogs: [
+        {
+          title: 'School of Medicine Catalog - January 5, 2026',
+          description:
+            'Official SGU School of Medicine catalog covering MD tracks, curriculum, policies, and student support.',
+          file: '/universities/st-georges-university/brochures/sgu-school-of-medicine-catalog-jan-2026.pdf'
+        },
+        {
+          title: 'School of Veterinary Medicine Catalog - January 5, 2026',
+          description:
+            'Official SGU School of Veterinary Medicine catalog detailing DVM pathways, accreditation context, and academic policies.',
+          file: '/universities/st-georges-university/brochures/sgu-school-of-veterinary-medicine-catalog-jan-2026.pdf'
+        }
+      ],
+      studentTestimonials: [
+        {
+          name: 'Aarav Bhatia',
+          program: 'Doctor of Medicine Program',
+          quote: 'The multi-track MD structure and international learning environment made SGU a strong fit for my long-term goals.',
+          location: 'New Delhi'
+        }
+      ]
+    },
+    longDescription: "St. George's University is an international medical institution based in Grenada with a long-running Doctor of Medicine pathway and multiple entry tracks for students from different academic backgrounds. The university combines preclinical learning in Grenada with clinical training opportunities through affiliated systems and maintains active global alumni and residency outcomes.",
+    highlights: [
+      'Doctor of Medicine pathways with 4-, 5-, 6-, and 7-year track options',
+      'Official SGU data highlights 1,049+ US residencies in 2025',
+      '25K+ School of Medicine graduates (official SGU SOM qualifying data)',
+      'Campus-based medical education in Grenada with global clinical exposure',
+      'School of Medicine and School of Veterinary Medicine catalogs added for direct reference',
+      'Accreditation and approvals outlined across official SGU catalog documentation',
+      'Strong global alumni and student support ecosystem'
+    ],
+    website: 'https://www.sgu.edu/school-of-medicine/'
+  },
+  {
     id: 13,
     title: 'Benedictine University',
     slug: 'benedictine-university',
     category: 'American University',
     country: 'USA',
-    image: '/universities/benedictine-university-hero.jpg',
+    image: '/universities/benedictine-university-hero.webp',
     logo: '/universities/benedictine-university-logo.png',
     studentsPlaced: 2100,
     programs: 7,
@@ -603,7 +668,7 @@ export const portfolioData = [
     slug: 'international-american-university',
     category: 'American University',
     country: 'USA',
-    image: '/universities/international-american-university-hero.webp',
+    image: '/universities/international-american-university-hero.jpg',
     logo: '/universities/international-american-university-logo.png',
     studentsPlaced: 1800,
     programs: 8,
@@ -854,6 +919,7 @@ export const categories = [
   'Business School',
   'Higher Education Institution',
   'American University',
+  'Medical University',
 ];
 
 export const partnerCompanies = [

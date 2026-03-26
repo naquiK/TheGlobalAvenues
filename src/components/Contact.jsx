@@ -2,24 +2,52 @@ import { useState } from 'react';
 import { Send } from 'lucide-react';
 import useScrollAnimation from '../hooks/useScrollAnimation';
 import { InteractiveGlobe } from './contact/InteractiveGlobe';
+import { CONTACT_FORM_RECIPIENT_EMAIL, submitContactForm } from '../services/contactFormService';
 
 export function Contact() {
   const [formData, setFormData] = useState({ name: '', email: '', message: '' });
-  const [submitted, setSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState('idle');
+  const [submitMessage, setSubmitMessage] = useState('');
   const headingRef = useScrollAnimation({ y: 20, duration: 600 });
   const globeRef = useScrollAnimation({ x: -20, duration: 700 });
   const formRef = useScrollAnimation({ x: 20, duration: 700, delay: 150 });
+  const recipientEmail = CONTACT_FORM_RECIPIENT_EMAIL;
 
   const handleChange = (event) => {
     const { name, value } = event.target;
     setFormData((previous) => ({ ...previous, [name]: value }));
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    setSubmitted(true);
-    setFormData({ name: '', email: '', message: '' });
-    window.setTimeout(() => setSubmitted(false), 3000);
+    if (isSubmitting) return;
+
+    setIsSubmitting(true);
+    setSubmitStatus('idle');
+    setSubmitMessage('');
+
+    try {
+      await submitContactForm({
+        toEmail: recipientEmail,
+        formName: 'Home Contact Form',
+        source: '/',
+        fields: {
+          Name: formData.name,
+          Email: formData.email,
+          Message: formData.message,
+        },
+      });
+
+      setSubmitStatus('success');
+      setSubmitMessage('Message sent.');
+      setFormData({ name: '', email: '', message: '' });
+    } catch (error) {
+      setSubmitStatus('error');
+      setSubmitMessage('Message failed. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -97,15 +125,22 @@ export function Contact() {
 
               <button
                 type="submit"
+                disabled={isSubmitting}
                 className="group flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-6 py-3 font-semibold text-primary-foreground transition-all duration-300 hover:scale-105 hover:bg-secondary"
               >
-                Send Message
+                {isSubmitting ? 'Sending...' : 'Send Message'}
                 <Send className="h-4 w-4 transition-transform group-hover:translate-x-1" />
               </button>
 
-              {submitted && (
-                <div className="animate-fade-in-up rounded-lg bg-green-100 p-4 text-center font-medium text-green-800">
-                  Message sent successfully. Our partnerships team will contact you soon.
+              {submitStatus !== 'idle' && (
+                <div
+                  className={`animate-fade-in-up rounded-lg p-4 text-center font-medium ${
+                    submitStatus === 'success'
+                      ? 'bg-green-100 text-green-800'
+                      : 'bg-red-100 text-red-800'
+                  }`}
+                >
+                  {submitMessage}
                 </div>
               )}
             </form>

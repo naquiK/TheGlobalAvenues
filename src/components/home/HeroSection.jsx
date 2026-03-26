@@ -322,15 +322,15 @@ export default function HeroSection() {
   const heroBadge = heroSlide?.badge || "\u{1F30D} Asia's Trusted Global Education Partner";
   const heroTitleLine1 = stripTrailingFullStop(
     heroSlide?.titleLine1,
-    "Expanding Universities' Global Reach"
+    "Connecting Universities to South Asia's Talent"
   );
   const heroTitleLine2 = stripTrailingFullStop(
     heroSlide?.titleLine2,
-    'Delivering High-Quality International Enrolments'
+    'Strenthening Global Student Recruitment'
   );
   const heroDescription =
     heroSlide?.description ||
-    'We help universities build a powerful presence across South Asia, activate high-quality recruitment networks, and convert student demand into sustained enrolment growth.';
+    'We support institutions in building a powerful regional presence, engaging high-quality recruitment partners, and translating demand into meaningful enrolment outcomes.';
   const primaryCtaLabel = heroSlide?.primaryCtaLabel || 'Partner With Us';
   const primaryCtaUrl = getSafeInternalPath(heroSlide?.primaryCtaUrl, '/collaborate');
   const secondaryCtaLabel = heroSlide?.secondaryCtaLabel || 'View Our Network';
@@ -483,13 +483,13 @@ export default function HeroSection() {
               }}
             >
               <span
-                className="block lg:whitespace-nowrap"
+                className="block text-[0.76em] lg:whitespace-nowrap"
                 style={{ animation: heroAnimation('fadeUp', 700, 100), opacity: heroOpacity }}
               >
                 {heroTitleLine1}
               </span>
               <span
-                className="mt-2 block text-[0.86em] leading-[1.12] lg:max-w-[22ch] bg-[linear-gradient(95deg,#FFFFFF_0%,#FFE7D8_55%,#FFB57F_100%)] bg-clip-text text-transparent"
+                className="mt-2 block text-[0.56em] leading-[1.12]  bg-[linear-gradient(95deg,#FFFFFF_0%,#FFE7D8_55%,#FFB57F_100%)] bg-clip-text text-transparent"
                 style={{ animation: heroAnimation('fadeUp', 700, 200), opacity: heroOpacity }}
               >
                 {heroTitleLine2}
