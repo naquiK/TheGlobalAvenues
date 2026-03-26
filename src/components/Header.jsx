@@ -26,6 +26,7 @@ const portfolioIconMap = {
   Cyprus: 'CY',
   USA: 'US',
   Europe: 'EU',
+  Grenada: 'GD',
 };
 
 const offeringIconMap = {

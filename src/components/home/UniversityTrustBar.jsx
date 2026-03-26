@@ -12,6 +12,7 @@ const trustItems = [
   { id: 9, label: 'EUAS', href: 'https://euas.eu/' },
   { id: 10, label: 'MJM Graphic Design', href: 'https://www.mjm-design.com/en' },
   { id: 11, label: 'EIT InnoEnergy', href: 'https://apply.innoenergy.com/' },
+  { id: 12, label: "St. George's University", href: 'https://www.sgu.edu/school-of-medicine/' },
 ];
 
 export default function UniversityTrustBar() {

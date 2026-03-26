@@ -1,5 +1,186 @@
 export const newsItems = [
   {
+    id: 8,
+    slug: 'scholarships-for-indian-students-planning-to-study-in-south-cyprus',
+    type: 'blog',
+    title: 'Scholarships for Indian Students Planning to Study in South-Cyprus',
+    excerpt:
+      'South Cyprus offers scholarships, fee reductions, and practical support that make European education more affordable for Indian students.',
+    content: `South-Cyprus is steadily emerging as a popular study destination for Indian students looking for quality European education at an affordable cost. One of the key reasons for its growing popularity is the availability of scholarships and government-supported fee reductions for international students.
+
+For many students and parents, the biggest concern about studying abroad is affordability. Fortunately, Cyprus offers several financial support options that help make higher education more accessible.
+
+Government Support for International Students
+
+The government of Cyprus actively supports the international education sector by encouraging universities to offer financial assistance to international students. Many universities in Cyprus provide tuition fee reductions that can lower the overall cost of education significantly.
+
+In several cases, international students may receive tuition fee reductions of up to 50% or more, depending on the university, academic performance, and program selected. This initiative helps make Cyprus one of the more affordable European destinations for Indian students seeking internationally recognized degrees.
+
+Merit-Based Scholarships
+
+Many universities in Cyprus offer merit-based scholarships for students who have strong academic backgrounds. These scholarships are typically awarded based on previous academic results, entrance requirements, or overall student profile.
+
+Such scholarships can reduce tuition fees and help students manage their study expenses more comfortably.
+
+Early Application Benefits
+
+Some universities also offer early application discounts for students who apply and confirm their admission within specific timelines. This not only secures a seat in the program but can also help reduce tuition fees.
+
+Students planning and completing their applications early often benefit from these financial incentives.
+
+University-Specific Financial Support
+
+In addition to government encouragement, individual universities in Cyprus often have their own scholarship programs for international students. These may include:
+
+Academic merit scholarships
+
+Partial tuition fee waivers
+
+Scholarships for specific programs or faculties
+
+These options allow students to pursue their studies in fields such as business, hospitality, information technology, and engineering while keeping costs manageable.
+
+Why Cyprus is a Practical Choice
+
+Apart from scholarships, Cyprus offers several advantages for Indian students:
+
+Affordable tuition fees compared to many Western countries
+
+English-taught degree programs
+
+A safe and welcoming environment
+
+Opportunities to experience European culture and education
+
+How The Global Avenues Can Help
+
+At The Global Avenues, we help students identify universities in Cyprus that offer the best scholarship opportunities and fee reductions. Our team supports students through the entire process - from choosing the right program to preparing applications and securing admission.
+
+With the right guidance and available scholarships, studying in Cyprus can become an affordable pathway to a European degree and global career opportunities.
+
+For many Indian students, Cyprus offers a balanced combination of quality education, financial support, and international exposure, making it a strong option for those planning their study abroad journey.`,
+    image: '/blogs/scholarships-south-cyprus.jpg',
+    thumbnail: '/blogs/scholarships-south-cyprus.jpg',
+    date: '2026-03-26',
+    author: 'The Global Avenues',
+    category: 'Scholarships',
+    featured: false,
+    views: 0,
+    readTime: '7 min read',
+  },
+  {
+    id: 7,
+    slug: 'affordable-countries-for-indian-students-to-study-abroad',
+    type: 'blog',
+    title: 'Affordable Countries for Indian Students to Study Abroad',
+    excerpt:
+      'Estonia, Latvia, Malta, and Poland offer quality European education with more manageable tuition and living costs for Indian students.',
+    content: `For many Indian students, studying abroad is a dream, but the cost often becomes the biggest concern for families. Countries like the USA, UK, or Australia can require a very high financial commitment. The good news is that Europe offers several destinations where students can receive quality international education at a much more affordable cost.
+
+At The Global Avenues, we often guide students toward emerging European destinations that combine quality education, reasonable tuition fees, and good career opportunities. Among the most promising options today are Estonia, Latvia, Malta, and Poland.
+
+Poland - Quality Education at a Lower Cost
+
+Poland has become one of the most practical study destinations for Indian students looking for affordability in Europe. Universities offer a wide range of English-taught programs in fields such as engineering, business, IT, and health sciences.
+
+Tuition fees are relatively affordable compared to Western Europe starting at only EUR 3500.00 annually, and the cost of living is manageable for international students. Poland also has vibrant student cities, modern infrastructure, and a strong academic reputation. Many students appreciate the balance between quality education and reasonable expenses.
+
+Estonia - A Tech-Focused Education Hub
+
+Estonia is often called one of the most digitally advanced countries in the world. It is an excellent destination for students interested in technology, innovation, and entrepreneurship.
+
+Universities in Estonia are known for modern teaching methods and strong links with the tech industry. For students interested in IT, digital business, cybersecurity, or engineering, Estonia offers exciting academic opportunities along with a safe and student-friendly environment.
+
+Latvia - Affordable Education in the European Union
+
+Latvia is another growing destination for Indian students who want to study in Europe without extremely high costs. Universities offer English-medium programs across disciplines such as business, technology, and healthcare.
+
+The capital city, Riga, is a lively student city that combines historic charm with modern facilities. Students often find Latvia appealing because it offers the benefits of studying within the European Union while keeping overall expenses relatively manageable.
+
+Malta - English-Speaking and International
+
+Malta offers a unique advantage for Indian students, as English is widely spoken and used in education. This makes the transition easier for students who may be studying abroad for the first time.
+
+Located in the Mediterranean, Malta has a welcoming international environment and a growing education sector. Programs in business, hospitality, technology, and management are particularly popular among international students.
+
+Making the Right Choice
+
+Choosing the right study destination depends on many factors such as course preference, budget, career goals, and lifestyle expectations. Affordable destinations like Estonia, Latvia, Malta, and Poland allow students to experience European education without the financial pressure often associated with traditional study destinations.
+
+At The Global Avenues, we work closely with students and parents to identify the most suitable country, university, and course based on their individual goals. From application guidance to visa support and pre-departure preparation, our team ensures that students feel confident at every stage of their study abroad journey.
+
+Studying abroad is not just about earning a degree; it is about gaining global exposure, independence, and new perspectives. With the right guidance and destination, it can become an achievable and rewarding opportunity for many Indian students.`,
+    image: '/blogs/affordable-countries-study-abroad.jpg',
+    thumbnail: '/blogs/affordable-countries-study-abroad.jpg',
+    date: '2026-03-26',
+    author: 'The Global Avenues',
+    category: 'Affordable Destinations',
+    featured: false,
+    views: 0,
+    readTime: '7 min read',
+  },
+  {
+    id: 6,
+    slug: 'a-parents-guide-to-sending-your-child-abroad-for-higher-education',
+    type: 'blog',
+    title: "A Parent's Guide to Sending Your Child Abroad for Higher Education",
+    excerpt:
+      'A practical guide for parents to handle course selection, budgeting, safety, visa steps, and career outcomes in the study abroad journey.',
+    content: `For many parents, the idea of sending their child abroad for higher education brings excitement along with several concerns. Questions about safety, finances, career prospects, and the admission process often create uncertainty. The good news is that with the right planning and expert guidance, these challenges can be managed effectively. Here are some common concerns parents face and practical solutions to address them.
+
+Problem 1: "How do we choose the right course and country?"
+
+Many students and parents feel overwhelmed by the number of options available. Choosing a course based only on popularity can lead to confusion later.
+
+Solution:
+
+Start with the student's interests, academic strengths, and long-term career goals. Research countries that are known for those specific fields. For example, technology programs may be strong in some countries, while others excel in business, hospitality, or design. Speaking with experienced study abroad advisors can also help families shortlist the right universities and programs.
+
+Problem 2: "Studying abroad is too expensive."
+
+Financial concerns are one of the biggest barriers for families considering international education.
+
+Solution:
+
+Create a clear financial plan early in the process. Apart from tuition fees, consider accommodation, living expenses, and insurance. Many universities offer scholarships, early payment benefits, and part-time work opportunities for international students. Education loans and financial planning can also make studying abroad more affordable than many parents initially assume.
+
+Problem 3: "Will my child be safe in another country?"
+
+Safety and well-being are natural concerns for parents sending their children far from home.
+
+Solution:
+
+Choose universities with strong international student support systems. Most universities provide on-campus accommodation, orientation programs, and dedicated international student offices that help students adjust to a new environment. Staying informed about the city, local laws, and emergency contacts also provides reassurance.
+
+Problem 4: "The application and visa process seems complicated."
+
+The documentation and procedures for studying abroad can feel confusing for families unfamiliar with the process.
+
+Solution:
+
+Working with experienced education consultants can simplify the journey. Professional advisors guide students through university selection, application preparation, documentation, visa processes, and pre-departure planning. This reduces mistakes and ensures that deadlines are met.
+
+Problem 5: "What about career opportunities after graduation?"
+
+Parents want to ensure that studying abroad leads to strong career prospects.
+
+Solution:
+
+Many countries offer post-study work opportunities, internships, and industry exposure that help students gain global work experience. Choosing universities with strong industry connections and career support services can significantly improve employment prospects.
+
+At The Global Avenues, we understand that sending a child abroad is not just an academic decision; it's a family decision. Our role is to support parents and students with clear guidance, trusted university partnerships, and a transparent process.
+
+With the right planning and support, studying abroad becomes more than just an education, it becomes a pathway to global opportunities and lifelong success for your child.`,
+    image: '/blogs/parents-guide-study-abroad.jpg',
+    thumbnail: '/blogs/parents-guide-study-abroad.jpg',
+    date: '2026-03-26',
+    author: 'The Global Avenues',
+    category: 'Parent Guide',
+    featured: false,
+    views: 0,
+    readTime: '8 min read',
+  },
+  {
     id: 3,
     slug: 'study-in-cyprus-mba-opportunities-at-kes-college-nicosia',
     type: 'blog',

@@ -171,11 +171,11 @@ const galleryCollections = [
         caption: 'ICN Business School',
       },
       {
-        src: '/gallery/collections/partner-universities/european-partners/fh-kufstein.jpg',
+        src: '/universities/fh-kufstein-tirol-hero.webp',
         caption: 'FH Kufstein University of Applied Sciences',
       },
       {
-        src: '/gallery/collections/partner-universities/european-partners/euas.png',
+        src: '/universities/euas-hero.jpg',
         caption: 'Estonian Entrepreneurship University of Applied Sciences (EUAS)',
       },
       {
@@ -193,6 +193,25 @@ const galleryCollections = [
     ],
   },
   {
+    id: 'medical-partners',
+    slug: 'medical-partners',
+    title: 'Medical Partners Collection',
+    category: 'Partner Universities',
+    categorySlug: 'partner-universities',
+    description:
+      "Official partner visuals for St. George's University in Grenada, including campus and School of Medicine learning environments.",
+    photos: [
+      {
+        src: '/gallery/collections/partner-universities/medical-partners/st-georges-university-campus-sign.jpg',
+        caption: "St. George's University Campus Sign (Grenada)",
+      },
+      {
+        src: '/gallery/collections/partner-universities/medical-partners/st-georges-university-simulation-lab.jpg',
+        caption: 'SGU School of Medicine Simulation Lab (Official)',
+      },
+    ],
+  },
+  {
     id: 'campus-showcase',
     slug: 'campus-showcase',
     title: 'Campus Showcase Collection',
@@ -201,6 +220,10 @@ const galleryCollections = [
     description:
       'Official campus visuals from partner universities, focused on real campus architecture and environment.',
     photos: [
+      {
+        src: '/gallery/collections/campus-highlights/campus-showcase/st-georges-university-campus-building.jpg',
+        caption: "St. George's University Campus Building (Official)",
+      },
       {
         src: '/gallery/collections/campus-highlights/campus-showcase/iau-los-angeles-campus-building.jpg',
         thumbnail:

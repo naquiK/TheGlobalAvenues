@@ -1,23 +1,30 @@
 import { createContext, useEffect, useMemo, useState } from 'react';
 
 export const ThemeContext = createContext(undefined);
-const THEME_SESSION_KEY = 'tga-theme-session';
+const THEME_STORAGE_KEY = 'tga-theme-preference';
+const LEGACY_THEME_SESSION_KEY = 'tga-theme-session';
 
 const getInitialTheme = () => {
   if (typeof window === 'undefined') {
-    return 'dark';
+    return 'light';
   }
 
   try {
-    const storedTheme = window.sessionStorage.getItem(THEME_SESSION_KEY);
+    const storedTheme = window.localStorage.getItem(THEME_STORAGE_KEY);
     if (storedTheme === 'light' || storedTheme === 'dark') {
       return storedTheme;
     }
+
+    const legacyTheme = window.sessionStorage.getItem(LEGACY_THEME_SESSION_KEY);
+    if (legacyTheme === 'light' || legacyTheme === 'dark') {
+      window.localStorage.setItem(THEME_STORAGE_KEY, legacyTheme);
+      return legacyTheme;
+    }
   } catch (error) {
-    // Ignore storage access issues and fall back to default dark.
+    // Ignore storage access issues and fall back to default light.
   }
 
-  return 'dark';
+  return 'light';
 };
 
 export function ThemeProvider({ children }) {
@@ -32,7 +39,8 @@ export function ThemeProvider({ children }) {
     root.classList.toggle('dark', theme === 'dark');
 
     try {
-      window.sessionStorage.setItem(THEME_SESSION_KEY, theme);
+      window.localStorage.setItem(THEME_STORAGE_KEY, theme);
+      window.sessionStorage.removeItem(LEGACY_THEME_SESSION_KEY);
     } catch (error) {
       // Ignore storage access issues; theme still updates in DOM.
     }

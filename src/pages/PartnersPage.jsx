@@ -39,7 +39,7 @@ export default function PartnersPage() {
           </div>
           <h1 className="text-5xl md:text-6xl font-bold text-foreground mb-4">Our Partnership Ecosystem</h1>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            Collaborate with The Global Avenues and access a network of 214+ universities, industry leaders,
+            Collaborate with The Global Avenues and access a network of 215+ universities, industry leaders,
             and recruitment partners worldwide.
           </p>
         </motion.div>

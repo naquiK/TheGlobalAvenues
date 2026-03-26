@@ -222,8 +222,8 @@ export default function AboutPage() {
       <section className="about-section-shell relative overflow-hidden bg-gradient-to-b from-primary/8 via-background/80 to-background/40 px-4 py-20 sm:px-6 lg:px-8">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(83,64,176,0.14),transparent_35%),radial-gradient(circle_at_top_right,rgba(232,82,26,0.12),transparent_40%)]" />
         <div ref={heroRef} className="relative mx-auto max-w-5xl text-center">
-          <div className="section-kicker-classic mb-5 inline-flex">Who We Are</div>
-          <h1 className="text-4xl font-bold text-foreground sm:text-5xl lg:text-6xl">
+          <div className="section-kicker-classic mb-5 inline-flex">KNOW US BETTER</div>
+          <h1 className="text-4xl font-bold text-foreground sm:text-5xl lg:text-5xl">
             Empowering Global Education With
             <span className="block text-transparent bg-clip-text bg-gradient-to-r from-primary via-brand-purple to-brand-orange">
               Trusted Partnerships
@@ -386,17 +386,19 @@ export default function AboutPage() {
                     </div>
                   </div>
                   <div className="mt-6 flex min-h-[180px] items-center justify-center rounded-2xl border border-[#DAD3F0] bg-[#F6F4FD] p-6 dark:border-[#3A2E72] dark:bg-[#17122D]">
-                    {!isBadgeReady ? (
-                      <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-                        Loading ICEF badge...
-                      </p>
-                    ) : null}
-                    <span
-                      ref={badgeRef}
-                      id="iasBadge"
-                      data-account-id="5944"
-                      className={`relative z-10 block max-w-full transition-opacity duration-300 ${isBadgeReady ? 'opacity-100' : 'opacity-0'}`}
-                    />
+                    <div className="relative flex h-[112px] w-full max-w-[320px] items-center justify-center overflow-hidden rounded-xl border border-[#D3CBEA] bg-white p-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.85)] dark:border-[#43337C] dark:bg-[#1A1435] sm:h-[120px]">
+                      {!isBadgeReady ? (
+                        <p className="text-center text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                          Loading ICEF badge...
+                        </p>
+                      ) : null}
+                      <span
+                        ref={badgeRef}
+                        id="iasBadge"
+                        data-account-id="5944"
+                        className={`relative z-10 block max-w-full origin-center scale-[0.66] transition-opacity duration-300 sm:scale-[0.72] ${isBadgeReady ? 'opacity-100' : 'opacity-0'}`}
+                      />
+                    </div>
                   </div>
                 </div>
 
@@ -428,12 +430,15 @@ export default function AboutPage() {
                       <h3 className="text-xl font-semibold text-foreground">NET24</h3>
                     </div>
                   </div>
-                  <div className="mt-6 flex justify-center rounded-2xl border border-[#DAD3F0] bg-[#F6F4FD] p-6 dark:border-[#3A2E72] dark:bg-[#17122D]">
-                    <div className="w-full max-w-[320px] rounded-2xl border border-[#D3CBEA] bg-[linear-gradient(140deg,#FFFFFF_0%,#F4F0FF_100%)] p-6 text-center shadow-[inset_0_1px_0_rgba(255,255,255,0.85)] dark:border-[#43337C] dark:bg-[linear-gradient(140deg,#1A1435_0%,#241A48_100%)]">
-                      <p className="text-3xl font-bold tracking-[0.08em] text-primary">NET24</p>
-                      <p className="mt-2 text-[11px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
-                        Global Education Network
-                      </p>
+                  <div className="mt-6 flex min-h-[180px] items-center justify-center rounded-2xl border border-[#DAD3F0] bg-[#F6F4FD] p-6 dark:border-[#3A2E72] dark:bg-[#17122D]">
+                    <div className="h-[112px] w-full max-w-[320px] overflow-hidden rounded-xl border border-[#D3CBEA] bg-white shadow-[inset_0_1px_0_rgba(255,255,255,0.85)] dark:border-[#43337C] dark:bg-[#1A1435] sm:h-[120px]">
+                      <img
+                        src="/memberships/net24-logo.jpeg"
+                        alt="NET24 membership logo"
+                        loading="lazy"
+                        decoding="async"
+                        className="h-full w-full scale-[1.08] object-cover object-center"
+                      />
                     </div>
                   </div>
                   <p className="mt-6 text-sm text-muted-foreground">
@@ -453,9 +458,15 @@ export default function AboutPage() {
                       <h3 className="text-xl font-semibold text-foreground">EAIE</h3>
                     </div>
                   </div>
-                  <div className="mt-6 flex items-center justify-center rounded-2xl border border-[#DAD3F0] bg-[#F6F4FD] p-6 dark:border-[#3A2E72] dark:bg-[#17122D]">
-                    <div className="flex h-20 w-48 items-center justify-center rounded-xl border border-[#BDD2C5] bg-[#E6F4EA] text-3xl font-bold text-green-700 dark:border-[#3F6552] dark:bg-[#1D352A] dark:text-[#7FD79F]">
-                      EAIE
+                  <div className="mt-6 flex min-h-[180px] items-center justify-center rounded-2xl border border-[#DAD3F0] bg-[#F6F4FD] p-6 dark:border-[#3A2E72] dark:bg-[#17122D]">
+                    <div className="h-[112px] w-full max-w-[320px] overflow-hidden rounded-xl border border-[#BDD2C5] bg-white dark:border-[#3F6552] dark:bg-[#1D352A] sm:h-[120px]">
+                      <img
+                        src="/memberships/eaie-logo.png"
+                        alt="EAIE membership logo"
+                        loading="lazy"
+                        decoding="async"
+                        className="h-full w-full scale-[1.22] object-cover object-center"
+                      />
                     </div>
                   </div>
                   <p className="mt-6 text-sm text-muted-foreground">

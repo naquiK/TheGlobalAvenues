@@ -23,8 +23,19 @@
     <script>
       (function () {
         try {
-          var storedTheme = window.sessionStorage.getItem('tga-theme-session');
-          var theme = storedTheme === 'light' || storedTheme === 'dark' ? storedTheme : 'dark';
+          var storageKey = 'tga-theme-preference';
+          var legacyKey = 'tga-theme-session';
+          var storedTheme = window.localStorage.getItem(storageKey);
+
+          if (storedTheme !== 'light' && storedTheme !== 'dark') {
+            var legacyTheme = window.sessionStorage.getItem(legacyKey);
+            if (legacyTheme === 'light' || legacyTheme === 'dark') {
+              storedTheme = legacyTheme;
+              window.localStorage.setItem(storageKey, legacyTheme);
+            }
+          }
+
+          var theme = storedTheme === 'dark' ? 'dark' : 'light';
 
           if (theme === 'dark') {
             document.documentElement.classList.add('dark');
@@ -32,7 +43,7 @@
             document.documentElement.classList.remove('dark');
           }
         } catch (error) {
-          document.documentElement.classList.add('dark');
+          document.documentElement.classList.remove('dark');
         }
       })();
     </script>
