@@ -50,7 +50,7 @@ export default function CollaboratePage() {
   const { ref: flowRef, isVisible: flowVisible } = useLazySection();
   const { ref: teamsRef, isVisible: teamsVisible } = useLazySection();
 
-  const primaryPhone = siteConfig.contact?.phone?.[0] || '+91 11 4680 1133';
+  const primaryPhone = siteConfig.contact?.phone?.[0] || '+91 9319831133';
   const primaryPhoneHref = primaryPhone.replace(/\s+/g, '');
   const generalEmail = siteConfig.contact?.email?.general || 'connect@theglobalavenues.com';
   const whatsappLink = siteConfig.social?.whatsapp || '#';

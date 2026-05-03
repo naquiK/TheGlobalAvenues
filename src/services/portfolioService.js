@@ -81,6 +81,7 @@ const mergePortfolioData = (basePortfolio, overridePortfolio) => {
     ...basePortfolio,
     ...overridePortfolio,
     image: overridePortfolio.image || basePortfolio.image,
+    logo: overridePortfolio.logo || basePortfolio.logo,
     description: overridePortfolio.description || basePortfolio.description,
     category: overridePortfolio.category || basePortfolio.category,
     details: {

@@ -19,11 +19,11 @@ export const SITE_CONFIG = {
   },
 
   contact: {
-    phone: ['+91 11 4680 1133', '+91 93198 31133', '+91 97178 01133'],
+    phone: ['+91 9319831133', '+91 9319831133', '+91 9971801133'],
     email: {
       general: 'connect@theglobalavenues.com',
-      admissions: 'admissions@theglobalavenues.com',
-      partnerships: 'partnerships@theglobalavenues.com',
+      admissions: 'neetu@theglobalavenues.com',
+      partnerships: 'connect@theglobalavenues.com',
     },
     address: {
       street: 'A 6, Block A, South Extension II',
@@ -49,6 +49,7 @@ export const SITE_CONFIG = {
       role: 'Director',
       phone: '+91 93198 31133',
       whatsappNumber: '919319831133',
+      avatar: '/team/neetu-verma-gupta.webp',
       prefilledMessage:
         'Hello Neetu, I would like to connect with The Global Avenues regarding a new enquiry.',
     },
@@ -57,6 +58,7 @@ export const SITE_CONFIG = {
       role: 'International Recruitment Head',
       phone: '+91 97178 01133',
       whatsappNumber: '919717801133',
+      avatar: '/team/deepshikha-chauhan.webp',
       prefilledMessage:
         'Hello Deepshikha, I would like to connect with The Global Avenues regarding a new enquiry.',
     },
@@ -73,6 +75,7 @@ export const SITE_CONFIG = {
     primary: [
       { label: 'Home', path: '/' },
       { label: 'Who We Are', path: '/about' },
+      { label: 'Universities', path: '/universities' },
       { label: 'News & Blog', path: '/news-blog' },
       { label: 'Gallery', path: '/gallery' },
     ],
@@ -108,18 +111,18 @@ export const SITE_CONFIG = {
   collaborateTeams: [
     {
       title: 'Institutional Partnerships',
-      phone: '+91 11 4680 1133',
+      phone: '+91 9319831133',
       email: 'connect@theglobalavenues.com',
     },
     {
-      title: 'Recruitment Operations',
-      phone: '+91 93198 31133',
-      email: 'admissions@theglobalavenues.com',
+      title: 'Recruitment/Operations',
+      phone: '+91 9319831133',
+      email: 'neetu@theglobalavenues.com',
     },
     {
       title: 'Market Expansion',
-      phone: '+91 97178 01133',
-      email: 'partnerships@theglobalavenues.com',
+      phone: '+91 9971801133',
+      email: 'connect@theglobalavenues.com',
     },
   ],
 };

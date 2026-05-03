@@ -296,10 +296,13 @@ export default function PortfolioDetailPage() {
     normalizedSlug === 'mjm-graphic-design' || normalizedTitle.includes('mjm graphic design');
   const isIcnBusinessSchoolProfile =
     normalizedSlug === 'icn-business-school' || normalizedTitle.includes('icn business school');
+  const isEpitechProfile =
+    normalizedSlug === 'epitech' || normalizedTitle.includes('epitech');
   const isEitInnoenergyProfile =
     normalizedSlug === 'eit-innoenergy' ||
     normalizedTitle.includes('eit innoenergy') ||
     normalizedTitle.includes('innoenergy masters');
+  const usesDarkLogoBadge = isIcnBusinessSchoolProfile || isEpitechProfile;
 
   useEffect(() => {
     const section = mjmSpotlightRef.current;
@@ -494,7 +497,9 @@ export default function PortfolioDetailPage() {
                 alt={portfolio.partnerName || portfolio.title}
                 loading="lazy"
                 decoding="async"
-                className="w-full h-full object-cover"
+                className={`h-full w-full ${
+                  isEpitechProfile ? 'object-contain bg-[#E5E5E5] p-6' : 'object-cover'
+                }`}
                 initial={{ scale: 0.95, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 transition={{ duration: 0.6 }}
@@ -510,7 +515,7 @@ export default function PortfolioDetailPage() {
               {portfolio.logo && (
                 <motion.div
                   className={`absolute top-6 right-6 rounded-xl p-2 shadow-lg ${
-                    isIcnBusinessSchoolProfile
+                    usesDarkLogoBadge
                       ? 'border border-white/30 bg-black/45 backdrop-blur-md'
                       : 'border border-white/35 bg-white/95'
                   }`}
@@ -524,7 +529,7 @@ export default function PortfolioDetailPage() {
                     loading="lazy"
                     decoding="async"
                     className={`h-10 w-auto object-contain ${
-                      isIcnBusinessSchoolProfile
+                      usesDarkLogoBadge
                         ? 'max-w-[10rem] brightness-110'
                         : isEitInnoenergyProfile
                           ? 'max-w-[11rem]'

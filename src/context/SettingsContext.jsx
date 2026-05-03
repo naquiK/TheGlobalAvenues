@@ -147,9 +147,9 @@ const buildSiteConfig = (settings) => {
   const fallbackPhone = config.contact.phone?.[0] || '';
   const fallbackEmail = config.contact.email?.general || '';
   const teamBlueprint = [
-    { title: 'General Enquiries', phone: config.contact.phone?.[0], email: config.contact.email?.general },
-    { title: 'Admissions Support', phone: config.contact.phone?.[1], email: config.contact.email?.admissions },
-    { title: 'Partnerships', phone: config.contact.phone?.[2], email: config.contact.email?.partnerships },
+    { title: 'Institutional Partnerships', phone: config.contact.phone?.[0], email: config.contact.email?.general },
+    { title: 'Recruitment/Operations', phone: config.contact.phone?.[1], email: config.contact.email?.admissions },
+    { title: 'Market Expansion', phone: config.contact.phone?.[2], email: config.contact.email?.partnerships },
   ];
 
   config.collaborateTeams = teamBlueprint.map((team, index) => ({

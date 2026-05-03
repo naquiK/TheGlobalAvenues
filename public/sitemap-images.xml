@@ -244,6 +244,10 @@
       <image:loc>https://theglobalavenues.com/universities/ifh-institut-francais-de-l-hotellerie-hero.jpg</image:loc>
       <image:caption>IFH - Institut Francais de l&apos;Hotellerie</image:caption>
     </image:image>
+    <image:image>
+      <image:loc>https://theglobalavenues.com/universities/ifh-institut-francais-de-l-hotellerie/ifh-logo-official.svg</image:loc>
+      <image:caption>IFH - Institut Francais de l&apos;Hotellerie logo</image:caption>
+    </image:image>
   </url>
   <url>
     <loc>https://theglobalavenues.com/gallery/collection/counselling-events-2026</loc>

@@ -7,6 +7,10 @@ const accentClasses = [
   'border-[#DDD4F2] bg-[linear-gradient(160deg,rgba(255,255,255,0.96)_0%,rgba(247,243,255,0.94)_100%)] dark:border-[#3E316F] dark:bg-[linear-gradient(160deg,rgba(22,17,42,0.96)_0%,rgba(17,13,33,0.96)_100%)]',
   'border-[#F0D8CE] bg-[linear-gradient(160deg,rgba(255,255,255,0.96)_0%,rgba(255,244,238,0.96)_100%)] dark:border-[#5B3328] dark:bg-[linear-gradient(160deg,rgba(34,18,14,0.96)_0%,rgba(23,13,11,0.96)_100%)]',
 ];
+const contactAvatarFallbacks = {
+  neetu: '/team/neetu-verma-gupta.webp',
+  deepshikha: '/team/deepshikha-chauhan.webp',
+};
 
 function sanitizePhoneNumber(phone) {
   return String(phone || '').replace(/\D/g, '');
@@ -49,6 +53,10 @@ export function FloatingContactButton() {
 
     return configuredContacts.map((contact, index) => ({
       ...contact,
+      avatar:
+        contact.avatar ||
+        contactAvatarFallbacks[String(contact.name || '').trim().toLowerCase()] ||
+        '',
       href: buildWhatsAppLink(
         contact.whatsappNumber || contact.phone,
         contact.prefilledMessage ||
@@ -122,8 +130,18 @@ export function FloatingContactButton() {
                     onClick={() => setIsOpen(false)}
                     className={`floating-contact-card group flex items-center gap-3 rounded-[22px] border p-3 shadow-[0_16px_34px_rgba(16,12,40,0.08)] transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-[0_22px_46px_rgba(16,12,40,0.16)] ${contact.accentClass}`}
                   >
-                    <div className="floating-contact-card__icon flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-2xl border border-primary/20 bg-primary/10 text-primary shadow-[inset_0_1px_0_rgba(255,255,255,0.5)] dark:border-white/15 dark:bg-white/10 dark:text-white">
-                      <MessageSquareText className="h-5 w-5" />
+                    <div className="floating-contact-card__icon relative flex h-12 w-12 flex-shrink-0 items-center justify-center overflow-hidden rounded-2xl border border-primary/20 bg-primary/10 text-primary shadow-[inset_0_1px_0_rgba(255,255,255,0.5)] dark:border-white/15 dark:bg-white/10 dark:text-white">
+                      {contact.avatar ? (
+                        <img
+                          src={contact.avatar}
+                          alt={`${contact.name} profile`}
+                          loading="lazy"
+                          decoding="async"
+                          className="h-full w-full object-cover"
+                        />
+                      ) : (
+                        <MessageSquareText className="h-5 w-5" />
+                      )}
                     </div>
                     <div className="min-w-0 flex-1">
                       <p className="text-base font-semibold text-foreground">{contact.name}</p>
@@ -150,7 +168,13 @@ export function FloatingContactButton() {
       >
         <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.2),transparent_46%,rgba(255,255,255,0.08)_100%)] opacity-80" />
         <span className="relative flex h-12 w-12 items-center justify-center rounded-full border border-white/16 bg-white/12 text-white shadow-[0_10px_24px_rgba(16,12,40,0.22)]">
-          {isOpen ? <X className="h-5 w-5" /> : <MessageSquareText className="h-5 w-5" />}
+          {isOpen ? (
+            <X className="h-5 w-5" />
+          ) : (
+            <span className="relative flex h-9 w-9 items-center justify-center">
+              <MessageSquareText className="h-5 w-5" />
+            </span>
+          )}
         </span>
       </button>
     </div>

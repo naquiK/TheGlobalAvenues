@@ -98,6 +98,7 @@ const ValueCard = ({ item, index }) => {
 export default function AboutPage() {
   const ICEF_ACCOUNT_ID = '5944';
   const ICEF_DIRECTORY_URL = 'https://www.icef.com/ias-directory/';
+  const PIER_DIRECTORY_URL = 'https://connect.pierapps.com/agencies/46631';
   const badgeRef = useRef(null);
   const [isBadgeReady, setIsBadgeReady] = useState(false);
   const [showBadgeFallback, setShowBadgeFallback] = useState(false);
@@ -248,12 +249,6 @@ export default function AboutPage() {
         role: 'Admissions Coordinator',
         image: '/team/suraj-kumar-soni.webp',
         bio: 'Dedicated professional managing admissions workflows, documentation quality, and partner compliance',
-      },
-      {
-        name: 'Nancy Goel',
-        role: 'Recruitment Specialist',
-        image: '/team/nancy.jpeg',
-        bio: 'Focused on student recruitment engagement, counselor coordination, and nurturing strong applicant pipelines.',
       },
       {
         name: 'Ishita Nagpal',
@@ -444,73 +439,138 @@ export default function AboutPage() {
                 </p>
               </div>
 
-              <div className="mt-12 grid grid-cols-1 gap-10 lg:grid-cols-[0.9fr_1.1fr]">
-                <div className="rounded-3xl border border-[#DDD7F2] bg-[linear-gradient(160deg,#FFFFFF_0%,#F9F6FF_52%,#F3F7FF_100%)] p-8 shadow-[0_24px_70px_rgba(16,12,40,0.12)] dark:border-[#2B2354] dark:bg-[linear-gradient(160deg,#140F28_0%,#0E0A1E_55%,#181133_100%)]">
-                  <div className="flex items-center gap-3">
-                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary">
-                      <Award className="h-5 w-5" />
-                    </div>
-                    <div>
-                      <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">Accreditation</p>
-                      <h3 className="text-xl font-semibold text-foreground">ICEF Certified</h3>
+              <div className="mt-12 space-y-8">
+                <article className="rounded-[34px] border border-[#DAD2F1] bg-[linear-gradient(145deg,rgba(255,255,255,0.72)_0%,rgba(248,245,255,0.8)_46%,rgba(247,241,255,0.72)_100%)] p-[1px] shadow-[0_26px_70px_rgba(16,12,40,0.12)] dark:border-[#2F2658] dark:bg-[linear-gradient(145deg,rgba(28,20,52,0.9)_0%,rgba(17,13,34,0.94)_100%)]">
+                  <div className="rounded-[32px] bg-white/66 p-4 backdrop-blur-sm dark:bg-[#120D25]/70 sm:p-5">
+                    <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,430px)_minmax(0,1fr)] lg:gap-7">
+                      <div className="rounded-3xl border border-[#DDD7F2] bg-[linear-gradient(160deg,#FFFFFF_0%,#F9F6FF_52%,#F3F7FF_100%)] p-6 shadow-[0_24px_70px_rgba(16,12,40,0.12)] dark:border-[#2B2354] dark:bg-[linear-gradient(160deg,#140F28_0%,#0E0A1E_55%,#181133_100%)] sm:p-8">
+                        <div className="flex items-center gap-3">
+                          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+                            <Award className="h-5 w-5" />
+                          </div>
+                          <div>
+                            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">Accreditation</p>
+                            <h3 className="text-xl font-semibold text-foreground">ICEF Certified</h3>
+                          </div>
+                        </div>
+                        <div className="mt-6 flex min-h-[160px] items-center justify-center rounded-2xl border border-[#DAD3F0] bg-[#F6F4FD] p-4 dark:border-[#3A2E72] dark:bg-[#17122D] sm:min-h-[180px] sm:p-6">
+                          <div className="relative flex h-[112px] w-full max-w-[300px] items-center justify-center overflow-hidden rounded-xl border border-[#D3CBEA] bg-white p-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.85)] dark:border-[#43337C] dark:bg-[#1A1435] sm:h-[120px] sm:max-w-[320px]">
+                            {!isBadgeReady && !showBadgeFallback ? (
+                              <p className="text-center text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                                Loading ICEF badge...
+                              </p>
+                            ) : null}
+                            {showBadgeFallback ? (
+                              <div className="absolute inset-2 z-20 flex flex-col items-center justify-center gap-3 rounded-xl border border-[#D3CBEA] bg-white/96 px-3 py-3 dark:border-[#43337C] dark:bg-[#1A1435]/96 sm:px-4">
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    setShowBadgeFallback(false);
+                                    setIsBadgeReady(false);
+                                    setBadgeRetryKey((value) => value + 1);
+                                  }}
+                                  className="inline-flex w-full max-w-[220px] items-center justify-center rounded-full border border-primary/20 bg-primary/10 px-4 py-2 text-center text-[11px] font-semibold uppercase tracking-[0.16em] text-primary transition-all duration-200 hover:bg-primary hover:text-white sm:text-xs"
+                                >
+                                  Retry Badge
+                                </button>
+                                <a
+                                  href={ICEF_DIRECTORY_URL}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="inline-flex w-full max-w-[220px] items-center justify-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-4 py-2 text-center text-[11px] font-semibold uppercase tracking-[0.16em] text-primary transition-all duration-200 hover:bg-primary hover:text-white sm:text-xs"
+                                >
+                                  <span className="truncate">Search IAS Code {ICEF_ACCOUNT_ID}</span>
+                                  <ArrowUpRight className="h-3.5 w-3.5" />
+                                </a>
+                              </div>
+                            ) : null}
+                            <span
+                              ref={badgeRef}
+                              id="iasBadge"
+                              data-account-id={ICEF_ACCOUNT_ID}
+                              className={`relative z-10 block max-w-full origin-center scale-[0.66] transition-opacity duration-300 sm:scale-[0.72] ${isBadgeReady ? 'opacity-100' : 'opacity-0'}`}
+                            />
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="relative overflow-hidden rounded-3xl border border-[#DBD4F0] bg-white/80 p-6 shadow-[0_18px_55px_rgba(16,12,40,0.1)] dark:border-[#352B61] dark:bg-[#16102B]/82 sm:p-8">
+                        <div className="absolute -right-10 -top-10 h-28 w-28 rounded-full bg-primary/10 blur-3xl dark:bg-brand-purple-mid/18" />
+                        <div className="relative space-y-4 text-sm leading-relaxed text-muted-foreground">
+                          <p>
+                            ICEF&apos;s quality assurance framework is widely recognized as a professional benchmark across the
+                            international education sector and helps institutions identify accredited agencies with confidence.
+                          </p>
+                          <p>
+                            This status confirms that The Global Avenues has undergone structured screening for operational
+                            quality, ethical standards, and responsible recruitment practices.
+                          </p>
+                          <p>
+                            It reinforces our commitment to building long-term institutional partnerships through transparency,
+                            accountability, and consistent service delivery.
+                          </p>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                  <div className="mt-6 flex min-h-[180px] items-center justify-center rounded-2xl border border-[#DAD3F0] bg-[#F6F4FD] p-6 dark:border-[#3A2E72] dark:bg-[#17122D]">
-                    <div className="relative flex h-[112px] w-full max-w-[320px] items-center justify-center overflow-hidden rounded-xl border border-[#D3CBEA] bg-white p-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.85)] dark:border-[#43337C] dark:bg-[#1A1435] sm:h-[120px]">
-                      {!isBadgeReady && !showBadgeFallback ? (
-                        <p className="text-center text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-                          Loading ICEF badge...
-                        </p>
-                      ) : null}
-                      {showBadgeFallback ? (
-                        <div className="absolute inset-2 z-20 flex flex-col items-center justify-center gap-3 rounded-xl border border-[#D3CBEA] bg-white/96 px-3 py-3 dark:border-[#43337C] dark:bg-[#1A1435]/96 sm:px-4">
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setShowBadgeFallback(false);
-                              setIsBadgeReady(false);
-                              setBadgeRetryKey((value) => value + 1);
-                            }}
-                            className="inline-flex w-full max-w-[220px] items-center justify-center rounded-full border border-primary/20 bg-primary/10 px-4 py-2 text-center text-[11px] font-semibold uppercase tracking-[0.16em] text-primary transition-all duration-200 hover:bg-primary hover:text-white sm:text-xs"
-                          >
-                            Retry Badge
-                          </button>
+                </article>
+
+                <article className="rounded-[34px] border border-[#DAD2F1] bg-[linear-gradient(145deg,rgba(255,255,255,0.72)_0%,rgba(248,245,255,0.8)_46%,rgba(247,241,255,0.72)_100%)] p-[1px] shadow-[0_26px_70px_rgba(16,12,40,0.12)] dark:border-[#2F2658] dark:bg-[linear-gradient(145deg,rgba(28,20,52,0.9)_0%,rgba(17,13,34,0.94)_100%)]">
+                  <div className="rounded-[32px] bg-white/66 p-4 backdrop-blur-sm dark:bg-[#120D25]/70 sm:p-5">
+                    <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,430px)_minmax(0,1fr)] lg:gap-7">
+                      <div className="rounded-3xl border border-[#DDD7F2] bg-[linear-gradient(160deg,#FFFFFF_0%,#F9F6FF_52%,#F3F7FF_100%)] p-6 shadow-[0_24px_70px_rgba(16,12,40,0.12)] dark:border-[#2B2354] dark:bg-[linear-gradient(160deg,#140F28_0%,#0E0A1E_55%,#181133_100%)] sm:p-8">
+                        <div className="flex items-center gap-3">
+                          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+                            <Award className="h-5 w-5" />
+                          </div>
+                          <div>
+                            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">Accreditation</p>
+                            <h3 className="text-xl font-semibold text-foreground">PIER Certified</h3>
+                          </div>
+                        </div>
+                        <div className="mt-6 flex min-h-[160px] items-center justify-center rounded-2xl border border-[#DAD3F0] bg-[#F6F4FD] p-4 dark:border-[#3A2E72] dark:bg-[#17122D] sm:min-h-[180px] sm:p-6">
+                          <div className="flex h-[112px] w-full max-w-[300px] flex-col items-center justify-center rounded-xl border border-[#C6D7DF] bg-white px-4 text-center shadow-[inset_0_1px_0_rgba(255,255,255,0.85)] dark:border-[#35556A] dark:bg-[#132231] sm:h-[120px] sm:max-w-[320px]">
+                            <p className="text-[32px] font-extrabold uppercase leading-none tracking-[0.18em] text-[#0B5E86] dark:text-[#5FB6E0] sm:text-[38px]">
+                              PIER
+                            </p>
+                            <p className="mt-1 max-w-[240px] text-[11px] font-semibold uppercase tracking-[0.08em] text-[#174E69] dark:text-[#9ED5F0]">
+                              Professional International Education Resources
+                            </p>
+                          </div>
+                        </div>
+                        <div className="mt-5 flex flex-wrap gap-3">
                           <a
-                            href={ICEF_DIRECTORY_URL}
+                            href={PIER_DIRECTORY_URL}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex w-full max-w-[220px] items-center justify-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-4 py-2 text-center text-[11px] font-semibold uppercase tracking-[0.16em] text-primary transition-all duration-200 hover:bg-primary hover:text-white sm:text-xs"
+                            className="inline-flex items-center justify-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-4 py-2 text-center text-[11px] font-semibold uppercase tracking-[0.16em] text-primary transition-all duration-200 hover:bg-primary hover:text-white sm:text-xs"
                           >
-                            <span className="truncate">Search IAS Code {ICEF_ACCOUNT_ID}</span>
+                            <span className="truncate">View Verified Profile</span>
                             <ArrowUpRight className="h-3.5 w-3.5" />
                           </a>
                         </div>
-                      ) : null}
-                      <span
-                        ref={badgeRef}
-                        id="iasBadge"
-                        data-account-id={ICEF_ACCOUNT_ID}
-                        className={`relative z-10 block max-w-full origin-center scale-[0.66] transition-opacity duration-300 sm:scale-[0.72] ${isBadgeReady ? 'opacity-100' : 'opacity-0'}`}
-                      />
+                      </div>
+
+                      <div className="relative overflow-hidden rounded-3xl border border-[#DBD4F0] bg-white/80 p-6 shadow-[0_18px_55px_rgba(16,12,40,0.1)] dark:border-[#352B61] dark:bg-[#16102B]/82 sm:p-8">
+                        <div className="absolute -left-10 -bottom-10 h-28 w-28 rounded-full bg-brand-orange/10 blur-3xl dark:bg-brand-orange/16" />
+                        <div className="relative space-y-4 text-sm leading-relaxed text-muted-foreground">
+                          <p>
+                            PIER certification provides an additional layer of external verification through our official PIER
+                            Connect agency listing, including identity and profile transparency.
+                          </p>
+                          <p>
+                            This helps universities and partners complete due diligence more efficiently by referencing a
+                            trusted third-party directory before collaboration.
+                          </p>
+                          <p>
+                            Together, our ICEF and PIER credentials strengthen confidence in our processes and support
+                            compliant, quality-focused, and institution-first engagement.
+                          </p>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                </div>
-
-                <div className="space-y-4 text-sm text-muted-foreground">
-                  <p>
-                    ICEF&apos;s industry-leading quality assurance processes are increasingly recognized worldwide as a
-                    benchmark for education agencies and industry stakeholders, allowing for the easy identification of
-                    accredited organizations.
-                  </p>
-                  <p>
-                    This recognition affirms that The Global Avenues has been thoroughly screened and accredited for
-                    its quality work, professional approach, and strong ethical standards in international recruitment.
-                  </p>
-                  <p>
-                    It reinforces our credibility and commitment to excellence in building institutional opportunities.
-                    With this accreditation, we continue to strengthen trust among our partners and the wider education community.
-                  </p>
-                </div>
+                </article>
               </div>
 
               <div className="mt-12 grid grid-cols-1 gap-10 lg:grid-cols-2">
