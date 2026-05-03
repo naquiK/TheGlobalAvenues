@@ -294,6 +294,8 @@ export default function PortfolioDetailPage() {
   const normalizedTitle = String(portfolio?.title || '').toLowerCase();
   const isMjmGraphicDesignProfile =
     normalizedSlug === 'mjm-graphic-design' || normalizedTitle.includes('mjm graphic design');
+  const isMjmSummerSchoolCardEnabled = false;
+  const isMjmSummerSchoolPopupEnabled = false;
   const isIcnBusinessSchoolProfile =
     normalizedSlug === 'icn-business-school' || normalizedTitle.includes('icn business school');
   const isEpitechProfile =
@@ -306,7 +308,13 @@ export default function PortfolioDetailPage() {
 
   useEffect(() => {
     const section = mjmSpotlightRef.current;
-    if (!isMjmGraphicDesignProfile || !section || typeof window === 'undefined') return undefined;
+    if (
+      !isMjmGraphicDesignProfile ||
+      !isMjmSummerSchoolPopupEnabled ||
+      !section ||
+      typeof window === 'undefined'
+    )
+      return undefined;
 
     const fireMjmPopper = () => {
       confetti({
@@ -354,7 +362,7 @@ export default function PortfolioDetailPage() {
 
     observer.observe(section);
     return () => observer.disconnect();
-  }, [isMjmGraphicDesignProfile]);
+  }, [isMjmGraphicDesignProfile, isMjmSummerSchoolPopupEnabled]);
 
   if (isLoading) {
     return (
@@ -984,7 +992,7 @@ export default function PortfolioDetailPage() {
           </motion.div>
         )}
 
-        {isMjmGraphicDesignProfile && (
+        {isMjmGraphicDesignProfile && isMjmSummerSchoolCardEnabled && (
           <motion.div
             ref={mjmSpotlightRef}
             className="relative mb-16 overflow-hidden rounded-3xl border border-[#D5C9F1] bg-[linear-gradient(118deg,#FFF5EE_0%,#F7F0FF_36%,#EAF3FF_72%,#FFF1D9_100%)] p-6 shadow-[0_30px_74px_rgba(16,12,40,0.18)] dark:border-[#352B62] dark:bg-[linear-gradient(118deg,#1B1731_0%,#17142B_38%,#152131_70%,#211A29_100%)] sm:p-8"

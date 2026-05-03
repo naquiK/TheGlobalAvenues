@@ -284,8 +284,7 @@ export default function AboutPage() {
         image="/team/neetu-verma-gupta.webp"
         keywords={['about The Global Avenues', 'international education partner', 'ICEF accredited agency']}
       />
-      <section className="about-section-shell relative overflow-hidden bg-gradient-to-b from-primary/8 via-background/80 to-background/40 px-4 py-20 sm:px-6 lg:px-8">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(83,64,176,0.14),transparent_35%),radial-gradient(circle_at_top_right,rgba(232,82,26,0.12),transparent_40%)]" />
+      <section className="about-section-shell px-4 py-20 sm:px-6 lg:px-8">
         <div ref={heroRef} className="relative mx-auto max-w-5xl text-center">
           <div className="section-kicker-classic mb-5 inline-flex">KNOW US BETTER</div>
           <h1 className="text-4xl font-bold text-foreground sm:text-5xl lg:text-5xl">
@@ -405,7 +404,7 @@ export default function AboutPage() {
 
       <div ref={teamRef}>
         {teamVisible ? (
-          <section className="about-section-shell bg-muted/20 px-4 py-16 sm:px-6 lg:px-8">
+          <section className="about-section-shell px-4 py-16 sm:px-6 lg:px-8">
             <div className="mx-auto max-w-6xl">
               <div className="text-center">
                 <div className="section-kicker-classic mb-4 inline-flex">Leadership & Team</div>

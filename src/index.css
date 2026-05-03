@@ -449,14 +449,14 @@ html.dark {
     inset: 0;
     pointer-events: none;
     z-index: 0;
-    opacity: 0.52;
+    opacity: 0.58;
     background-image:
-      radial-gradient(circle at 1px 1px, rgba(88, 70, 170, 0.1) 1px, transparent 1.2px),
+      radial-gradient(circle at 1px 1px, rgba(88, 70, 170, 0.12) 1px, transparent 1.2px),
       linear-gradient(
         118deg,
-        rgba(255, 255, 255, 0.18) 0%,
-        rgba(123, 107, 204, 0.03) 50%,
-        rgba(232, 82, 26, 0.05) 100%
+        rgba(255, 255, 255, 0.2) 0%,
+        rgba(123, 107, 204, 0.045) 50%,
+        rgba(232, 82, 26, 0.065) 100%
       );
     background-size:
       26px 26px,
@@ -470,28 +470,28 @@ html.dark {
     pointer-events: none;
     z-index: 0;
     background-image:
-      radial-gradient(560px 320px at 18% 30%, rgba(255, 255, 255, 0.22), transparent 70%),
-      radial-gradient(560px 340px at 82% 72%, rgba(232, 82, 26, 0.08), transparent 72%);
-    opacity: 0.42;
+      radial-gradient(560px 320px at 18% 30%, rgba(255, 255, 255, 0.28), transparent 70%),
+      radial-gradient(560px 340px at 82% 72%, rgba(232, 82, 26, 0.12), transparent 72%);
+    opacity: 0.52;
   }
 
   .dark .home-page-gradient--textured::before {
-    opacity: 0.36;
+    opacity: 0.4;
     background-image:
-      radial-gradient(circle at 1px 1px, rgba(151, 138, 220, 0.2) 1px, transparent 1.2px),
+      radial-gradient(circle at 1px 1px, rgba(151, 138, 220, 0.22) 1px, transparent 1.2px),
       linear-gradient(
         118deg,
-        rgba(255, 255, 255, 0.04) 0%,
-        rgba(123, 107, 204, 0.08) 50%,
-        rgba(232, 82, 26, 0.09) 100%
+        rgba(255, 255, 255, 0.05) 0%,
+        rgba(123, 107, 204, 0.095) 50%,
+        rgba(232, 82, 26, 0.105) 100%
       );
   }
 
   .dark .home-page-gradient--textured::after {
     background-image:
-      radial-gradient(620px 360px at 20% 28%, rgba(123, 107, 204, 0.12), transparent 72%),
-      radial-gradient(620px 360px at 84% 74%, rgba(232, 82, 26, 0.11), transparent 74%);
-    opacity: 0.34;
+      radial-gradient(620px 360px at 20% 28%, rgba(123, 107, 204, 0.16), transparent 72%),
+      radial-gradient(620px 360px at 84% 74%, rgba(232, 82, 26, 0.14), transparent 74%);
+    opacity: 0.4;
   }
 
   .about-page-gradient {
@@ -504,12 +504,30 @@ html.dark {
       radial-gradient(760px 460px at 92% 12%, rgba(83, 64, 176, 0.1), transparent 64%),
       repeating-linear-gradient(
         -45deg,
-        rgba(83, 64, 176, 0.02) 0,
-        rgba(83, 64, 176, 0.02) 1px,
+        rgba(83, 64, 176, 0.022) 0,
+        rgba(83, 64, 176, 0.022) 1px,
         transparent 1px,
         transparent 14px
       ),
       linear-gradient(180deg, #fcfbff 0%, #f4f4fa 100%);
+  }
+
+  .about-page-gradient::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    background-image:
+      radial-gradient(circle at 16% 30%, rgba(255, 255, 255, 0.66), transparent 34%),
+      radial-gradient(circle at 82% 76%, rgba(232, 82, 26, 0.09), transparent 30%),
+      linear-gradient(
+        to right,
+        transparent 0%,
+        rgba(83, 64, 176, 0.034) 50%,
+        transparent 100%
+      );
+    opacity: 1;
   }
 
   .about-page-gradient > * {
@@ -523,20 +541,7 @@ html.dark {
   }
 
   .about-section-shell::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    background-image:
-      radial-gradient(circle at 16% 30%, rgba(255, 255, 255, 0.6), transparent 34%),
-      radial-gradient(circle at 82% 76%, rgba(232, 82, 26, 0.06), transparent 30%),
-      linear-gradient(
-        to right,
-        transparent 0%,
-        rgba(83, 64, 176, 0.03) 50%,
-        transparent 100%
-      );
-    opacity: 1;
+    content: none;
   }
 
   .about-section-shell > * {
@@ -552,11 +557,15 @@ html.dark {
       linear-gradient(180deg, #0b0915 0%, #0f0b1f 100%);
   }
 
-  .dark .about-section-shell::before {
+  .dark .about-page-gradient::before {
     background-image:
-      radial-gradient(circle at 16% 30%, rgba(255, 255, 255, 0.04), transparent 34%),
-      radial-gradient(circle at 82% 76%, rgba(232, 82, 26, 0.1), transparent 30%),
-      linear-gradient(to right, transparent 0%, rgba(255, 255, 255, 0.03) 50%, transparent 100%);
+      radial-gradient(circle at 16% 30%, rgba(255, 255, 255, 0.055), transparent 34%),
+      radial-gradient(circle at 82% 76%, rgba(232, 82, 26, 0.13), transparent 30%),
+      linear-gradient(to right, transparent 0%, rgba(255, 255, 255, 0.033) 50%, transparent 100%);
+  }
+
+  .dark .about-section-shell::before {
+    background-image: none;
   }
 
   .collaborate-page-gradient {
@@ -569,8 +578,8 @@ html.dark {
       radial-gradient(780px 480px at 90% 14%, rgba(83, 64, 176, 0.12), transparent 66%),
       repeating-linear-gradient(
         35deg,
-        rgba(83, 64, 176, 0.018) 0,
-        rgba(83, 64, 176, 0.018) 1px,
+        rgba(83, 64, 176, 0.02) 0,
+        rgba(83, 64, 176, 0.02) 1px,
         transparent 1px,
         transparent 13px
       ),
@@ -593,12 +602,12 @@ html.dark {
     inset: 0;
     pointer-events: none;
     background-image:
-      radial-gradient(circle at 14% 24%, rgba(255, 255, 255, 0.65), transparent 34%),
-      radial-gradient(circle at 84% 78%, rgba(232, 82, 26, 0.07), transparent 30%),
+      radial-gradient(circle at 14% 24%, rgba(255, 255, 255, 0.7), transparent 34%),
+      radial-gradient(circle at 84% 78%, rgba(232, 82, 26, 0.1), transparent 30%),
       linear-gradient(
         to right,
         transparent 0%,
-        rgba(83, 64, 176, 0.035) 50%,
+        rgba(83, 64, 176, 0.038) 50%,
         transparent 100%
       );
     opacity: 1;
@@ -619,9 +628,9 @@ html.dark {
 
   .dark .collaborate-section-shell::before {
     background-image:
-      radial-gradient(circle at 14% 24%, rgba(255, 255, 255, 0.03), transparent 34%),
-      radial-gradient(circle at 84% 78%, rgba(232, 82, 26, 0.11), transparent 30%),
-      linear-gradient(to right, transparent 0%, rgba(255, 255, 255, 0.035) 50%, transparent 100%);
+      radial-gradient(circle at 14% 24%, rgba(255, 255, 255, 0.045), transparent 34%),
+      radial-gradient(circle at 84% 78%, rgba(232, 82, 26, 0.14), transparent 30%),
+      linear-gradient(to right, transparent 0%, rgba(255, 255, 255, 0.036) 50%, transparent 100%);
   }
 
   .summer-hot-blink-btn {
