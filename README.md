@@ -23,10 +23,19 @@
 - **Hero Section** - Eye-catching introduction with statistics
 - **Services Grid** - 6 comprehensive service offerings (3-column layout)
 - **About Section** - Company information with 6-step process
+- **Portfolio Brochure Cards** - University-specific PDF cards with official brochure imagery, view/download actions, and responsive light/dark styling
 - **Testimonials** - Client carousel with navigation
 - **Contact Form** - Functional form with validation
 - **Footer** - Links, newsletter signup, and information
 - **Scroll-to-Top** - Floating button for navigation
+
+### Portfolio PDF Assets
+- EUAS brochure: `public/universities/estonian-entrepreneurship-university-of-applied-sciences/brochures/euas-english-booklet-business-it-design.pdf`
+- MJM Paris/London brochure: `public/universities/mjm-graphic-design/brochures/mjm-paris-london-international-programmes.pdf`
+- MJM eco-design master brochure: `public/universities/mjm-graphic-design/brochures/mjm-international-master-interior-architecture-eco-design-management.pdf`
+- PDF cards are rendered from `src/data/portfolioData.js` and displayed by `src/pages/PortfolioDetailPage.jsx`.
+- View links use `target="_blank"` with `rel="noopener noreferrer"`; download links use the browser `download` attribute.
+- Lead capture before PDF access requires a backend or trusted form service. A frontend-only gate can be bypassed and is not implemented.
 
 ### ⚡ Performance
 - Optimized animations (60 FPS)

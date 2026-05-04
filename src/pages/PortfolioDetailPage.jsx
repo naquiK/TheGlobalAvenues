@@ -1,61 +1,104 @@
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
-import confetti from 'canvas-confetti';
 import {
   MapPin,
   Trophy,
   Star,
   Globe,
   ChevronRight,
-  Mail,
   ExternalLink,
   CalendarDays,
   Clock3,
+  Download,
+  Eye,
   FileText,
-  Flame,
-  Rocket,
   BadgeCheck,
   Building2,
   GraduationCap,
   Palette,
   Cpu,
   Briefcase,
+  X,
 } from 'lucide-react';
 import { getPortfolioById, getPortfolios } from '../services/portfolioService';
 import { getUniversityDetail } from '../services/contentApi';
 import { resolveMediaUrl } from '../services/apiClient';
+import useScrollIntentCelebration from '../hooks/useScrollIntentCelebration';
 import BackNavButton from '../components/ui/BackNavButton';
+import PageLoader from '../components/ui/PageLoader';
 import Seo from '../components/seo/Seo';
 import { SITE_URL, trimDescription, toAbsoluteUrl } from '../seo/siteMeta';
+import { SITE_CONFIG } from '../config';
 
 const MJM_SUMMER_SCHOOL_HIGHLIGHT = {
-  city: 'Rennes, France',
+  title: 'MJM France Summer School',
+  city: 'Paris & Lille',
+  dates: '15-26 June 2026',
+  duration: 'Two weeks',
+  fee: '2000Euro Per Student',
+  age: '16 and above',
+  classSize: '15-25 students',
+  mode: 'On-campus & outdoor learning',
+  hours: '36 hours from 10:00 to 18:00',
+  pdf: '/universities/mjm-graphic-design/brochures/mjm-summer-school-france.pdf',
   description:
-    'These summer opportunities allow students to study in France, gain practical skills, experience life in Rennes, and discover our learning environment.',
-  aiBusiness: {
-    title: 'AI Business Summer School',
-    fee: 'Between EUR 1,250 and EUR 3,500',
-    deadline: 'April 10, 2026',
-  },
+    "Our Summer School in France is a two-week immersive programme combining artistic courses, cultural activities, and language learning. Designed for international students aged 16 and above, the programme blends MJM's 45 years of creative expertise with the unique cultural richness of France.",
+  images: [
+    {
+      src: '/universities/mjm-graphic-design/summer-school/mjm-paris-welcome.jpg',
+      alt: 'Welcome to Paris',
+      caption: 'Welcome to Paris',
+    },
+    {
+      src: '/universities/mjm-graphic-design/summer-school/mjm-lille-welcome.jpg',
+      alt: 'Welcome to Lille',
+      caption: 'Welcome to Lille',
+    },
+    {
+      src: '/universities/mjm-graphic-design/summer-school/mjm-accommodation-residence.jpg',
+      alt: 'Accommodation',
+      caption: 'Accommodation',
+    },
+  ],
+  included: [
+    'Full English teaching and activities',
+    'Accommodation',
+    'Creative workshops (theory & practice)',
+    'Cultural immersion programme',
+    'Language classes (French or English / E-learning)',
+    'Cultural visits',
+    'Student support & supervision',
+    'Certificate of completion',
+    'Transfert town to town during the Summer School',
+  ],
   tracks: [
     {
-      title: 'Digital Marketing and Branding',
-      dates: 'June 1 - June 12, 2026',
-      fee: 'EUR 1,640',
-      deadline: 'April 30, 2026',
+      title: 'Creative Foundations & Studio Practice courses',
+      details: [
+        'Drawing & Illustration',
+        'Colour & Composition',
+        'Perspective & Volume',
+        'Creative Expression & Mixed Media',
+      ],
     },
     {
-      title: 'Sustainable Business',
-      dates: 'June 23 - July 3, 2026',
-      fee: 'EUR 1,640',
-      deadline: 'April 30, 2026',
+      title: 'Guided Cultural Experiences Lille & Paris',
+      details: [
+        'Louvre Museum',
+        "Musée d'Orsay",
+        'Grand Palais',
+        'Eiffel Tower',
+      ],
     },
     {
-      title: 'Cross-Cultural Management',
-      dates: 'July 20 - July 29, 2026',
-      fee: 'EUR 1,640',
-      deadline: 'April 30, 2026',
+      title: 'Outdoor Creative Labs',
+      details: [
+        'Sketching along the canal',
+        'photo challenges',
+        'café drawing',
+        'visual journaling',
+      ],
     },
   ],
 };
@@ -64,6 +107,48 @@ const MJM_TRACK_CARD_THEME_CLASSES = [
   'border-[#D3E0FF] bg-[linear-gradient(145deg,rgba(239,249,255,0.95)_0%,rgba(247,242,255,0.95)_56%,rgba(255,242,226,0.94)_100%)] dark:border-[#42557F] dark:bg-[linear-gradient(145deg,rgba(20,33,46,0.78)_0%,rgba(28,22,56,0.86)_55%,rgba(40,27,30,0.74)_100%)]',
   'border-[#F2D4DC] bg-[linear-gradient(145deg,rgba(255,240,244,0.94)_0%,rgba(243,243,255,0.96)_52%,rgba(255,246,225,0.95)_100%)] dark:border-[#5A4574] dark:bg-[linear-gradient(145deg,rgba(39,23,44,0.76)_0%,rgba(28,24,58,0.86)_55%,rgba(44,29,24,0.74)_100%)]',
 ];
+const CATALOG_THEME_CLASSES = {
+  euas: {
+    shell:
+      'border-[#CFE5D7] bg-[linear-gradient(135deg,rgba(239,250,244,0.94)_0%,rgba(246,249,255,0.94)_56%,rgba(255,249,231,0.88)_100%)] dark:border-[#31594A] dark:bg-[linear-gradient(135deg,rgba(14,35,31,0.9)_0%,rgba(15,23,42,0.96)_56%,rgba(44,37,18,0.82)_100%)]',
+    accent: 'bg-[#0F7B61] text-white',
+    text: 'text-[#0F7B61] dark:text-[#7EE2BC]',
+    button:
+      'border-[#0F7B61]/25 text-[#0F7B61] hover:bg-[#0F7B61] hover:text-white dark:border-[#7EE2BC]/30 dark:text-[#7EE2BC] dark:hover:bg-[#7EE2BC] dark:hover:text-[#06251D]',
+  },
+  mjmLondon: {
+    shell:
+      'border-[#F5B9B2] bg-[linear-gradient(135deg,rgba(255,239,235,0.96)_0%,rgba(255,246,237,0.9)_45%,rgba(243,247,255,0.94)_100%)] dark:border-[#7C3B46] dark:bg-[linear-gradient(135deg,rgba(56,22,28,0.9)_0%,rgba(45,28,22,0.84)_45%,rgba(18,24,42,0.94)_100%)]',
+    accent: 'bg-[#E8521A] text-white',
+    text: 'text-[#E8521A] dark:text-[#FFB199]',
+    button:
+      'border-[#E8521A]/25 text-[#E8521A] hover:bg-[#E8521A] hover:text-white dark:border-[#FFB199]/35 dark:text-[#FFB199] dark:hover:bg-[#FFB199] dark:hover:text-[#35140F]',
+  },
+  mjmEco: {
+    shell:
+      'border-[#BFDCC9] bg-[linear-gradient(135deg,rgba(239,250,243,0.96)_0%,rgba(246,245,255,0.92)_52%,rgba(255,247,235,0.9)_100%)] dark:border-[#3A6550] dark:bg-[linear-gradient(135deg,rgba(16,42,32,0.9)_0%,rgba(25,22,48,0.92)_52%,rgba(45,31,18,0.82)_100%)]',
+    accent: 'bg-[#2E7D58] text-white',
+    text: 'text-[#2E7D58] dark:text-[#8BE3B2]',
+    button:
+      'border-[#2E7D58]/25 text-[#2E7D58] hover:bg-[#2E7D58] hover:text-white dark:border-[#8BE3B2]/35 dark:text-[#8BE3B2] dark:hover:bg-[#8BE3B2] dark:hover:text-[#082719]',
+  },
+  mjmSummer: {
+    shell:
+      'border-[#D9D0F7] bg-[linear-gradient(135deg,rgba(248,244,255,0.96)_0%,rgba(255,242,232,0.9)_54%,rgba(239,247,255,0.92)_100%)] dark:border-[#584489] dark:bg-[linear-gradient(135deg,rgba(30,21,58,0.92)_0%,rgba(49,28,23,0.82)_54%,rgba(18,27,45,0.9)_100%)]',
+    accent: 'bg-primary text-primary-foreground',
+    text: 'text-primary',
+    button:
+      'border-primary/25 text-primary hover:bg-primary hover:text-primary-foreground dark:border-primary/40',
+  },
+  default: {
+    shell:
+      'border-border/60 bg-[linear-gradient(135deg,rgba(255,255,255,0.94)_0%,rgba(246,248,251,0.94)_100%)] dark:bg-[linear-gradient(135deg,rgba(17,24,39,0.9)_0%,rgba(15,23,42,0.96)_100%)]',
+    accent: 'bg-primary text-primary-foreground',
+    text: 'text-primary',
+    button:
+      'border-primary/25 text-primary hover:bg-primary hover:text-primary-foreground dark:border-primary/40',
+  },
+};
 const ICN_PREMIUM_SPOTLIGHT = {
   subtitle: 'ICN Official Profile',
   heading: 'ICN Creative Business School',
@@ -170,8 +255,9 @@ export default function PortfolioDetailPage() {
   const [portfolio, setPortfolio] = useState(null);
   const [allPortfolios, setAllPortfolios] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [activeCatalogDetails, setActiveCatalogDetails] = useState(null);
   const mjmSpotlightRef = useRef(null);
-  const mjmConfettiFiredInViewRef = useRef(false);
+  const catalogDocumentsRef = useRef(null);
 
   const mapUniversityToPortfolio = (data) => {
     if (!data || !data.university) return null;
@@ -215,8 +301,6 @@ export default function PortfolioDetailPage() {
       country: university.country,
       image: resolveMediaUrl(university.logo),
       logo: resolveMediaUrl(university.logo),
-      contact: university.email || university.contact_email || '',
-      website: university.website || university.link || '',
       description: university.description,
       programs: programs.length || undefined,
       details: mappedDetails,
@@ -294,8 +378,6 @@ export default function PortfolioDetailPage() {
   const normalizedTitle = String(portfolio?.title || '').toLowerCase();
   const isMjmGraphicDesignProfile =
     normalizedSlug === 'mjm-graphic-design' || normalizedTitle.includes('mjm graphic design');
-  const isMjmSummerSchoolCardEnabled = false;
-  const isMjmSummerSchoolPopupEnabled = false;
   const isIcnBusinessSchoolProfile =
     normalizedSlug === 'icn-business-school' || normalizedTitle.includes('icn business school');
   const isEpitechProfile =
@@ -308,13 +390,7 @@ export default function PortfolioDetailPage() {
 
   useEffect(() => {
     const section = mjmSpotlightRef.current;
-    if (
-      !isMjmGraphicDesignProfile ||
-      !isMjmSummerSchoolPopupEnabled ||
-      !section ||
-      typeof window === 'undefined'
-    )
-      return undefined;
+    if (!isMjmGraphicDesignProfile || !section || typeof window === 'undefined') return undefined;
 
     const fireMjmPopper = () => {
       confetti({
@@ -362,17 +438,17 @@ export default function PortfolioDetailPage() {
 
     observer.observe(section);
     return () => observer.disconnect();
-  }, [isMjmGraphicDesignProfile, isMjmSummerSchoolPopupEnabled]);
+  }, [isMjmGraphicDesignProfile]);
 
   if (isLoading) {
     return (
-      <div className="pt-20 min-h-screen flex items-center justify-center">
+      <div className="pt-20 min-h-screen">
         <Seo
           title="Institution Profile"
           description="Loading institution profile and partnership details."
           path={`/portfolio/${id || ''}`}
         />
-        <div className="w-12 h-12 border-4 border-muted border-t-primary rounded-full animate-spin" />
+        <PageLoader />
       </div>
     );
   }
@@ -396,15 +472,88 @@ export default function PortfolioDetailPage() {
   const relatedPortfolios = allPortfolios
     .filter(p => p.id !== portfolio.id && p.category === portfolio.category)
     .slice(0, 3);
-  const catalogDocuments = Array.isArray(portfolio.details?.catalogs)
-    ? portfolio.details.catalogs.filter((item) => item && typeof item.file === 'string' && item.file.trim())
-    : [];
+  const recognitionLabel = 'Ranking';
+  const tuitionLabel = 'Average Tuition';
+  const intakeLabel = 'Intakes';
+  const durationLabel = 'Typical Duration';
+  const campusLabel = 'Campus';
+  const specializationsTitle = 'Specializations';
+  const programmeInfoTitle = 'Program Information';
+  const hasScholarshipInfo = typeof portfolio.details?.scholarshipAvailable === 'boolean';
   const portfolioPath = `/portfolio/${portfolio.slug || portfolio.id || id || ''}`;
   const portfolioDescription = trimDescription(
     portfolio.description ||
       `Explore ${portfolio.title} and discover institution profile details, programs, and partnership highlights.`,
     165
   );
+  const portfolioSpecializations = Array.isArray(portfolio.details?.specializations)
+    ? portfolio.details.specializations.filter(Boolean)
+    : [];
+  const seoKeywords = [
+    'university profile',
+    'study abroad advisor',
+    'international student recruitment',
+    'partner institution',
+    portfolio.title,
+    portfolio.country,
+    ...portfolioSpecializations,
+    ...catalogDocuments.map((catalog) => catalog.title).filter(Boolean),
+  ].filter(Boolean);
+  const tgaOrganizationSchema = {
+    '@type': 'Organization',
+    name: SITE_CONFIG.company.name,
+    url: SITE_URL,
+    logo: toAbsoluteUrl(SITE_CONFIG.company.logo.lightSrc),
+    contactPoint: [
+      {
+        '@type': 'ContactPoint',
+        contactType: 'Admissions and partnership enquiries',
+        telephone: SITE_CONFIG.contact.phone?.[0],
+        email: SITE_CONFIG.contact.email?.general,
+        areaServed: ['IN', portfolio.country].filter(Boolean),
+        availableLanguage: ['English', 'Hindi'],
+      },
+    ],
+  };
+  const portfolioProgramItems = portfolioSpecializations.map((program, index) => ({
+    '@type': 'Offer',
+    position: index + 1,
+    itemOffered: {
+      '@type': 'Course',
+      name: program,
+      provider: {
+        '@type': 'EducationalOrganization',
+        name: portfolio.title,
+      },
+    },
+  }));
+  const catalogDocumentSchema = catalogDocuments.map((catalog) => ({
+    '@type': 'DigitalDocument',
+    name: catalog.title,
+    description: catalog.description || undefined,
+    encodingFormat: 'application/pdf',
+    url: toAbsoluteUrl(catalog.file),
+    inLanguage: 'en',
+    about: {
+      '@type': 'EducationalOrganization',
+      name: portfolio.title,
+    },
+  }));
+  const catalogDocumentListSchema =
+    catalogDocuments.length > 0
+      ? {
+          '@context': 'https://schema.org',
+          '@type': 'ItemList',
+          name: `${portfolio.title} program documents`,
+          itemListElement: catalogDocuments.map((catalog, index) => ({
+            '@type': 'ListItem',
+            position: index + 1,
+            name: catalog.title,
+            url: toAbsoluteUrl(catalog.file),
+            description: catalog.description || undefined,
+          })),
+        }
+      : null;
   const portfolioSchema = [
     {
       '@context': 'https://schema.org',
@@ -416,8 +565,42 @@ export default function PortfolioDetailPage() {
       logo: portfolio.logo ? toAbsoluteUrl(portfolio.logo) : undefined,
       address: portfolio.details?.location || portfolio.country || undefined,
       areaServed: portfolio.country || undefined,
-      email: portfolio.contact || undefined,
-      sameAs: portfolio.website ? [portfolio.website] : undefined,
+      hasOfferCatalog: portfolioProgramItems.length
+        ? {
+            '@type': 'OfferCatalog',
+            name: `${portfolio.title} program pathways`,
+            itemListElement: portfolioProgramItems,
+          }
+        : undefined,
+      subjectOf: catalogDocumentSchema.length ? catalogDocumentSchema : undefined,
+    },
+    {
+      '@context': 'https://schema.org',
+      '@type': 'WebPage',
+      name: `${portfolio.title} | The Global Avenues`,
+      description: portfolioDescription,
+      url: `${SITE_URL}${portfolioPath}`,
+      image: toAbsoluteUrl(portfolio.image || portfolio.logo || '/videos/hero-poster.jpg'),
+      isPartOf: {
+        '@type': 'WebSite',
+        name: SITE_CONFIG.company.name,
+        url: SITE_URL,
+      },
+      about: {
+        '@type': 'EducationalOrganization',
+        name: portfolio.title,
+        address: portfolio.details?.location || portfolio.country || undefined,
+      },
+      provider: tgaOrganizationSchema,
+    },
+    {
+      '@context': 'https://schema.org',
+      '@type': 'Service',
+      name: `${portfolio.title} study abroad guidance`,
+      description: `Application guidance, document support, and student advisory for ${portfolio.title}.`,
+      provider: tgaOrganizationSchema,
+      areaServed: portfolio.country || undefined,
+      serviceType: 'Study abroad admissions guidance',
     },
     {
       '@context': 'https://schema.org',
@@ -443,6 +626,7 @@ export default function PortfolioDetailPage() {
         },
       ],
     },
+    ...(catalogDocumentListSchema ? [catalogDocumentListSchema] : []),
   ];
 
   const containerVariants = {
@@ -465,7 +649,7 @@ export default function PortfolioDetailPage() {
         description={portfolioDescription}
         path={portfolioPath}
         image={portfolio.image || portfolio.logo || '/videos/hero-poster.jpg'}
-        keywords={['university profile', 'partner institution', portfolio.title, portfolio.country]}
+        keywords={seoKeywords}
         jsonLd={portfolioSchema}
       />
       {/* Back Button */}
@@ -623,42 +807,6 @@ export default function PortfolioDetailPage() {
               )}
             </div>
 
-            {(portfolio.website || portfolio.contact) && (
-              <motion.div
-                className={`space-y-3 rounded-xl border p-4 ${
-                  isIcnBusinessSchoolProfile
-                    ? 'border-[#F59E0B]/25 bg-[linear-gradient(145deg,rgba(255,251,242,0.95)_0%,rgba(255,244,228,0.92)_40%,rgba(255,255,255,0.96)_100%)] dark:border-[#F59E0B]/20 dark:bg-[linear-gradient(145deg,rgba(38,30,19,0.74)_0%,rgba(20,23,35,0.88)_100%)]'
-                    : 'border-border/50 bg-muted/40'
-                }`}
-                whileHover={{ translateY: -2 }}
-              >
-                {portfolio.contact && (
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <Mail className="w-4 h-4 text-primary" />
-                    <span className="font-medium">Email:</span>
-                    <a href={`mailto:${portfolio.contact}`} className="text-primary hover:underline">
-                      {portfolio.contact}
-                    </a>
-                  </div>
-                )}
-                {portfolio.website && (
-                  <a
-                    href={portfolio.website}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={`inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-semibold transition-colors ${
-                      isIcnBusinessSchoolProfile
-                        ? 'bg-[linear-gradient(95deg,#9A3412_0%,#EA580C_55%,#F59E0B_100%)] text-white hover:brightness-110'
-                        : 'bg-primary text-primary-foreground hover:bg-secondary'
-                    }`}
-                  >
-                    Visit Official Website
-                    <ExternalLink className="w-4 h-4" />
-                  </a>
-                )}
-              </motion.div>
-            )}
-
             {/* Location & Ranking */}
             <motion.div
               className={`rounded-xl border p-6 ${
@@ -680,7 +828,7 @@ export default function PortfolioDetailPage() {
                 <div>
                   <div className="flex items-center gap-2 mb-2">
                     <Trophy className="w-4 h-4 text-secondary" />
-                    <p className="text-muted-foreground text-sm font-medium">Ranking</p>
+                    <p className="text-muted-foreground text-sm font-medium">{recognitionLabel}</p>
                   </div>
                   <p className="text-lg font-bold text-foreground">{portfolio.details?.ranking}</p>
                 </div>
@@ -702,7 +850,9 @@ export default function PortfolioDetailPage() {
           viewport={{ once: true }}
         >
           <h2 className="text-3xl font-bold text-foreground mb-6">
-            {isIcnBusinessSchoolProfile ? 'Why ICN Business School Stands Out' : 'About This University'}
+            {isIcnBusinessSchoolProfile
+              ? 'Why ICN Business School Stands Out'
+              : 'About This University'}
           </h2>
           <p className="text-lg text-muted-foreground leading-relaxed mb-6">
             {portfolio.description}
@@ -721,7 +871,7 @@ export default function PortfolioDetailPage() {
           )}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-6 border-t border-border/50">
             <div>
-              <h4 className="font-bold text-foreground mb-2">Specializations</h4>
+              <h4 className="font-bold text-foreground mb-2">{specializationsTitle}</h4>
               <ul className="space-y-2">
                 {portfolio.details?.specializations?.map((spec) => (
                   <li key={spec} className="text-muted-foreground flex items-center gap-2">
@@ -732,26 +882,31 @@ export default function PortfolioDetailPage() {
               </ul>
             </div>
             <div>
-              <h4 className="font-bold text-foreground mb-2">Program Information</h4>
+              <h4 className="font-bold text-foreground mb-2">{programmeInfoTitle}</h4>
               <div className="space-y-2 text-muted-foreground">
-                <p><span className="font-semibold">Average Tuition:</span> {portfolio.details?.avgTuition}</p>
-                <p><span className="font-semibold">Scholarships:</span> {portfolio.details?.scholarshipAvailable ? 'Available' : 'Not Available'}</p>
+                <p><span className="font-semibold">{tuitionLabel}:</span> {portfolio.details?.avgTuition}</p>
+                {hasScholarshipInfo && (
+                  <p>
+                    <span className="font-semibold">Scholarships:</span>{' '}
+                    {portfolio.details.scholarshipAvailable ? 'Available' : 'Not Available'}
+                  </p>
+                )}
                 {portfolio.details?.intakeWindows && (
                   <p className="flex items-start gap-2">
                     <CalendarDays className="w-4 h-4 mt-0.5 text-primary" />
-                    <span><span className="font-semibold">Intakes:</span> {portfolio.details.intakeWindows}</span>
+                    <span><span className="font-semibold">{intakeLabel}:</span> {portfolio.details.intakeWindows}</span>
                   </p>
                 )}
                 {portfolio.details?.programDuration && (
                   <p className="flex items-start gap-2">
                     <Clock3 className="w-4 h-4 mt-0.5 text-primary" />
-                    <span><span className="font-semibold">Typical Duration:</span> {portfolio.details.programDuration}</span>
+                    <span><span className="font-semibold">{durationLabel}:</span> {portfolio.details.programDuration}</span>
                   </p>
                 )}
                 {Array.isArray(portfolio.details?.campusLocations) &&
                   portfolio.details.campusLocations.length > 0 && (
                     <p>
-                      <span className="font-semibold">Campus:</span>{' '}
+                      <span className="font-semibold">{campusLabel}:</span>{' '}
                       {portfolio.details.campusLocations.join(', ')}
                     </p>
                   )}
@@ -995,97 +1150,206 @@ export default function PortfolioDetailPage() {
         {isMjmGraphicDesignProfile && isMjmSummerSchoolCardEnabled && (
           <motion.div
             ref={mjmSpotlightRef}
-            className="relative mb-16 overflow-hidden rounded-3xl border border-[#D5C9F1] bg-[linear-gradient(118deg,#FFF5EE_0%,#F7F0FF_36%,#EAF3FF_72%,#FFF1D9_100%)] p-6 shadow-[0_30px_74px_rgba(16,12,40,0.18)] dark:border-[#352B62] dark:bg-[linear-gradient(118deg,#1B1731_0%,#17142B_38%,#152131_70%,#211A29_100%)] sm:p-8"
+            className="relative mb-12 overflow-hidden rounded-2xl border border-[#D8D2E8] bg-[linear-gradient(132deg,#FFF7ED_0%,#F8FAFC_36%,#EEF6F3_72%,#FFF2E5_100%)] p-4 shadow-[0_22px_52px_rgba(17,24,39,0.14)] dark:border-[#374151] dark:bg-[linear-gradient(132deg,#171923_0%,#111827_45%,#16221F_100%)] sm:p-5 lg:p-6"
             variants={itemVariants}
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true }}
           >
-            <div className="pointer-events-none absolute -right-24 -top-24 h-60 w-60 rounded-full bg-primary/20 blur-3xl dark:bg-primary/18" />
-            <div className="pointer-events-none absolute -left-24 top-24 h-52 w-52 rounded-full bg-sky-300/20 blur-3xl dark:bg-sky-400/10" />
-            <div className="pointer-events-none absolute -bottom-24 -left-20 h-52 w-52 rounded-full bg-accent/25 blur-3xl dark:bg-accent/14" />
-
+            <motion.div
+              className="pointer-events-none absolute -left-12 -top-12 h-40 w-40 rounded-full bg-[#F59E0B]/15 blur-3xl dark:bg-[#F59E0B]/20"
+              animate={{ scale: [1, 1.12, 1], opacity: [0.7, 1, 0.7] }}
+              transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
+            />
+            <motion.div
+              className="pointer-events-none absolute -bottom-14 -right-12 h-52 w-52 rounded-full bg-[#0F766E]/14 blur-3xl dark:bg-[#14B8A6]/18"
+              animate={{ scale: [1.06, 1, 1.06], opacity: [0.62, 0.92, 0.62] }}
+              transition={{ duration: 5.8, repeat: Infinity, ease: 'easeInOut', delay: 0.4 }}
+            />
             <div className="relative z-10">
-              <div className="mb-5 flex flex-wrap items-center gap-2.5">
-                <span className="inline-flex items-center gap-1.5 rounded-full border border-[#FFB088]/50 bg-[linear-gradient(92deg,rgba(255,226,210,0.95)_0%,rgba(255,244,204,0.94)_100%)] px-3 py-1 text-[11px] font-bold uppercase tracking-[0.14em] shadow-[0_8px_20px_rgba(217,91,35,0.16)] dark:border-[#F57C46]/35 dark:bg-[linear-gradient(92deg,rgba(51,26,20,0.8)_0%,rgba(66,43,20,0.74)_100%)]">
-                  <Flame className="h-3.5 w-3.5 text-[#E74C1A] dark:text-[#FFC4A2]" />
-                  <span className="summer-school-new-blink">New</span>
-                </span>
-                <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-primary dark:border-white/25 dark:bg-white/10 dark:text-white">
-                  <Rocket className="h-3.5 w-3.5" />
-                  Live Cohort 2026
-                </span>
-                <span className="inline-flex items-center gap-1.5 rounded-full border border-border/70 bg-background/80 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-foreground">
-                  Summer School Spotlight
+              <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="inline-flex rounded-full border border-[#EF7C42]/35 bg-white/80 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-[#9A3412] dark:border-[#F59E0B]/25 dark:bg-white/10 dark:text-[#FED7AA]">
+                    MJM Graphic Design
+                  </span>
+                  <span className="inline-flex rounded-full border border-[#0F766E]/25 bg-white/80 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-[#0F766E] dark:border-[#5EEAD4]/25 dark:bg-white/10 dark:text-[#99F6E4]">
+                    France Summer School
+                  </span>
+                </div>
+                <span className="summer-hot-blink-btn inline-flex rounded-full border px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.14em]">
+                  Limited Intake
                 </span>
               </div>
 
-              <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1.05fr_0.95fr]">
+              <div className="grid grid-cols-1 gap-5 lg:grid-cols-[0.92fr_1.08fr] lg:items-start">
+                <motion.div className="space-y-3" whileHover={{ y: -3 }} transition={{ duration: 0.25 }}>
+                  <div className="relative aspect-[16/10] overflow-hidden rounded-xl border border-white/70 bg-black/10 shadow-[0_14px_34px_rgba(15,23,42,0.16)] dark:border-white/10">
+                    <img
+                      src={MJM_SUMMER_SCHOOL_HIGHLIGHT.images[0].src}
+                      alt={MJM_SUMMER_SCHOOL_HIGHLIGHT.images[0].alt}
+                      loading="lazy"
+                      decoding="async"
+                      className="h-full w-full object-cover transition-transform duration-700 ease-out hover:scale-105"
+                    />
+                    <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(15,23,42,0)_45%,rgba(15,23,42,0.62)_100%)]" />
+                    <p className="absolute bottom-3 left-3 inline-flex rounded-full bg-black/45 px-3 py-1 text-xs font-semibold text-white backdrop-blur-sm">
+                      {MJM_SUMMER_SCHOOL_HIGHLIGHT.images[0].caption}
+                    </p>
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    {MJM_SUMMER_SCHOOL_HIGHLIGHT.images.slice(1).map((image) => (
+                      <div
+                        key={image.src}
+                        className="relative aspect-[4/3] overflow-hidden rounded-xl border border-white/70 bg-black/10 dark:border-white/10"
+                      >
+                        <img
+                          src={image.src}
+                          alt={image.alt}
+                          loading="lazy"
+                          decoding="async"
+                          className="h-full w-full object-cover transition-transform duration-700 ease-out hover:scale-105"
+                        />
+                        <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(15,23,42,0)_48%,rgba(15,23,42,0.58)_100%)]" />
+                        <p className="absolute bottom-2 left-2 rounded-full bg-black/45 px-2.5 py-1 text-[11px] font-semibold text-white backdrop-blur-sm">
+                          {image.caption}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                </motion.div>
+
                 <div>
                   <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-                    MJM Graphic Design
+                    International Creative Immersion
                   </p>
-                  <h3 className="mt-2 text-3xl font-bold leading-tight text-foreground sm:text-4xl">
-                    SUMMER SCHOOL | {MJM_SUMMER_SCHOOL_HIGHLIGHT.city}
+                  <h3 className="mt-2 text-2xl font-bold leading-tight text-foreground sm:text-3xl">
+                    {MJM_SUMMER_SCHOOL_HIGHLIGHT.title} | {MJM_SUMMER_SCHOOL_HIGHLIGHT.city}
                   </h3>
-                  <p className="mt-4 text-base leading-relaxed text-muted-foreground">
+                  <p className="mt-3 text-sm leading-relaxed text-muted-foreground sm:text-base">
                     {MJM_SUMMER_SCHOOL_HIGHLIGHT.description}
                   </p>
 
-                  <div className="mt-6 rounded-2xl border border-[#D8CDEE] bg-[linear-gradient(145deg,rgba(255,255,255,0.82)_0%,rgba(247,243,255,0.88)_54%,rgba(255,236,224,0.82)_100%)] p-5 shadow-[0_14px_34px_rgba(25,18,53,0.08)] dark:border-[#443A6E] dark:bg-[linear-gradient(145deg,rgba(28,22,52,0.84)_0%,rgba(18,15,37,0.9)_54%,rgba(30,23,42,0.82)_100%)]">
-                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-                      Featured Program
-                    </p>
-                    <h4 className="mt-2 text-2xl font-semibold text-foreground">
-                      {MJM_SUMMER_SCHOOL_HIGHLIGHT.aiBusiness.title}
-                    </h4>
-                    <div className="mt-4 space-y-2.5 text-sm text-muted-foreground">
-                      <div className="flex items-start gap-2.5">
-                        <span className="font-semibold text-foreground">Course Fees:</span>
-                        <span>{MJM_SUMMER_SCHOOL_HIGHLIGHT.aiBusiness.fee}</span>
-                      </div>
-                      <div className="flex items-start gap-2.5">
-                        <span className="font-semibold text-foreground">Deadline to Apply:</span>
-                        <span>{MJM_SUMMER_SCHOOL_HIGHLIGHT.aiBusiness.deadline}</span>
-                      </div>
-                    </div>
+                  <div className="mt-5 grid grid-cols-1 gap-2.5 sm:grid-cols-2">
+                    {[
+                      {
+                        label: 'Destinations',
+                        value: MJM_SUMMER_SCHOOL_HIGHLIGHT.city,
+                        icon: Globe,
+                      },
+                      {
+                        label: 'Dates',
+                        value: MJM_SUMMER_SCHOOL_HIGHLIGHT.dates,
+                        icon: CalendarDays,
+                      },
+                      {
+                        label: 'Duration',
+                        value: MJM_SUMMER_SCHOOL_HIGHLIGHT.duration,
+                        icon: Clock3,
+                      },
+                      {
+                        label: 'Class Size',
+                        value: MJM_SUMMER_SCHOOL_HIGHLIGHT.classSize,
+                        icon: Trophy,
+                      },
+                      {
+                        label: 'Minimum Age',
+                        value: MJM_SUMMER_SCHOOL_HIGHLIGHT.age,
+                        icon: Star,
+                      },
+                      {
+                        label: 'Study Mode',
+                        value: MJM_SUMMER_SCHOOL_HIGHLIGHT.mode,
+                        icon: GraduationCap,
+                      },
+                      {
+                        label: 'Programme Hours',
+                        value: MJM_SUMMER_SCHOOL_HIGHLIGHT.hours,
+                        icon: Clock3,
+                      },
+                      {
+                        label: 'Tuition Package',
+                        value: MJM_SUMMER_SCHOOL_HIGHLIGHT.fee,
+                        icon: Briefcase,
+                      },
+                    ].map(({ label, value, icon: Icon }, index) => (
+                      <motion.div
+                        key={label}
+                        className="rounded-lg border border-[#D8D2E8] bg-white/75 px-3 py-2.5 shadow-[0_10px_24px_rgba(15,23,42,0.06)] dark:border-white/10 dark:bg-white/[0.07]"
+                        whileHover={{ y: -3, scale: 1.01 }}
+                        transition={{ duration: 0.2, delay: index * 0.03 }}
+                      >
+                        <dt className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
+                          <Icon className="h-3.5 w-3.5 text-[#0F766E] dark:text-[#5EEAD4]" />
+                          {label}
+                        </dt>
+                        <dd className="mt-1 font-semibold text-foreground">{value}</dd>
+                      </motion.div>
+                    ))}
+                  </div>
+
+                  <div className="mt-4 flex flex-wrap gap-2.5">
+                    <a
+                      href={MJM_SUMMER_SCHOOL_HIGHLIGHT.pdf}
+                      download
+                      className="group inline-flex items-center gap-2 rounded-lg border border-[#2D1B69]/25 bg-white/70 px-4 py-2 text-sm font-semibold text-[#2D1B69] transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#F2EDFF] hover:shadow-[0_12px_24px_rgba(45,27,105,0.16)] dark:border-white/15 dark:bg-white/10 dark:text-white dark:hover:bg-white/15"
+                    >
+                      <FileText className="h-4 w-4 transition-transform duration-300 group-hover:-rotate-6 group-hover:scale-110" />
+                      Download PDF
+                    </a>
+                    <a
+                      href={MJM_SUMMER_SCHOOL_HIGHLIGHT.pdf}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="group inline-flex items-center gap-2 rounded-lg bg-[linear-gradient(92deg,#2D1B69_0%,#0F766E_54%,#E8521A_100%)] px-4 py-2 text-sm font-semibold text-white transition-all duration-300 hover:-translate-y-0.5 hover:brightness-110 hover:shadow-[0_14px_32px_rgba(45,27,105,0.26)]"
+                    >
+                      Open PDF
+                      <ExternalLink className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                    </a>
                   </div>
                 </div>
+              </div>
 
-                <div className="space-y-3.5">
-                  {MJM_SUMMER_SCHOOL_HIGHLIGHT.tracks.map((track, index) => (
-                    <article
-                      key={track.title}
-                      className={`rounded-2xl border p-4 shadow-[0_14px_30px_rgba(16,12,40,0.1)] backdrop-blur-sm dark:shadow-[0_16px_34px_rgba(6,5,14,0.42)] ${MJM_TRACK_CARD_THEME_CLASSES[index % MJM_TRACK_CARD_THEME_CLASSES.length]}`}
-                    >
-                      <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">Track</p>
-                      <h4 className="mt-1 text-lg font-semibold leading-tight text-foreground">{track.title}</h4>
-                      <div className="mt-3 space-y-1.5 text-sm text-muted-foreground">
-                        <p>
-                          <span className="font-semibold text-foreground">Dates:</span> {track.dates}
-                        </p>
-                        <p>
-                          <span className="font-semibold text-foreground">Course Fee:</span> {track.fee}
-                        </p>
-                        <p>
-                          <span className="font-semibold text-foreground">Deadline:</span> {track.deadline}
-                        </p>
+              <div className="mt-5 grid grid-cols-1 gap-4 lg:grid-cols-[0.9fr_1.1fr]">
+                <motion.div
+                  className="rounded-xl border border-[#D8D2E8] bg-white/60 p-4 dark:border-white/10 dark:bg-white/[0.05]"
+                  whileHover={{ y: -3 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                    What's Included?
+                  </p>
+                  <div className="mt-3 grid grid-cols-1 gap-2 text-sm text-muted-foreground sm:grid-cols-2 lg:grid-cols-1">
+                    {MJM_SUMMER_SCHOOL_HIGHLIGHT.included.map((item) => (
+                      <div key={item} className="flex items-start gap-2">
+                        <BadgeCheck className="mt-0.5 h-4 w-4 flex-shrink-0 text-[#0F766E]" />
+                        <span>{item}</span>
                       </div>
-                    </article>
-                  ))}
-
-                  <div className="pt-1">
-                    <motion.button
-                      className="inline-flex items-center gap-2 rounded-xl bg-[linear-gradient(92deg,#2D1B69_0%,#5B45C6_52%,#E8521A_100%)] px-5 py-2.5 text-sm font-semibold text-white transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_14px_30px_rgba(45,27,105,0.3)]"
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                      onClick={() => navigate('/collaborate')}
-                      type="button"
-                    >
-                      Enquire About Summer School
-                      <ChevronRight className="h-4 w-4" />
-                    </motion.button>
+                    ))}
                   </div>
+                </motion.div>
+
+                <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
+                  {MJM_SUMMER_SCHOOL_HIGHLIGHT.tracks.map((track, index) => (
+                    <motion.article
+                      key={track.title}
+                      className={`rounded-xl border p-3.5 shadow-[0_12px_24px_rgba(16,12,40,0.08)] dark:shadow-[0_14px_28px_rgba(6,5,14,0.34)] ${MJM_TRACK_CARD_THEME_CLASSES[index % MJM_TRACK_CARD_THEME_CLASSES.length]}`}
+                      whileHover={{ y: -4, scale: 1.01 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                        Program Overview
+                      </p>
+                      <h4 className="mt-1 text-base font-semibold leading-tight text-foreground">{track.title}</h4>
+                      <div className="mt-3 space-y-1.5 text-sm text-muted-foreground">
+                        {track.details.map((detail) => (
+                          <p key={detail} className="flex items-start gap-2">
+                            <span className="mt-2 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-[#E8521A]" />
+                            <span>{detail}</span>
+                          </p>
+                        ))}
+                      </div>
+                    </motion.article>
+                  ))}
                 </div>
               </div>
             </div>
@@ -1094,43 +1358,129 @@ export default function PortfolioDetailPage() {
 
         {catalogDocuments.length > 0 && (
           <motion.div
-            className="bg-muted/20 border border-border/50 rounded-2xl p-8 mb-16"
+            ref={catalogDocumentsRef}
+            className="mb-14 overflow-hidden rounded-2xl border border-border/50 bg-background/70 p-5 shadow-[0_18px_44px_rgba(15,23,42,0.08)] backdrop-blur dark:bg-[#0F172A]/70 sm:p-6"
             variants={itemVariants}
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true }}
           >
-            <h3 className="text-2xl font-bold text-foreground mb-2 flex items-center gap-2">
-              <FileText className="w-5 h-5 text-primary" />
-              Official Program Catalogs
-            </h3>
-            <p className="text-sm text-muted-foreground mb-5">
-              Download the official university catalogs for complete program structures, curriculum information, and policy details.
-            </p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {catalogDocuments.map((catalog) => (
-                <a
-                  key={`${catalog.title || 'catalog'}-${catalog.file}`}
-                  href={catalog.file}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="rounded-xl border border-border/50 bg-background/80 p-4 transition-all hover:border-primary/40 hover:-translate-y-0.5"
-                >
-                  <p className="text-xs font-semibold uppercase tracking-[0.12em] text-primary mb-1">
-                    PDF Catalog
-                  </p>
-                  <h4 className="text-base font-semibold text-foreground mb-2">
-                    {catalog.title || 'Program Catalog'}
-                  </h4>
-                  {catalog.description && (
-                    <p className="text-sm text-muted-foreground mb-3">{catalog.description}</p>
-                  )}
-                  <span className="inline-flex items-center gap-2 text-sm font-semibold text-primary">
-                    Open PDF
-                    <ExternalLink className="w-4 h-4" />
-                  </span>
-                </a>
-              ))}
+            <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                  Official PDF Brochures
+                </p>
+                <h3 className="mt-1 flex items-center gap-2 text-2xl font-bold text-foreground">
+                  <FileText className="h-5 w-5 text-primary" />
+                  Program Documents
+                </h3>
+              </div>
+            </div>
+            <div
+              className={`grid grid-cols-1 gap-4 ${
+                catalogDocuments.length === 1 ? 'max-w-3xl' : 'xl:grid-cols-2'
+              }`}
+            >
+              {catalogDocuments.map((catalog) => {
+                const catalogTheme = CATALOG_THEME_CLASSES[catalog.theme] || CATALOG_THEME_CLASSES.default;
+
+                return (
+                  <article
+                    key={`${catalog.title}-${catalog.file}`}
+                    className={`group relative grid overflow-hidden rounded-2xl border shadow-[0_16px_36px_rgba(15,23,42,0.08)] transition-all hover:-translate-y-0.5 hover:shadow-[0_20px_44px_rgba(15,23,42,0.13)] md:grid-cols-[minmax(11rem,0.42fr)_minmax(0,0.58fr)] ${catalogTheme.shell}`}
+                  >
+                    <div className="pointer-events-none absolute inset-0 opacity-[0.08] [background-image:linear-gradient(90deg,currentColor_1px,transparent_1px),linear-gradient(180deg,currentColor_1px,transparent_1px)] [background-size:22px_22px]" />
+                    {catalog.image ? (
+                      <div className="relative min-h-48 overflow-hidden bg-muted md:min-h-full md:min-w-44">
+                        <img
+                          src={catalog.image}
+                          alt={catalog.imageAlt || catalog.title}
+                          loading="lazy"
+                          decoding="async"
+                          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        />
+                        <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(15,23,42,0)_38%,rgba(15,23,42,0.58)_100%)]" />
+                        {catalog.secondaryImage && (
+                          <img
+                            src={catalog.secondaryImage}
+                            alt={catalog.secondaryImageAlt || ''}
+                            loading="lazy"
+                            decoding="async"
+                            className="absolute right-3 top-3 h-16 w-16 rounded-xl border border-white/70 object-cover shadow-[0_10px_24px_rgba(15,23,42,0.28)] sm:h-20 sm:w-20"
+                          />
+                        )}
+                        {catalog.eyebrow && (
+                          <span className={`absolute bottom-3 left-3 rounded-full px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] ${catalogTheme.accent}`}>
+                            {catalog.eyebrow}
+                          </span>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="relative flex min-h-40 items-center justify-center bg-primary/10">
+                        <FileText className="h-12 w-12 text-primary" />
+                      </div>
+                    )}
+                    <div className="relative flex min-h-full min-w-0 flex-col p-4 sm:p-5">
+                      {catalog.eyebrow && (
+                        <p className={`text-xs font-semibold uppercase tracking-[0.16em] ${catalogTheme.text}`}>
+                          {catalog.eyebrow}
+                        </p>
+                      )}
+                      <h4 className="mt-2 text-lg font-bold leading-snug text-foreground break-words">
+                        {catalog.title}
+                      </h4>
+                      {catalog.description && (
+                        <p className="mt-3 break-words text-sm leading-relaxed text-muted-foreground">{catalog.description}</p>
+                      )}
+                      {Array.isArray(catalog.facts) && catalog.facts.length > 0 && (
+                        <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-2">
+                          {catalog.facts.map((fact) => (
+                            <span
+                              key={fact}
+                              className="min-w-0 rounded-lg border border-border/55 bg-background/62 px-3 py-2 text-xs font-medium leading-relaxed text-foreground/85 break-words dark:bg-background/20"
+                            >
+                              {fact}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                      <div className="mt-5 flex flex-col gap-2 pt-1 sm:flex-row sm:flex-wrap">
+                        {catalog.detailPanel && (
+                          <button
+                            type="button"
+                            onClick={() => setActiveCatalogDetails(catalog)}
+                            aria-label={`Open structured details for ${catalog.title}`}
+                            className={`inline-flex min-w-0 flex-1 items-center justify-center gap-2 rounded-xl border bg-background/75 px-3 py-2 text-sm font-semibold transition-colors sm:flex-[1_1_8.25rem] ${catalogTheme.button}`}
+                          >
+                            <Building2 className="h-4 w-4" />
+                            More Info
+                          </button>
+                        )}
+                        <a
+                          href={catalog.file}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          aria-label={`View ${catalog.title} PDF`}
+                          className={`inline-flex min-w-0 flex-1 items-center justify-center gap-2 rounded-xl border bg-background/75 px-3 py-2 text-sm font-semibold transition-colors sm:flex-[1_1_8.25rem] ${catalogTheme.button}`}
+                        >
+                          <Eye className="h-4 w-4" />
+                          View PDF
+                          <ExternalLink className="h-3.5 w-3.5" />
+                        </a>
+                        <a
+                          href={catalog.file}
+                          download={catalog.downloadName || true}
+                          aria-label={`Download ${catalog.title} PDF`}
+                          className={`inline-flex min-w-0 flex-1 items-center justify-center gap-2 rounded-xl border bg-background/75 px-3 py-2 text-sm font-semibold transition-colors sm:flex-[1_1_8.25rem] ${catalogTheme.button}`}
+                        >
+                          <Download className="h-4 w-4" />
+                          Download PDF
+                        </a>
+                      </div>
+                    </div>
+                  </article>
+                );
+              })}
             </div>
           </motion.div>
         )}
@@ -1170,7 +1520,9 @@ export default function PortfolioDetailPage() {
             viewport={{ once: true }}
             variants={containerVariants}
           >
-            <h3 className="text-2xl font-bold text-foreground mb-8">Why Choose {portfolio.title}?</h3>
+            <h3 className="text-2xl font-bold text-foreground mb-8">
+              Why Choose {portfolio.title}?
+            </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {portfolio.highlights.map((highlight, index) => (
                 <motion.div
@@ -1202,7 +1554,7 @@ export default function PortfolioDetailPage() {
           whileInView="visible"
           viewport={{ once: true }}
         >
-          <h3 className="text-2xl font-bold text-foreground mb-4">Specializations</h3>
+          <h3 className="text-2xl font-bold text-foreground mb-4">{specializationsTitle}</h3>
           <div className="flex flex-wrap gap-3">
             {portfolio.details?.specializations?.map((spec, index) => (
               <motion.div
@@ -1274,7 +1626,9 @@ export default function PortfolioDetailPage() {
           whileInView="visible"
           viewport={{ once: true }}
         >
-          <h3 className="text-2xl font-bold text-foreground mb-4">Ready to Partner with {portfolio.title}?</h3>
+          <h3 className="text-2xl font-bold text-foreground mb-4">
+            Ready to Partner with {portfolio.title}?
+          </h3>
           <p className="text-muted-foreground mb-6 max-w-2xl mx-auto">
             Partner with us to strengthen your visibility and recruitment outcomes for institutions like {portfolio.title} across key markets.
           </p>
@@ -1336,6 +1690,85 @@ export default function PortfolioDetailPage() {
           </motion.div>
         )}
       </div>
+
+      {activeCatalogDetails?.detailPanel && (
+        <div className="fixed inset-0 z-[90] flex items-end justify-center bg-slate-950/55 p-3 backdrop-blur-[2px] sm:items-center sm:p-6">
+          <button
+            type="button"
+            aria-label="Close details panel"
+            className="absolute inset-0 h-full w-full cursor-default"
+            onClick={() => setActiveCatalogDetails(null)}
+          />
+          <div className="relative z-10 w-full max-w-4xl overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_24px_80px_rgba(15,23,42,0.35)] dark:border-slate-700 dark:bg-slate-900">
+            <div className="flex items-start justify-between gap-4 border-b border-slate-200 bg-[linear-gradient(120deg,rgba(15,123,97,0.1)_0%,rgba(59,130,246,0.1)_100%)] px-5 py-4 dark:border-slate-700 dark:bg-[linear-gradient(120deg,rgba(19,78,74,0.38)_0%,rgba(30,58,138,0.32)_100%)] sm:px-6">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.15em] text-[#0F7B61] dark:text-[#7EE2BC]">
+                  {activeCatalogDetails.eyebrow || 'Official Brochure'}
+                </p>
+                <h4 className="mt-1 text-lg font-bold text-slate-900 dark:text-slate-100 sm:text-xl">
+                  {activeCatalogDetails.detailPanel.heading || activeCatalogDetails.title}
+                </h4>
+                {activeCatalogDetails.detailPanel.source && (
+                  <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">
+                    {activeCatalogDetails.detailPanel.source}
+                  </p>
+                )}
+              </div>
+              <button
+                type="button"
+                onClick={() => setActiveCatalogDetails(null)}
+                className="group inline-flex h-9 w-9 items-center justify-center rounded-lg border border-slate-300 bg-white/85 text-slate-700 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-[1.03] hover:border-[#0F7B61]/45 hover:bg-white hover:text-[#0F7B61] hover:shadow-[0_10px_22px_rgba(15,123,97,0.22)] active:translate-y-0 active:scale-95 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 dark:hover:border-[#7EE2BC]/50 dark:hover:bg-slate-700 dark:hover:text-[#7EE2BC]"
+                aria-label="Close details panel"
+              >
+                <X className="h-4 w-4 transition-transform duration-200 ease-out group-hover:rotate-90 group-hover:scale-110 group-active:rotate-0 group-active:scale-95" />
+              </button>
+            </div>
+
+            <div className="smooth-scroll-panel max-h-[78vh] overflow-y-auto px-5 py-5 sm:px-6">
+              {Array.isArray(activeCatalogDetails.detailPanel.keyStats) &&
+                activeCatalogDetails.detailPanel.keyStats.length > 0 && (
+                  <div className="mb-5 grid grid-cols-1 gap-3 sm:grid-cols-2">
+                    {activeCatalogDetails.detailPanel.keyStats.map((stat) => (
+                      <div
+                        key={`${stat.label}-${stat.value}`}
+                        className="rounded-xl border border-slate-200 bg-[#F8FBFA] px-4 py-3 dark:border-slate-700 dark:bg-slate-800/70"
+                      >
+                        <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-500 dark:text-slate-300">
+                          {stat.label}
+                        </p>
+                        <p className="mt-1 text-sm font-semibold leading-relaxed text-slate-900 dark:text-slate-100">
+                          {stat.value}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+              {Array.isArray(activeCatalogDetails.detailPanel.sections) &&
+                activeCatalogDetails.detailPanel.sections.length > 0 && (
+                  <div className="grid grid-cols-1 gap-3">
+                    {activeCatalogDetails.detailPanel.sections.map((section) => (
+                      <section
+                        key={section.title}
+                        className="rounded-xl border border-slate-200 bg-white px-4 py-3 dark:border-slate-700 dark:bg-slate-800/45"
+                      >
+                        <h5 className="text-sm font-bold text-slate-900 dark:text-slate-100">{section.title}</h5>
+                        <ul className="mt-2 space-y-1.5">
+                          {(section.points || []).map((point) => (
+                            <li key={point} className="flex items-start gap-2 text-sm leading-relaxed text-slate-700 dark:text-slate-200">
+                              <span className="mt-2 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-[#0F7B61] dark:bg-[#7EE2BC]" />
+                              <span>{point}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </section>
+                    ))}
+                  </div>
+                )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

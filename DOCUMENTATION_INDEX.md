@@ -80,6 +80,7 @@ PROJECT_INFO.md → IMPLEMENTATION_SUMMARY.md → README.md
 ### Content Customization
 - **[QUICK_START.md](./QUICK_START.md)** - Most common edits
 - **[SETUP_GUIDE.md](./SETUP_GUIDE.md)** - Full customization guide (page 3-15)
+- **[PROJECT_INFO.md](./PROJECT_INFO.md)** - Portfolio brochure PDF asset locations and frontend security note
 
 ### Design & Colors
 - **[DESIGN_SYSTEM.md](./DESIGN_SYSTEM.md)** - Complete design system

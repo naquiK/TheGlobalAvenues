@@ -261,12 +261,6 @@ export default function PortfolioPage() {
                           {portfolio.details.intakeWindows}
                         </p>
                       )}
-                      {portfolio.contact && (
-                        <p className="text-xs text-muted-foreground mb-3">
-                          <span className="font-semibold text-foreground">Email:</span> {portfolio.contact}
-                        </p>
-                      )}
-
                       {/* View Details Button */}
                       <Link
                         to={`/portfolio/${portfolio.slug || portfolio.id}`}
