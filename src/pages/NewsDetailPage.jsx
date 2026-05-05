@@ -5,6 +5,8 @@ import { Calendar, Clock, Eye, User } from 'lucide-react';
 import { newsItems as fallbackNewsItems } from '../data/newsData';
 import BackNavButton from '../components/ui/BackNavButton';
 import Seo from '../components/seo/Seo';
+import LazySection from '../components/ui/LazySection';
+import { CtaSkeleton } from '../components/ui/SkeletonLayouts';
 import { SITE_NAME, SITE_URL, trimDescription, toAbsoluteUrl } from '../seo/siteMeta';
 
 const getCardImage = (item) => item.thumbnail || item.image;
@@ -348,6 +350,7 @@ export default function NewsDetailPage() {
               </div>
             )}
 
+            <LazySection fallback={<CtaSkeleton className="py-0 px-0 sm:px-0 lg:px-0" />}>
             <div className="rounded-2xl border border-border/70 bg-muted/20 p-5 sm:p-6">
               <h2 className="text-xl font-bold text-foreground">Continue Exploring</h2>
               <p className="mt-2 text-sm text-muted-foreground">
@@ -374,6 +377,7 @@ export default function NewsDetailPage() {
                 </Link>
               </div>
             </div>
+            </LazySection>
           </motion.div>
 
         </motion.div>

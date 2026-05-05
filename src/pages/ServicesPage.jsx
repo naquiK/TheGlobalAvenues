@@ -2,6 +2,8 @@ import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { CheckCircle, BookOpen, Users, FileText, Zap, Target, BarChart3, Briefcase } from 'lucide-react';
 import Seo from '../components/seo/Seo';
+import LazySection from '../components/ui/LazySection';
+import { CardGridSkeleton, ProcessSkeleton, TrackListSkeleton } from '../components/ui/SkeletonLayouts';
 import { SITE_NAME, SITE_URL } from '../seo/siteMeta';
 
 const FAQ_ITEMS = [
@@ -170,6 +172,7 @@ export default function ServicesPage() {
       </motion.section>
 
       {/* Services Grid */}
+      <LazySection fallback={<CardGridSkeleton count={8} columns="md:grid-cols-2 lg:grid-cols-4" />}>
       <section className="py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <motion.div
@@ -224,8 +227,10 @@ export default function ServicesPage() {
           </motion.div>
         </div>
       </section>
+      </LazySection>
 
       {/* Process Section */}
+      <LazySection fallback={<ProcessSkeleton count={4} />}>
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-muted/30">
         <div className="max-w-7xl mx-auto">
           <motion.div
@@ -286,7 +291,9 @@ export default function ServicesPage() {
           </motion.div>
         </div>
       </section>
+      </LazySection>
 
+      <LazySection fallback={<TrackListSkeleton count={5} />}>
       <section className="py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-5xl mx-auto">
           <motion.div
@@ -332,6 +339,7 @@ export default function ServicesPage() {
           </motion.p>
         </div>
       </section>
+      </LazySection>
 
       {/* Package Section */}
       {/* <section className="py-20 px-4 sm:px-6 lg:px-8">

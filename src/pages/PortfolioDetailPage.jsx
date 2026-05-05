@@ -27,12 +27,30 @@ import { getUniversityDetail } from '../services/contentApi';
 import { resolveMediaUrl } from '../services/apiClient';
 import useScrollIntentCelebration from '../hooks/useScrollIntentCelebration';
 import BackNavButton from '../components/ui/BackNavButton';
+<<<<<<< HEAD
+=======
+import { DetailSkeleton } from '../components/ui/SkeletonLayouts';
+>>>>>>> 3e8bec7 (add skeleton load effect, dolve some bugs, improve ui)
 import Seo from '../components/seo/Seo';
 import { SITE_URL, trimDescription, toAbsoluteUrl } from '../seo/siteMeta';
 import { SITE_CONFIG } from '../config';
 
 const MJM_SUMMER_SCHOOL_HIGHLIGHT = {
+<<<<<<< HEAD
   city: 'Rennes, France',
+=======
+  title: 'MJM France Summer School',
+  city: 'Paris & Lille',
+  dates: '15-26 June 2026',
+  duration: 'Two weeks',
+  fee: '2000Euro Per Student',
+  age: '16 and above',
+  classSize: '15-25 students',
+  mode: 'On-campus & outdoor learning',
+  hours: '36 hours from 10:00 to 18:00',
+  pdf: '/universities/mjm-graphic-design/brochures/mjm-summer-school-france.pdf',
+  pdfLow: '/universities/mjm-graphic-design/brochures/mjm-summer-school-france-low.pdf',
+>>>>>>> 3e8bec7 (add skeleton load effect, dolve some bugs, improve ui)
   description:
     "Our Summer School in France is a two-week immersive programme combining artistic courses, cultural activities, and language learning. Designed for international students aged 16 and above, the programme blends MJM's 45 years of creative expertise with the unique cultural richness of France.",
   images: [
@@ -191,6 +209,75 @@ const MJM_TRACK_CARD_THEME_CLASSES = [
   'border-[#D3E0FF] bg-[linear-gradient(145deg,rgba(239,249,255,0.95)_0%,rgba(247,242,255,0.95)_56%,rgba(255,242,226,0.94)_100%)] dark:border-[#42557F] dark:bg-[linear-gradient(145deg,rgba(20,33,46,0.78)_0%,rgba(28,22,56,0.86)_55%,rgba(40,27,30,0.74)_100%)]',
   'border-[#F2D4DC] bg-[linear-gradient(145deg,rgba(255,240,244,0.94)_0%,rgba(243,243,255,0.96)_52%,rgba(255,246,225,0.95)_100%)] dark:border-[#5A4574] dark:bg-[linear-gradient(145deg,rgba(39,23,44,0.76)_0%,rgba(28,24,58,0.86)_55%,rgba(44,29,24,0.74)_100%)]',
 ];
+<<<<<<< HEAD
+=======
+const CATALOG_THEME_CLASSES = {
+  euas: {
+    shell:
+      'border-[#CFE5D7] bg-[linear-gradient(135deg,rgba(239,250,244,0.94)_0%,rgba(246,249,255,0.94)_56%,rgba(255,249,231,0.88)_100%)] dark:border-[#31594A] dark:bg-[linear-gradient(135deg,rgba(14,35,31,0.9)_0%,rgba(15,23,42,0.96)_56%,rgba(44,37,18,0.82)_100%)]',
+    accent: 'bg-[#0F7B61] text-white',
+    text: 'text-[#0F7B61] dark:text-[#7EE2BC]',
+    button:
+      'border-[#0F7B61]/25 text-[#0F7B61] hover:bg-[#0F7B61] hover:text-white dark:border-[#7EE2BC]/30 dark:text-[#7EE2BC] dark:hover:bg-[#7EE2BC] dark:hover:text-[#06251D]',
+  },
+  mjmLondon: {
+    shell:
+      'border-[#F5B9B2] bg-[linear-gradient(135deg,rgba(255,239,235,0.96)_0%,rgba(255,246,237,0.9)_45%,rgba(243,247,255,0.94)_100%)] dark:border-[#7C3B46] dark:bg-[linear-gradient(135deg,rgba(56,22,28,0.9)_0%,rgba(45,28,22,0.84)_45%,rgba(18,24,42,0.94)_100%)]',
+    accent: 'bg-[#E8521A] text-white',
+    text: 'text-[#E8521A] dark:text-[#FFB199]',
+    button:
+      'border-[#E8521A]/25 text-[#E8521A] hover:bg-[#E8521A] hover:text-white dark:border-[#FFB199]/35 dark:text-[#FFB199] dark:hover:bg-[#FFB199] dark:hover:text-[#35140F]',
+  },
+  mjmEco: {
+    shell:
+      'border-[#BFDCC9] bg-[linear-gradient(135deg,rgba(239,250,243,0.96)_0%,rgba(246,245,255,0.92)_52%,rgba(255,247,235,0.9)_100%)] dark:border-[#3A6550] dark:bg-[linear-gradient(135deg,rgba(16,42,32,0.9)_0%,rgba(25,22,48,0.92)_52%,rgba(45,31,18,0.82)_100%)]',
+    accent: 'bg-[#2E7D58] text-white',
+    text: 'text-[#2E7D58] dark:text-[#8BE3B2]',
+    button:
+      'border-[#2E7D58]/25 text-[#2E7D58] hover:bg-[#2E7D58] hover:text-white dark:border-[#8BE3B2]/35 dark:text-[#8BE3B2] dark:hover:bg-[#8BE3B2] dark:hover:text-[#082719]',
+  },
+  mjmSummer: {
+    shell:
+      'border-[#D9D0F7] bg-[linear-gradient(135deg,rgba(248,244,255,0.96)_0%,rgba(255,242,232,0.9)_54%,rgba(239,247,255,0.92)_100%)] dark:border-[#584489] dark:bg-[linear-gradient(135deg,rgba(30,21,58,0.92)_0%,rgba(49,28,23,0.82)_54%,rgba(18,27,45,0.9)_100%)]',
+    accent: 'bg-primary text-primary-foreground',
+    text: 'text-primary',
+    button:
+      'border-primary/25 text-primary hover:bg-primary hover:text-primary-foreground dark:border-primary/40',
+  },
+  sguMedicine: {
+    shell:
+      'border-[#BBD9E8] bg-[linear-gradient(135deg,rgba(239,250,255,0.96)_0%,rgba(248,246,255,0.93)_52%,rgba(255,247,237,0.9)_100%)] dark:border-[#315B70] dark:bg-[linear-gradient(135deg,rgba(13,36,48,0.9)_0%,rgba(22,20,47,0.94)_52%,rgba(45,29,18,0.82)_100%)]',
+    accent: 'bg-[#0A6378] text-white',
+    text: 'text-[#0A6378] dark:text-[#8BDCF0]',
+    button:
+      'border-[#0A6378]/25 text-[#0A6378] hover:bg-[#0A6378] hover:text-white dark:border-[#8BDCF0]/35 dark:text-[#8BDCF0] dark:hover:bg-[#8BDCF0] dark:hover:text-[#08242D]',
+    cover:
+      'bg-[linear-gradient(145deg,rgba(10,99,120,0.16)_0%,rgba(45,27,105,0.1)_56%,rgba(232,82,26,0.12)_100%)] text-[#0A6378] dark:text-[#8BDCF0]',
+    coverBadge:
+      'border-[#0A6378]/20 bg-white/78 text-[#0A6378] shadow-[0_12px_24px_rgba(10,99,120,0.14)] dark:border-[#8BDCF0]/25 dark:bg-white/10 dark:text-[#8BDCF0]',
+  },
+  sguVeterinary: {
+    shell:
+      'border-[#C6DFC7] bg-[linear-gradient(135deg,rgba(241,250,242,0.96)_0%,rgba(247,246,255,0.93)_52%,rgba(255,247,238,0.9)_100%)] dark:border-[#3D6544] dark:bg-[linear-gradient(135deg,rgba(16,42,26,0.9)_0%,rgba(23,20,48,0.94)_52%,rgba(45,29,18,0.82)_100%)]',
+    accent: 'bg-[#33743D] text-white',
+    text: 'text-[#33743D] dark:text-[#A6E7AC]',
+    button:
+      'border-[#33743D]/25 text-[#33743D] hover:bg-[#33743D] hover:text-white dark:border-[#A6E7AC]/35 dark:text-[#A6E7AC] dark:hover:bg-[#A6E7AC] dark:hover:text-[#0E2712]',
+    cover:
+      'bg-[linear-gradient(145deg,rgba(51,116,61,0.16)_0%,rgba(45,27,105,0.1)_56%,rgba(232,82,26,0.12)_100%)] text-[#33743D] dark:text-[#A6E7AC]',
+    coverBadge:
+      'border-[#33743D]/20 bg-white/78 text-[#33743D] shadow-[0_12px_24px_rgba(51,116,61,0.14)] dark:border-[#A6E7AC]/25 dark:bg-white/10 dark:text-[#A6E7AC]',
+  },
+  default: {
+    shell:
+      'border-border/60 bg-[linear-gradient(135deg,rgba(255,255,255,0.94)_0%,rgba(246,248,251,0.94)_100%)] dark:bg-[linear-gradient(135deg,rgba(17,24,39,0.9)_0%,rgba(15,23,42,0.96)_100%)]',
+    accent: 'bg-primary text-primary-foreground',
+    text: 'text-primary',
+    button:
+      'border-primary/25 text-primary hover:bg-primary hover:text-primary-foreground dark:border-primary/40',
+  },
+};
+>>>>>>> 3e8bec7 (add skeleton load effect, dolve some bugs, improve ui)
 const ICN_PREMIUM_SPOTLIGHT = {
   subtitle: 'ICN Official Profile',
   heading: 'ICN Creative Business School',
@@ -297,6 +384,12 @@ export default function PortfolioDetailPage() {
   const [portfolio, setPortfolio] = useState(null);
   const [allPortfolios, setAllPortfolios] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+<<<<<<< HEAD
+=======
+  const [loadError, setLoadError] = useState('');
+  const [reloadToken, setReloadToken] = useState(0);
+  const [activeCatalogDetails, setActiveCatalogDetails] = useState(null);
+>>>>>>> 3e8bec7 (add skeleton load effect, dolve some bugs, improve ui)
   const mjmSpotlightRef = useRef(null);
   const catalogDocumentsRef = useRef(null);
 
@@ -503,7 +596,11 @@ export default function PortfolioDetailPage() {
           description="Loading institution profile and partnership details."
           path={`/portfolio/${id || ''}`}
         />
+<<<<<<< HEAD
         <div className="w-12 h-12 border-4 border-muted border-t-primary rounded-full animate-spin" />
+=======
+        <DetailSkeleton />
+>>>>>>> 3e8bec7 (add skeleton load effect, dolve some bugs, improve ui)
       </div>
     );
   }
@@ -1299,6 +1396,7 @@ export default function PortfolioDetailPage() {
                     {MJM_SUMMER_SCHOOL_HIGHLIGHT.description}
                   </p>
 
+<<<<<<< HEAD
                   <div className="mt-6 rounded-2xl border border-[#D8CDEE] bg-[linear-gradient(145deg,rgba(255,255,255,0.82)_0%,rgba(247,243,255,0.88)_54%,rgba(255,236,224,0.82)_100%)] p-5 shadow-[0_14px_34px_rgba(25,18,53,0.08)] dark:border-[#443A6E] dark:bg-[linear-gradient(145deg,rgba(28,22,52,0.84)_0%,rgba(18,15,37,0.9)_54%,rgba(30,23,42,0.82)_100%)]">
                     <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
                       Featured Program
@@ -1316,6 +1414,83 @@ export default function PortfolioDetailPage() {
                         <span>{MJM_SUMMER_SCHOOL_HIGHLIGHT.aiBusiness.deadline}</span>
                       </div>
                     </div>
+=======
+                  <div className="mt-5 grid grid-cols-1 gap-2.5 sm:grid-cols-2">
+                    {[
+                      {
+                        label: 'Destinations',
+                        value: MJM_SUMMER_SCHOOL_HIGHLIGHT.city,
+                        icon: Globe,
+                      },
+                      {
+                        label: 'Dates',
+                        value: MJM_SUMMER_SCHOOL_HIGHLIGHT.dates,
+                        icon: CalendarDays,
+                      },
+                      {
+                        label: 'Duration',
+                        value: MJM_SUMMER_SCHOOL_HIGHLIGHT.duration,
+                        icon: Clock3,
+                      },
+                      {
+                        label: 'Class Size',
+                        value: MJM_SUMMER_SCHOOL_HIGHLIGHT.classSize,
+                        icon: Trophy,
+                      },
+                      {
+                        label: 'Minimum Age',
+                        value: MJM_SUMMER_SCHOOL_HIGHLIGHT.age,
+                        icon: Star,
+                      },
+                      {
+                        label: 'Study Mode',
+                        value: MJM_SUMMER_SCHOOL_HIGHLIGHT.mode,
+                        icon: GraduationCap,
+                      },
+                      {
+                        label: 'Programme Hours',
+                        value: MJM_SUMMER_SCHOOL_HIGHLIGHT.hours,
+                        icon: Clock3,
+                      },
+                      {
+                        label: 'Tuition Package',
+                        value: MJM_SUMMER_SCHOOL_HIGHLIGHT.fee,
+                        icon: Briefcase,
+                      },
+                    ].map(({ label, value, icon: Icon }, index) => (
+                      <motion.div
+                        key={label}
+                        className="rounded-lg border border-[#D8D2E8] bg-white/75 px-3 py-2.5 shadow-[0_10px_24px_rgba(15,23,42,0.06)] dark:border-white/10 dark:bg-white/[0.07]"
+                        whileHover={{ y: -3, scale: 1.01 }}
+                        transition={{ duration: 0.2, delay: index * 0.03 }}
+                      >
+                        <dt className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
+                          <Icon className="h-3.5 w-3.5 text-[#0F766E] dark:text-[#5EEAD4]" />
+                          {label}
+                        </dt>
+                        <dd className="mt-1 font-semibold text-foreground">{value}</dd>
+                      </motion.div>
+                    ))}
+                  </div>
+
+                  <div className="mt-4 flex flex-wrap gap-2.5">
+                    <BrochureDownloadMenu
+                      file={MJM_SUMMER_SCHOOL_HIGHLIGHT.pdf}
+                      lowQualityFile={MJM_SUMMER_SCHOOL_HIGHLIGHT.pdfLow}
+                      title={MJM_SUMMER_SCHOOL_HIGHLIGHT.title}
+                      wrapperClassName="relative min-w-[13rem]"
+                      buttonClassName="group inline-flex items-center gap-2 rounded-lg border border-[#2D1B69]/25 bg-white/70 px-4 py-2 text-sm font-semibold text-[#2D1B69] transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#F2EDFF] hover:shadow-[0_12px_24px_rgba(45,27,105,0.16)] dark:border-white/15 dark:bg-white/10 dark:text-white dark:hover:bg-white/15"
+                    />
+                    <a
+                      href={MJM_SUMMER_SCHOOL_HIGHLIGHT.pdf}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="group inline-flex items-center gap-2 rounded-lg bg-[linear-gradient(92deg,#2D1B69_0%,#0F766E_54%,#E8521A_100%)] px-4 py-2 text-sm font-semibold text-white transition-all duration-300 hover:-translate-y-0.5 hover:brightness-110 hover:shadow-[0_14px_32px_rgba(45,27,105,0.26)]"
+                    >
+                      Open PDF
+                      <ExternalLink className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                    </a>
+>>>>>>> 3e8bec7 (add skeleton load effect, dolve some bugs, improve ui)
                   </div>
                 </div>
 
@@ -1356,6 +1531,7 @@ export default function PortfolioDetailPage() {
             whileInView="visible"
             viewport={{ once: true }}
           >
+<<<<<<< HEAD
             <h3 className="text-2xl font-bold text-foreground mb-2 flex items-center gap-2">
               <FileText className="w-5 h-5 text-primary" />
               Official Program Catalogs
@@ -1387,6 +1563,151 @@ export default function PortfolioDetailPage() {
                   </span>
                 </a>
               ))}
+=======
+            <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                  Official PDF Brochures
+                </p>
+                <h3 className="mt-1 flex items-center gap-2 text-2xl font-bold text-foreground">
+                  <FileText className="h-5 w-5 text-primary" />
+                  Program Documents
+                </h3>
+              </div>
+            </div>
+            <div
+              className={`grid grid-cols-1 gap-4 ${
+                catalogDocuments.length === 1 ? 'max-w-3xl' : 'xl:grid-cols-2'
+              }`}
+            >
+              {catalogDocuments.map((catalog) => {
+                const catalogTheme = CATALOG_THEME_CLASSES[catalog.theme] || CATALOG_THEME_CLASSES.default;
+                const lowQualityPdf = resolveLowQualityPdf(catalog.file, catalog.fileLow);
+                const hasCatalogImage = Boolean(catalog.image);
+                const fallbackCoverClass =
+                  catalogTheme.cover ||
+                  'bg-[linear-gradient(145deg,rgba(45,27,105,0.12)_0%,rgba(232,82,26,0.1)_100%)] text-primary';
+                const fallbackBadgeClass =
+                  catalogTheme.coverBadge ||
+                  'border-primary/20 bg-background/78 text-primary shadow-[0_12px_24px_rgba(45,27,105,0.12)]';
+
+                return (
+                  <article
+                    key={`${catalog.title}-${catalog.file}`}
+                    className={`group relative grid overflow-hidden rounded-2xl border shadow-[0_16px_36px_rgba(15,23,42,0.08)] transition-all hover:-translate-y-0.5 hover:shadow-[0_20px_44px_rgba(15,23,42,0.13)] ${
+                      hasCatalogImage
+                        ? 'md:grid-cols-[minmax(11rem,0.42fr)_minmax(0,0.58fr)]'
+                        : 'md:grid-cols-[minmax(7.5rem,0.24fr)_minmax(0,1fr)]'
+                    } ${catalogTheme.shell}`}
+                  >
+                    <div className="pointer-events-none absolute inset-0 opacity-[0.08] [background-image:linear-gradient(90deg,currentColor_1px,transparent_1px),linear-gradient(180deg,currentColor_1px,transparent_1px)] [background-size:22px_22px]" />
+                    {hasCatalogImage ? (
+                      <div className="relative min-h-48 overflow-hidden bg-muted md:min-h-full md:min-w-44">
+                        <img
+                          src={catalog.image}
+                          alt={catalog.imageAlt || catalog.title}
+                          loading="lazy"
+                          decoding="async"
+                          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        />
+                        <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(15,23,42,0)_38%,rgba(15,23,42,0.58)_100%)]" />
+                        {catalog.secondaryImage && (
+                          <img
+                            src={catalog.secondaryImage}
+                            alt={catalog.secondaryImageAlt || ''}
+                            loading="lazy"
+                            decoding="async"
+                            className="absolute right-3 top-3 h-16 w-16 rounded-xl border border-white/70 object-cover shadow-[0_10px_24px_rgba(15,23,42,0.28)] sm:h-20 sm:w-20"
+                          />
+                        )}
+                        {catalog.eyebrow && (
+                          <span className={`absolute bottom-3 left-3 rounded-full px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] ${catalogTheme.accent}`}>
+                            {catalog.eyebrow}
+                          </span>
+                        )}
+                      </div>
+                    ) : (
+                      <div
+                        className={`relative flex min-h-36 flex-col justify-between overflow-hidden p-4 md:min-h-full ${fallbackCoverClass}`}
+                      >
+                        <div className="pointer-events-none absolute -right-8 -top-8 h-24 w-24 rounded-full bg-white/38 blur-2xl dark:bg-white/8" />
+                        <div className="pointer-events-none absolute -bottom-10 left-4 h-28 w-28 rounded-full bg-current/12 blur-2xl" />
+                        <span
+                          className={`relative inline-flex h-14 w-14 items-center justify-center rounded-2xl border ${fallbackBadgeClass}`}
+                        >
+                          <FileText className="h-7 w-7" />
+                        </span>
+                        <div className="relative mt-5 min-w-0">
+                          <p className="text-[10px] font-semibold uppercase tracking-[0.16em] opacity-75">
+                            {catalog.coverLabel || 'Official PDF'}
+                          </p>
+                          <p className="mt-1 max-w-[10rem] break-words text-sm font-bold leading-snug text-foreground/90 dark:text-white/90">
+                            {catalog.coverTitle || catalog.eyebrow || 'Program Catalog'}
+                          </p>
+                        </div>
+                      </div>
+                    )}
+                    <div className="relative flex min-h-full min-w-0 flex-col p-4 sm:p-5">
+                      {catalog.eyebrow && (
+                        <p className={`text-xs font-semibold uppercase tracking-[0.16em] ${catalogTheme.text}`}>
+                          {catalog.eyebrow}
+                        </p>
+                      )}
+                      <h4 className="mt-2 text-lg font-bold leading-snug text-foreground break-words">
+                        {catalog.title}
+                      </h4>
+                      {catalog.description && (
+                        <p className="mt-3 break-words text-sm leading-relaxed text-muted-foreground">{catalog.description}</p>
+                      )}
+                      {Array.isArray(catalog.facts) && catalog.facts.length > 0 && (
+                        <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-2">
+                          {catalog.facts.map((fact) => (
+                            <span
+                              key={fact}
+                              className="min-w-0 rounded-lg border border-border/55 bg-background/62 px-3 py-2 text-xs font-medium leading-relaxed text-foreground/85 break-words dark:bg-background/20"
+                            >
+                              {fact}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                      <div className="mt-5 flex flex-col gap-2 pt-1 sm:flex-row sm:flex-wrap">
+                        {catalog.detailPanel && (
+                          <button
+                            type="button"
+                            onClick={() => setActiveCatalogDetails(catalog)}
+                            aria-label={`Open structured details for ${catalog.title}`}
+                            className={`inline-flex min-w-0 flex-1 items-center justify-center gap-2 rounded-xl border bg-background/75 px-3 py-2 text-sm font-semibold transition-colors sm:flex-[1_1_8.25rem] ${catalogTheme.button}`}
+                          >
+                            <Building2 className="h-4 w-4" />
+                            More Info
+                          </button>
+                        )}
+                        <a
+                          href={catalog.file}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          aria-label={`View ${catalog.title} PDF`}
+                          className={`inline-flex min-w-0 flex-1 items-center justify-center gap-2 rounded-xl border bg-background/75 px-3 py-2 text-sm font-semibold transition-colors sm:flex-[1_1_8.25rem] ${catalogTheme.button}`}
+                        >
+                          <Eye className="h-4 w-4" />
+                          View PDF
+                          <ExternalLink className="h-3.5 w-3.5" />
+                        </a>
+                        <BrochureDownloadMenu
+                          file={catalog.file}
+                          lowQualityFile={lowQualityPdf}
+                          downloadName={catalog.downloadName}
+                          title={catalog.title}
+                          menuPlacementClass="bottom-[calc(100%+0.5rem)]"
+                          buttonClassName={`inline-flex min-w-0 flex-1 items-center justify-center gap-2 rounded-xl border bg-background/75 px-3 py-2 text-sm font-semibold transition-colors sm:flex-[1_1_8.25rem] ${catalogTheme.button}`}
+                        />
+                      </div>
+                    </div>
+                  </article>
+                );
+              })}
+>>>>>>> 3e8bec7 (add skeleton load effect, dolve some bugs, improve ui)
             </div>
           </motion.div>
         )}

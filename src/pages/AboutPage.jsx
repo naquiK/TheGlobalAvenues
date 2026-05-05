@@ -13,7 +13,11 @@ import {
 } from 'lucide-react';
 import useScrollAnimation from '../hooks/useScrollAnimation';
 import useLazySection from '../hooks/useLazySection';
-import SectionSkeleton from '../components/ui/SectionSkeleton';
+import {
+  AccreditationSkeleton,
+  CardGridSkeleton,
+  ProfileGridSkeleton,
+} from '../components/ui/SkeletonLayouts';
 import Seo from '../components/seo/Seo';
 
 const ProfileCard = memo(function ProfileCard({ member, featured }) {
@@ -33,14 +37,16 @@ const ProfileCard = memo(function ProfileCard({ member, featured }) {
 
   return (
     <div ref={cardRef} className={`relative h-full ${featured ? 'lg:col-span-2' : ''}`}>
-      <div className="h-full rounded-[30px] bg-gradient-to-br from-primary/35 via-white/80 to-accent/35 p-[1px] shadow-[0_30px_80px_rgba(13,10,26,0.16)] dark:from-[#3A2A78]/80 dark:via-[#0D0A1A] dark:to-[#3A2A78]/70">
+      <div className="group relative h-full rounded-[30px] bg-gradient-to-br from-primary/35 via-white/80 to-accent/35 p-[1px] shadow-[0_30px_80px_rgba(13,10,26,0.16)] transition-all duration-500 ease-out hover:-translate-y-2 hover:shadow-[0_34px_90px_rgba(45,27,105,0.22)] dark:from-[#3A2A78]/80 dark:via-[#0D0A1A] dark:to-[#3A2A78]/70 dark:hover:shadow-[0_34px_90px_rgba(232,82,26,0.16)]">
+        <div className="pointer-events-none absolute -inset-1 rounded-[32px] bg-gradient-to-br from-primary/18 via-transparent to-brand-orange/20 opacity-0 blur-xl transition-opacity duration-500 group-hover:opacity-100" />
         <div className="relative flex h-full flex-col overflow-hidden rounded-[28px] bg-white/90 p-6 shadow-inner dark:bg-[#0F0B1E]/90">
-          <div className="absolute -right-14 -top-12 h-32 w-32 rounded-full bg-primary/10 blur-2xl dark:bg-brand-orange/10" />
+          <div className="absolute -right-14 -top-12 h-32 w-32 rounded-full bg-primary/10 blur-2xl transition-all duration-500 group-hover:scale-125 group-hover:opacity-100 dark:bg-brand-orange/10" />
+          <div className="pointer-events-none absolute inset-x-8 bottom-0 h-px bg-gradient-to-r from-transparent via-brand-orange/70 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
           <div className="flex items-start gap-5">
             <div className="relative">
-              <div className="absolute -inset-1 rounded-2xl bg-gradient-to-br from-primary/40 to-accent/40 blur-lg opacity-70" />
+              <div className="absolute -inset-1 rounded-2xl bg-gradient-to-br from-primary/40 to-accent/40 blur-lg opacity-70 transition-all duration-500 group-hover:scale-110 group-hover:opacity-100" />
               {hasImageError ? (
-                <div className="relative flex h-20 w-20 items-center justify-center rounded-2xl bg-[linear-gradient(145deg,#2D1B69_0%,#5B45C6_58%,#E8521A_100%)] text-lg font-bold text-white ring-1 ring-white/60 dark:ring-white/10">
+                <div className="relative flex h-20 w-20 items-center justify-center rounded-2xl bg-[linear-gradient(145deg,#2D1B69_0%,#5B45C6_58%,#E8521A_100%)] text-lg font-bold text-white ring-1 ring-white/60 transition-transform duration-500 group-hover:scale-105 dark:ring-white/10">
                   {initials}
                 </div>
               ) : (
@@ -50,7 +56,7 @@ const ProfileCard = memo(function ProfileCard({ member, featured }) {
                   loading="lazy"
                   decoding="async"
                   onError={() => setHasImageError(true)}
-                  className="relative h-20 w-20 rounded-2xl object-cover ring-1 ring-white/60 dark:ring-white/10"
+                  className="relative h-20 w-20 rounded-2xl object-cover ring-1 ring-white/60 transition-transform duration-500 group-hover:scale-105 dark:ring-white/10"
                 />
               )}
             </div>
@@ -58,13 +64,13 @@ const ProfileCard = memo(function ProfileCard({ member, featured }) {
               <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-muted-foreground/70">
                 Team
               </p>
-              <h3 className="mt-2 text-xl font-semibold text-foreground">{member.name}</h3>
+              <h3 className="mt-2 text-xl font-semibold text-foreground transition-colors duration-300 group-hover:text-primary">{member.name}</h3>
               <p className="mt-1 text-sm font-semibold text-primary">{member.role}</p>
             </div>
           </div>
           <div className="mt-5 flex h-full flex-col justify-between">
             <p className="text-sm leading-relaxed text-muted-foreground">{member.bio}</p>
-            <div className="mt-6 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-primary dark:border-white/20 dark:bg-white/10 dark:text-white">
+            <div className="mt-6 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-primary transition-all duration-300 group-hover:border-primary/35 group-hover:bg-primary group-hover:text-white dark:border-white/20 dark:bg-white/10 dark:text-white">
               {featured ? 'Leadership' : 'Specialist'}
             </div>
           </div>
@@ -398,7 +404,7 @@ export default function AboutPage() {
             </div>
           </section>
         ) : (
-          <SectionSkeleton height="h-[520px]" />
+          <CardGridSkeleton count={4} columns="md:grid-cols-2 lg:grid-cols-4" />
         )}
       </div>
 
@@ -422,7 +428,7 @@ export default function AboutPage() {
             </div>
           </section>
         ) : (
-          <SectionSkeleton height="h-[720px]" />
+          <ProfileGridSkeleton />
         )}
       </div>
 
@@ -653,7 +659,7 @@ export default function AboutPage() {
             </div>
           </section>
         ) : (
-          <SectionSkeleton height="h-[720px]" />
+          <AccreditationSkeleton />
         )}
       </div>
     </div>

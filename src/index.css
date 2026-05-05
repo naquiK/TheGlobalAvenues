@@ -417,6 +417,75 @@ html.dark {
     display: none;
   }
 
+  .skeleton-surface,
+  .skeleton-card,
+  .skeleton-line {
+    position: relative;
+    overflow: hidden;
+    background:
+      linear-gradient(135deg, rgb(var(--color-bg-primary-rgb) / 0.72), rgb(var(--color-brand-purple-light-rgb) / 0.86)),
+      rgb(var(--color-brand-purple-light-rgb) / 0.82);
+  }
+
+  .skeleton-card {
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.52);
+  }
+
+  .skeleton-line {
+    background:
+      linear-gradient(90deg, rgb(var(--color-brand-purple-rgb) / 0.08), rgb(var(--color-brand-orange-rgb) / 0.1)),
+      rgb(var(--color-brand-purple-rgb) / 0.08);
+  }
+
+  .skeleton-surface::after,
+  .skeleton-card::after,
+  .skeleton-line::after,
+  .skeleton-media::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    transform: translateX(-110%);
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgb(255 255 255 / 0.34) 48%,
+      transparent 100%
+    );
+    animation: skeletonShimmer 1.55s ease-in-out infinite;
+  }
+
+  .skeleton-media {
+    background:
+      linear-gradient(135deg, rgb(var(--color-brand-purple-rgb) / 0.1), rgb(var(--color-brand-orange-rgb) / 0.08)),
+      rgb(var(--color-brand-purple-light-rgb) / 0.72);
+  }
+
+  .dark .skeleton-surface,
+  .dark .skeleton-card,
+  .dark .skeleton-line {
+    background:
+      linear-gradient(135deg, rgb(255 255 255 / 0.06), rgb(var(--color-brand-purple-rgb) / 0.16)),
+      rgb(var(--color-bg-surface-rgb) / 0.84);
+  }
+
+  .dark .skeleton-line {
+    background:
+      linear-gradient(90deg, rgb(255 255 255 / 0.08), rgb(var(--color-brand-orange-rgb) / 0.12)),
+      rgb(255 255 255 / 0.08);
+  }
+
+  .dark .skeleton-surface::after,
+  .dark .skeleton-card::after,
+  .dark .skeleton-line::after,
+  .dark .skeleton-media::after {
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgb(255 255 255 / 0.12) 48%,
+      transparent 100%
+    );
+  }
+
   .smooth-scroll-panel {
     scroll-behavior: smooth;
     -webkit-overflow-scrolling: touch;
@@ -1208,6 +1277,12 @@ html.dark {
   background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.24), transparent);
   background-size: 1000px 100%;
   animation: shimmer 2s infinite;
+}
+
+@keyframes skeletonShimmer {
+  100% {
+    transform: translateX(110%);
+  }
 }
 
 @keyframes bounce-in {

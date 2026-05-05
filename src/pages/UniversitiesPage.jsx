@@ -1,9 +1,20 @@
 import { useDeferredValue, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Globe, Search, SlidersHorizontal, TrendingUp, Users } from 'lucide-react';
+import {
+  ArrowRight,
+  BadgeCheck,
+  GraduationCap,
+  Globe,
+  Search,
+  SlidersHorizontal,
+  TrendingUp,
+  Users,
+} from 'lucide-react';
 import { portfolioData } from '../data/portfolioData';
 import { useSettings } from '../context/SettingsContext';
 import Seo from '../components/seo/Seo';
+import LazySection from '../components/ui/LazySection';
+import { CardGridSkeleton } from '../components/ui/SkeletonLayouts';
 
 export default function UniversitiesPage() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -200,6 +211,7 @@ export default function UniversitiesPage() {
         </div>
       </section>
 
+      <LazySection fallback={<CardGridSkeleton count={6} image showHeading={false} />}>
       <section className="collaborate-section-shell px-4 pb-20 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-7xl">
           {filtered.length > 0 ? (
@@ -213,73 +225,88 @@ export default function UniversitiesPage() {
                 return (
                   <article
                     key={university.id}
-                    className="group overflow-hidden rounded-[26px] border border-[#D8D1EE] bg-[linear-gradient(160deg,#FFFFFF_0%,#F8F5FF_100%)] shadow-[0_18px_46px_rgba(16,12,40,0.08)] transition-all duration-300 ease-out hover:-translate-y-1 hover:border-primary/35 hover:shadow-[0_24px_56px_rgba(16,12,40,0.12)] dark:border-[#382C68] dark:bg-[linear-gradient(160deg,#15102B_0%,#100B1F_100%)]"
+                    className="group relative isolate flex h-full overflow-hidden rounded-[26px] border border-[#D8D1EE] bg-[linear-gradient(160deg,#FFFFFF_0%,#F7F4FF_58%,#FFF7F2_100%)] shadow-[0_18px_46px_rgba(16,12,40,0.08)] ring-1 ring-white/70 transition-all duration-500 ease-out hover:-translate-y-2 hover:border-brand-orange/[0.45] hover:shadow-[0_28px_70px_rgba(45,27,105,0.16)] dark:border-[#382C68] dark:bg-[linear-gradient(160deg,#15102B_0%,#120C27_58%,#211025_100%)] dark:ring-white/10"
                   >
-                    <div className="relative h-52 overflow-hidden bg-gradient-to-br from-primary/20 to-secondary/20">
-                      <img
-                        src={university.image}
-                        alt={university.title}
-                        loading="lazy"
-                        decoding="async"
-                        className={`h-full w-full ${
-                          useContainedHeroImage ? 'object-contain bg-[#E5E5E5] p-5' : 'object-cover'
-                        }`}
-                      />
+                    <div className="relative flex w-full flex-1 flex-col">
+                      <div className="relative h-56 overflow-hidden bg-gradient-to-br from-primary/20 to-secondary/20">
+                        <img
+                          src={university.image}
+                          alt={university.title}
+                          loading="lazy"
+                          decoding="async"
+                          className={`h-full w-full ${
+                            useContainedHeroImage ? 'object-contain bg-[#E5E5E5] p-5' : 'object-cover'
+                          } transition-transform duration-700 ease-out group-hover:scale-105`}
+                        />
 
-                      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(16,10,38,0)_42%,rgba(16,10,38,0.32)_100%)] opacity-80 transition-opacity duration-300 group-hover:opacity-100" />
+                        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(16,10,38,0.1)_0%,rgba(16,10,38,0)_34%,rgba(16,10,38,0.72)_100%)] opacity-[0.85] transition-opacity duration-500 group-hover:opacity-100" />
+                        <div className="absolute inset-x-0 top-0 h-px bg-white/60" />
 
-                      {university.logo ? (
-                        <div
-                          className={`absolute left-4 top-4 rounded-xl border p-1.5 shadow-md ${
-                            isLightLogo
-                              ? 'border-white/30 bg-[#20184A]/88 backdrop-blur-sm'
-                              : 'border-white/45 bg-white/95'
-                          }`}
-                        >
-                          <img
-                            src={university.logo}
-                            alt={`${university.title} logo`}
-                            loading="lazy"
-                            decoding="async"
-                            className={`h-7 w-auto max-w-[5.5rem] object-contain ${
-                              isLightLogo ? 'brightness-110 contrast-110' : ''
+                        {university.logo ? (
+                          <div
+                            className={`absolute left-4 top-4 rounded-2xl border p-2 shadow-[0_12px_26px_rgba(16,12,40,0.18)] transition-transform duration-500 group-hover:-translate-y-0.5 group-hover:scale-105 ${
+                              isLightLogo
+                                ? 'border-white/30 bg-[#20184A]/[0.88] backdrop-blur-sm'
+                                : 'border-white/[0.45] bg-white/95'
                             }`}
-                          />
-                        </div>
-                      ) : null}
+                          >
+                            <img
+                              src={university.logo}
+                              alt={`${university.title} logo`}
+                              loading="lazy"
+                              decoding="async"
+                              className={`h-7 w-auto max-w-[5.5rem] object-contain ${
+                                isLightLogo ? 'brightness-110 contrast-110' : ''
+                              }`}
+                            />
+                          </div>
+                        ) : null}
 
-                      <div className="absolute bottom-4 left-4 inline-flex items-center gap-1.5 rounded-full border border-white/45 bg-brand-purple px-3 py-1 text-xs font-semibold text-white shadow-[0_8px_20px_rgba(45,27,105,0.24)]">
-                        <Globe className="h-3.5 w-3.5" />
-                        {university.country}
-                      </div>
-                    </div>
-
-                    <div className="p-6">
-                      <h3 className="mb-3 line-clamp-3 text-2xl font-bold leading-tight text-foreground">
-                        {university.title}
-                      </h3>
-                      <p className="mb-5 line-clamp-2 text-sm text-muted-foreground">{university.description}</p>
-
-                      <div className="mb-6 grid grid-cols-2 gap-3">
-                        <div className="rounded-lg bg-primary/10 p-4 text-center">
-                          <p className="mb-1 text-2xl font-bold text-primary">{university.programs ?? 'N/A'}</p>
-                          <p className="text-xs text-muted-foreground">Programs</p>
-                        </div>
-                        <div className="rounded-lg bg-accent/10 p-4 text-center">
-                          <p className="mb-1 text-2xl font-bold text-accent">
-                            {university.successRate ? `${university.successRate}%` : 'N/A'}
-                          </p>
-                          <p className="text-xs text-muted-foreground">Success</p>
+                        <div className="absolute bottom-4 left-4 right-4 flex flex-wrap items-center gap-2">
+                          <div className="inline-flex items-center gap-1.5 rounded-full border border-white/[0.45] bg-brand-purple px-3 py-1.5 text-xs font-semibold text-white shadow-[0_8px_20px_rgba(45,27,105,0.24)] backdrop-blur-sm">
+                            <Globe className="h-3.5 w-3.5" />
+                            {university.country}
+                          </div>
+                          {university.category ? (
+                            <div className="inline-flex min-w-0 items-center gap-1.5 rounded-full border border-white/[0.35] bg-white/15 px-3 py-1.5 text-xs font-semibold text-white shadow-[0_8px_20px_rgba(16,12,40,0.18)] backdrop-blur-sm">
+                              <GraduationCap className="h-3.5 w-3.5 flex-shrink-0" />
+                              <span className="truncate">{university.category}</span>
+                            </div>
+                          ) : null}
                         </div>
                       </div>
 
-                      <Link
-                        to={`/portfolio/${university.slug || university.id}`}
-                        className="inline-flex items-center gap-2 font-semibold text-primary transition-colors duration-300 hover:text-secondary"
-                      >
-                        View profile
-                        <ArrowRight className="h-4 w-4" />
-                      </Link>
+                      <div className="relative flex flex-1 flex-col p-6">
+                        <h3 className="mb-3 line-clamp-3 text-2xl font-bold leading-tight text-foreground transition-colors duration-300 group-hover:text-primary">
+                          {university.title}
+                        </h3>
+                        <p className="mb-5 line-clamp-2 text-sm text-muted-foreground">{university.description}</p>
+
+                        <div className="mb-6 grid grid-cols-2 gap-3">
+                          <div className="rounded-2xl border border-primary/15 bg-primary/[0.08] p-4 text-center shadow-[inset_0_1px_0_rgba(255,255,255,0.65)] transition-all duration-300 group-hover:-translate-y-0.5 group-hover:border-primary/30 group-hover:bg-primary/[0.12] dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]">
+                            <GraduationCap className="mx-auto mb-2 h-4 w-4 text-primary" />
+                            <p className="mb-1 text-2xl font-bold text-primary">{university.programs ?? 'N/A'}</p>
+                            <p className="text-xs font-medium text-muted-foreground">Programs</p>
+                          </div>
+                          <div className="rounded-2xl border border-brand-orange/15 bg-brand-orange/10 p-4 text-center shadow-[inset_0_1px_0_rgba(255,255,255,0.65)] transition-all duration-300 group-hover:-translate-y-0.5 group-hover:border-brand-orange/30 group-hover:bg-brand-orange/[0.14] dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]">
+                            <BadgeCheck className="mx-auto mb-2 h-4 w-4 text-accent" />
+                            <p className="mb-1 text-2xl font-bold text-accent">
+                              {university.successRate ? `${university.successRate}%` : 'N/A'}
+                            </p>
+                            <p className="text-xs font-medium text-muted-foreground">Success</p>
+                          </div>
+                        </div>
+
+                        <Link
+                          to={`/portfolio/${university.slug || university.id}`}
+                          className="group/cta mt-auto inline-flex h-12 items-center justify-between rounded-2xl border border-primary/[0.18] bg-white/[0.72] px-4 text-sm font-bold text-primary shadow-[0_12px_28px_rgba(45,27,105,0.08)] transition-all duration-300 hover:-translate-y-0.5 hover:border-brand-orange/[0.45] hover:bg-brand-purple hover:text-white hover:shadow-[0_18px_34px_rgba(45,27,105,0.18)] focus:outline-none focus:ring-2 focus:ring-primary/25 dark:border-white/[0.12] dark:bg-white/[0.08] dark:text-white dark:hover:border-brand-orange/[0.45] dark:hover:bg-brand-orange"
+                        >
+                          <span>View profile</span>
+                          <span className="flex h-8 w-8 items-center justify-center rounded-full bg-brand-orange/15 text-brand-orange transition-all duration-300 group-hover/cta:translate-x-1 group-hover/cta:bg-white group-hover/cta:text-brand-purple dark:bg-white/[0.12] dark:text-white">
+                            <ArrowRight className="h-4 w-4" />
+                          </span>
+                        </Link>
+                      </div>
                     </div>
                   </article>
                 );
@@ -294,6 +321,7 @@ export default function UniversitiesPage() {
           )}
         </div>
       </section>
+      </LazySection>
     </div>
   );
 }

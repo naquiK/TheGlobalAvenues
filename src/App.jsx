@@ -36,13 +36,19 @@ const FloatingContactButton = lazy(() =>
 function FooterFallback() {
   return (
     <div className="h-[360px] border-t border-border/50 bg-muted/20 px-4 py-8 sm:px-6 lg:px-8">
-      <div className="mx-auto grid h-full max-w-7xl grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="mx-auto grid h-full max-w-7xl grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
         {Array.from({ length: 4 }).map((_, index) => (
-          <div key={`footer-fallback-${index + 1}`} className="space-y-3">
-            <div className="h-5 w-28 rounded bg-muted animate-pulse" />
-            <div className="h-3 w-full rounded bg-muted/80 animate-pulse" />
-            <div className="h-3 w-5/6 rounded bg-muted/80 animate-pulse" />
-            <div className="h-3 w-4/6 rounded bg-muted/80 animate-pulse" />
+          <div key={`footer-fallback-${index + 1}`} className="space-y-4">
+            {index === 0 ? <div className="skeleton-card h-16 w-72 max-w-full rounded-xl" /> : null}
+            <div className="skeleton-line h-6 w-32 rounded-xl" />
+            <div className="skeleton-line h-3 w-full rounded-full" />
+            <div className="skeleton-line h-3 w-5/6 rounded-full" />
+            <div className="skeleton-line h-3 w-4/6 rounded-full" />
+            <div className="flex gap-3 pt-3">
+              <div className="skeleton-card h-10 w-10 rounded-full" />
+              <div className="skeleton-card h-10 w-10 rounded-full" />
+              <div className="skeleton-card h-10 w-10 rounded-full" />
+            </div>
           </div>
         ))}
       </div>
@@ -52,7 +58,7 @@ function FooterFallback() {
 
 function FloatingButtonFallback() {
   return (
-    <div className="fixed bottom-4 right-4 z-30 h-14 w-14 rounded-full bg-muted animate-pulse" />
+    <div className="skeleton-card fixed bottom-4 right-4 z-30 h-14 w-14 rounded-full" />
   );
 }
 

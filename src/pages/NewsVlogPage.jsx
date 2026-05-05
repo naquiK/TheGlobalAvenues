@@ -5,6 +5,8 @@ import { ArrowRight, Calendar, Flame, Newspaper, Play, Sparkles, User } from 'lu
 import { newsItems as fallbackNewsItems } from '../data/newsData';
 import { subscribeToNews } from '../services/contactFormService';
 import Seo from '../components/seo/Seo';
+import LazySection from '../components/ui/LazySection';
+import { ArticleGridSkeleton, CtaSkeleton, ProcessSkeleton } from '../components/ui/SkeletonLayouts';
 import { SITE_NAME, SITE_URL } from '../seo/siteMeta';
 
 const getCardImage = (item) => item.thumbnail || item.image;
@@ -260,6 +262,7 @@ export default function NewsVlogPage() {
         </div>
       </motion.section>
 
+      <LazySection fallback={<ArticleGridSkeleton count={2} featured />}>
       {featuredItems.length > 0 && (
         <section className="px-4 pb-8 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-7xl rounded-3xl border border-border/70 bg-muted/20 p-6 sm:p-8 lg:p-10">
@@ -353,7 +356,9 @@ export default function NewsVlogPage() {
           </div>
         </section>
       )}
+      </LazySection>
 
+      <LazySection fallback={<ProcessSkeleton count={3} />}>
       <section className="px-4 py-8 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-7xl rounded-2xl border border-border/70 bg-background/70 p-6 shadow-sm backdrop-blur-sm">
           <motion.div
@@ -386,7 +391,9 @@ export default function NewsVlogPage() {
           </motion.div>
         </div>
       </section>
+      </LazySection>
 
+      <LazySection fallback={<ArticleGridSkeleton count={6} />}>
       <section className="px-4 pb-16 pt-8 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-7xl">
           <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
@@ -474,7 +481,9 @@ export default function NewsVlogPage() {
           )}
         </div>
       </section>
+      </LazySection>
 
+      <LazySection fallback={<CtaSkeleton />}>
       <section className="px-4 pb-20 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-4xl text-center">
           <motion.div
@@ -520,6 +529,7 @@ export default function NewsVlogPage() {
           </motion.div>
         </div>
       </section>
+      </LazySection>
     </div>
   );
 }

@@ -3,6 +3,7 @@ import { Star } from 'lucide-react';
 import useScrollAnimation from '../hooks/useScrollAnimation';
 import { getTestimonials } from '../services/contentApi';
 import { resolveMediaUrl } from '../services/apiClient';
+import { ProcessSkeleton } from './ui/SkeletonLayouts';
 
 const fallbackTestimonials = [
   {
@@ -395,9 +396,7 @@ export function Testimonials() {
         </div>
 
         {isLoading ? (
-          <div className="rounded-3xl border border-border/70 bg-background/70 p-10 text-center text-muted-foreground">
-            Loading testimonials...
-          </div>
+          <ProcessSkeleton count={4} className="py-0 px-0 sm:px-0 lg:px-0" />
         ) : (
           <div className="mx-auto max-w-6xl overflow-hidden rounded-2xl">
             <div

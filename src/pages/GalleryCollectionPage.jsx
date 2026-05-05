@@ -5,6 +5,8 @@ import { useNavigate, useParams } from 'react-router-dom';
 import BackNavButton from '../components/ui/BackNavButton';
 import { getGalleryCollectionBySlug } from '../data/galleryCollectionsData';
 import Seo from '../components/seo/Seo';
+import LazySection from '../components/ui/LazySection';
+import { GalleryGridSkeleton } from '../components/ui/SkeletonLayouts';
 
 const FALLBACK_IMAGE = '/videos/hero-poster.jpg';
 const SWIPE_THRESHOLD_PX = 50;
@@ -167,6 +169,7 @@ export default function GalleryCollectionPage() {
           <p className="mt-3 text-sm font-medium text-muted-foreground">{photos.length} photos in this collection</p>
         </motion.section>
 
+        <LazySection fallback={<GalleryGridSkeleton count={6} withFilters={false} />}>
         <section className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {photos.length === 0 && (
             <div className="col-span-full rounded-2xl border border-border/70 bg-muted/20 py-12 text-center">
@@ -201,6 +204,7 @@ export default function GalleryCollectionPage() {
             </motion.button>
           ))}
         </section>
+        </LazySection>
       </div>
 
       <AnimatePresence>

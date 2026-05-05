@@ -5,10 +5,12 @@
   "type": "module",
   "scripts": {
     "seo:generate": "node scripts/generate-seo-files.mjs",
+    "pdf:optimize-low": "python scripts/optimize-brochure-pdfs.py --max-dim 1200 --jpeg-quality 45 --raster-threshold-mb 10 --raster-dpi 85",
     "prebuild": "npm run seo:generate",
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
+    "test": "npm run lint && npm run build",
     "preview": "vite preview"
   },
   "dependencies": {

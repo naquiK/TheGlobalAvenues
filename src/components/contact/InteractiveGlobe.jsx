@@ -283,8 +283,10 @@ export function InteractiveGlobe() {
 
     const initializeGlobe = async () => {
       try {
-        await loadExternalScript(THREE_CDN);
         await loadExternalScript(GLOBE_CDN);
+        if (!window.THREE) {
+          await loadExternalScript(THREE_CDN);
+        }
 
         if (cancelled) return;
 

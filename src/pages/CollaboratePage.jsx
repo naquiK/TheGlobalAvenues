@@ -15,7 +15,7 @@ import { formatAddress } from '../config';
 import { useSettings } from '../context/SettingsContext';
 import useScrollAnimation from '../hooks/useScrollAnimation';
 import useLazySection from '../hooks/useLazySection';
-import SectionSkeleton from '../components/ui/SectionSkeleton';
+import { ProcessSkeleton } from '../components/ui/SkeletonLayouts';
 import { CONTACT_FORM_RECIPIENT_EMAIL, submitContactForm } from '../services/contactFormService';
 import Seo from '../components/seo/Seo';
 
@@ -407,7 +407,7 @@ export default function CollaboratePage() {
             </div>
           </section>
         ) : (
-          <SectionSkeleton height="h-[460px]" />
+          <ProcessSkeleton count={3} />
         )}
       </div>
 
@@ -473,7 +473,7 @@ export default function CollaboratePage() {
             </div>
           </section>
         ) : (
-          <SectionSkeleton height="h-[420px]" />
+          <ProcessSkeleton count={3} />
         )}
       </div>
     </div>

@@ -1,9 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Search, Filter, Globe, Award } from 'lucide-react';
 import { getPortfolios, getCategories, searchPortfolios } from '../services/portfolioService';
 import Seo from '../components/seo/Seo';
+import LazySection from '../components/ui/LazySection';
+import { CardGridSkeleton } from '../components/ui/SkeletonLayouts';
 
 export default function PortfolioPage() {
   const [portfolios, setPortfolios] = useState([]);
@@ -12,24 +14,28 @@ export default function PortfolioPage() {
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
   const [isLoading, setIsLoading] = useState(true);
+  const [loadError, setLoadError] = useState('');
+
+  const loadData = useCallback(async () => {
+    setIsLoading(true);
+    setLoadError('');
+    try {
+      const result = await getPortfolios();
+      const cats = await getCategories();
+      setPortfolios(result.data || result);
+      setFilteredPortfolios(result.data || result);
+      setCategories(cats);
+    } catch (error) {
+      console.error('Error loading portfolios:', error);
+      setLoadError('Unable to load institutions right now. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
-    const loadData = async () => {
-      try {
-        const result = await getPortfolios();
-        const cats = await getCategories();
-        setPortfolios(result.data || result);
-        setFilteredPortfolios(result.data || result);
-        setCategories(cats);
-      } catch (error) {
-        console.error('Error loading portfolios:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
     loadData();
-  }, []);
+  }, [loadData]);
 
   useEffect(() => {
     const filterAndSearch = async () => {
@@ -136,21 +142,25 @@ export default function PortfolioPage() {
 
             {/* Category Filter */}
             <div className="flex flex-wrap gap-3">
-              {categories.map((category) => (
-                <motion.button
-                  key={category}
-                  onClick={() => setSelectedCategory(category)}
-                  className={`px-6 py-2 rounded-full font-medium transition-all duration-300 capitalize ${
-                    selectedCategory === category
-                      ? 'bg-primary text-primary-foreground scale-105'
-                      : 'bg-muted text-foreground hover:bg-muted/80'
-                  }`}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  {category}
-                </motion.button>
-              ))}
+              {isLoading
+                ? Array.from({ length: 5 }).map((_, index) => (
+                    <span key={`category-skeleton-${index + 1}`} className="skeleton-line h-10 w-28 rounded-full" />
+                  ))
+                : categories.map((category) => (
+                    <motion.button
+                      key={category}
+                      onClick={() => setSelectedCategory(category)}
+                      className={`px-6 py-2 rounded-full font-medium transition-all duration-300 capitalize ${
+                        selectedCategory === category
+                          ? 'bg-primary text-primary-foreground scale-105'
+                          : 'bg-muted text-foreground hover:bg-muted/80'
+                      }`}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      {category}
+                    </motion.button>
+                  ))}
             </div>
 
             {/* Results Count */}
@@ -167,14 +177,27 @@ export default function PortfolioPage() {
       </motion.section>
 
       {/* Portfolio Grid */}
+      <LazySection fallback={<CardGridSkeleton count={6} image showHeading={false} />}>
       <section className="py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           {isLoading ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {[1, 2, 3, 4, 5, 6].map((i) => (
-                <div key={i} className="bg-muted rounded-xl h-96 animate-pulse" />
-              ))}
-            </div>
+            <CardGridSkeleton count={6} image showHeading={false} className="py-0 px-0 sm:px-0 lg:px-0" />
+          ) : loadError ? (
+            <motion.div
+              className="text-center py-20"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+            >
+              <h3 className="text-2xl font-bold text-foreground mb-2">Could not load institutions</h3>
+              <p className="text-muted-foreground max-w-md mx-auto mb-6">{loadError}</p>
+              <button
+                type="button"
+                onClick={loadData}
+                className="px-6 py-3 rounded-lg bg-primary text-primary-foreground font-semibold hover:bg-secondary transition-colors"
+              >
+                Retry
+              </button>
+            </motion.div>
           ) : filteredPortfolios.length > 0 ? (
             <motion.div
               className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
@@ -182,7 +205,7 @@ export default function PortfolioPage() {
               initial="hidden"
               animate="visible"
             >
-              <AnimatePresence mode="wait">
+              <AnimatePresence mode="sync">
                 {filteredPortfolios.map((portfolio) => {
                   const normalizedSlug = String(portfolio.slug || '').toLowerCase();
                   const isLightLogo =
@@ -290,6 +313,7 @@ export default function PortfolioPage() {
           )}
         </div>
       </section>
+      </LazySection>
     </div>
   );
 }

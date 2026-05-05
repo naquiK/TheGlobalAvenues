@@ -105,6 +105,8 @@ export const portfolioData = [
           description:
             'Estonian Entrepreneurship University of Applied Sciences is the largest private university in Estonia, with innovative and collaborative learning in business, IT, people management, and arts.',
           file: '/universities/estonian-entrepreneurship-university-of-applied-sciences/brochures/euas-english-booklet-business-it-design.pdf',
+          fileLow:
+            '/universities/estonian-entrepreneurship-university-of-applied-sciences/brochures/euas-english-booklet-business-it-design-low.pdf',
           downloadName: 'euas-english-booklet-business-it-design.pdf',
           image:
             '/universities/estonian-entrepreneurship-university-of-applied-sciences/brochures/euas-tallinn-campus.jpg',
@@ -222,14 +224,24 @@ export const portfolioData = [
       catalogs: [
         {
           title: 'School of Medicine Catalog - January 5, 2026',
+          eyebrow: 'School of Medicine',
+          theme: 'sguMedicine',
+          coverLabel: 'MD Program PDF',
+          coverTitle: 'Medicine Catalog',
           description:
             'Official SGU School of Medicine catalog covering MD tracks, curriculum, policies, and student support.',
+          facts: ['MD tracks and curriculum', 'Academic policies', 'Student support'],
           file: '/universities/st-georges-university/brochures/sgu-school-of-medicine-catalog-jan-2026.pdf'
         },
         {
           title: 'School of Veterinary Medicine Catalog - January 5, 2026',
+          eyebrow: 'School of Veterinary Medicine',
+          theme: 'sguVeterinary',
+          coverLabel: 'DVM Program PDF',
+          coverTitle: 'Veterinary Catalog',
           description:
             'Official SGU School of Veterinary Medicine catalog detailing DVM pathways, accreditation context, and academic policies.',
+          facts: ['DVM pathways', 'Accreditation context', 'Academic policies'],
           file: '/universities/st-georges-university/brochures/sgu-school-of-veterinary-medicine-catalog-jan-2026.pdf'
         }
       ],
@@ -464,6 +476,8 @@ export const portfolioData = [
           description:
             'Central Paris, taught in English, international and French students welcome: Bachelor in Graphic Design, Bachelor in Interior Architecture, Bachelor in Fashion Design.',
           file: '/universities/mjm-graphic-design/brochures/mjm-paris-london-international-programmes.pdf',
+          fileLow:
+            '/universities/mjm-graphic-design/brochures/mjm-paris-london-international-programmes-low.pdf',
           downloadName: 'mjm-paris-london-international-programmes.pdf',
           image: '/universities/mjm-graphic-design/brochures/mjm-paris-london-programmes-cover.jpg',
           imageAlt: 'MJM International Programmes',
@@ -527,6 +541,8 @@ export const portfolioData = [
           description:
             'Master the art of eco-conscious interior architecture and lead impactful global projects.',
           file: '/universities/mjm-graphic-design/brochures/mjm-international-master-interior-architecture-eco-design-management.pdf',
+          fileLow:
+            '/universities/mjm-graphic-design/brochures/mjm-international-master-interior-architecture-eco-design-management-low.pdf',
           downloadName: 'mjm-international-master-interior-architecture-eco-design-management.pdf',
           image: '/universities/mjm-graphic-design/brochures/mjm-eco-design-master-cover.jpg',
           imageAlt: 'Eco-conscious architecture',
@@ -589,6 +605,7 @@ export const portfolioData = [
           description:
             "Our Summer School in France is a two-week immersive programme combining artistic courses, cultural activities, and language learning.",
           file: '/universities/mjm-graphic-design/brochures/mjm-summer-school-france.pdf',
+          fileLow: '/universities/mjm-graphic-design/brochures/mjm-summer-school-france-low.pdf',
           downloadName: 'mjm-summer-school-france.pdf',
           image: '/universities/mjm-graphic-design/summer-school/mjm-campus-inspiration.jpg',
           imageAlt: 'MJM France Summer School creative programme',
