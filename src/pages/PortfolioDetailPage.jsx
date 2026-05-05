@@ -6,6 +6,7 @@ import {
   Trophy,
   Star,
   Globe,
+  ChevronDown,
   ChevronRight,
   ExternalLink,
   CalendarDays,
@@ -26,22 +27,12 @@ import { getUniversityDetail } from '../services/contentApi';
 import { resolveMediaUrl } from '../services/apiClient';
 import useScrollIntentCelebration from '../hooks/useScrollIntentCelebration';
 import BackNavButton from '../components/ui/BackNavButton';
-import PageLoader from '../components/ui/PageLoader';
 import Seo from '../components/seo/Seo';
 import { SITE_URL, trimDescription, toAbsoluteUrl } from '../seo/siteMeta';
 import { SITE_CONFIG } from '../config';
 
 const MJM_SUMMER_SCHOOL_HIGHLIGHT = {
-  title: 'MJM France Summer School',
-  city: 'Paris & Lille',
-  dates: '15-26 June 2026',
-  duration: 'Two weeks',
-  fee: '2000Euro Per Student',
-  age: '16 and above',
-  classSize: '15-25 students',
-  mode: 'On-campus & outdoor learning',
-  hours: '36 hours from 10:00 to 18:00',
-  pdf: '/universities/mjm-graphic-design/brochures/mjm-summer-school-france.pdf',
+  city: 'Rennes, France',
   description:
     "Our Summer School in France is a two-week immersive programme combining artistic courses, cultural activities, and language learning. Designed for international students aged 16 and above, the programme blends MJM's 45 years of creative expertise with the unique cultural richness of France.",
   images: [
@@ -102,53 +93,104 @@ const MJM_SUMMER_SCHOOL_HIGHLIGHT = {
     },
   ],
 };
+const AVAILABLE_LOW_QUALITY_BROCHURES = new Set([
+  '/universities/estonian-entrepreneurship-university-of-applied-sciences/brochures/euas-english-booklet-business-it-design-low.pdf',
+  '/universities/mjm-graphic-design/brochures/mjm-paris-london-international-programmes-low.pdf',
+  '/universities/mjm-graphic-design/brochures/mjm-international-master-interior-architecture-eco-design-management-low.pdf',
+  '/universities/mjm-graphic-design/brochures/mjm-summer-school-france-low.pdf',
+]);
+
+const resolveLowQualityPdf = (file = '', explicitLow = '') => {
+  const normalizedExplicit = String(explicitLow || '').trim();
+  if (normalizedExplicit) return normalizedExplicit;
+
+  const normalizedFile = String(file || '').trim();
+  if (!normalizedFile) return '';
+  if (!/\.pdf$/i.test(normalizedFile)) return '';
+
+  const derived = normalizedFile.replace(/\.pdf$/i, '-low.pdf');
+  return AVAILABLE_LOW_QUALITY_BROCHURES.has(derived) ? derived : '';
+};
+
+const getCompressedDownloadName = (downloadName = '') => {
+  const normalizedName = String(downloadName || '').trim();
+  return normalizedName ? normalizedName.replace(/\.pdf$/i, '-compressed.pdf') : true;
+};
+
+function BrochureDownloadMenu({
+  file,
+  lowQualityFile,
+  downloadName,
+  title,
+  buttonClassName,
+  menuClassName = '',
+  menuPlacementClass = 'top-[calc(100%+0.5rem)]',
+  wrapperClassName = 'min-w-0 flex-1 sm:flex-[1_1_8.25rem]',
+}) {
+  if (!file) return null;
+
+  if (!lowQualityFile) {
+    return (
+      <a
+        href={file}
+        download={downloadName || true}
+        aria-label={`Download ${title} PDF`}
+        className={buttonClassName}
+      >
+        <Download className="h-4 w-4" />
+        Download
+      </a>
+    );
+  }
+
+  return (
+    <details className={`group/download relative ${wrapperClassName}`}>
+      <summary
+        aria-label={`Choose download quality for ${title}`}
+        className={`${buttonClassName} cursor-pointer list-none [&::-webkit-details-marker]:hidden`}
+      >
+        <Download className="h-4 w-4" />
+        Download
+        <ChevronDown className="h-3.5 w-3.5 transition-transform duration-200 group-open/download:rotate-180" />
+      </summary>
+      <div
+        className={`absolute left-0 right-0 ${menuPlacementClass} z-30 overflow-hidden rounded-xl border border-border/70 bg-background/95 p-1.5 shadow-[0_18px_38px_rgba(15,23,42,0.16)] backdrop-blur dark:border-white/15 dark:bg-[#0F172A]/96 ${menuClassName}`}
+      >
+        <p className="px-3 pb-1.5 pt-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+          Select Download Quality
+        </p>
+        <a
+          href={file}
+          download={downloadName || true}
+          className="flex items-start gap-2 rounded-lg px-3 py-2 text-left transition-colors hover:bg-muted/70 focus:bg-muted/70 focus:outline-none"
+        >
+          <FileText className="mt-0.5 h-4 w-4 flex-shrink-0 text-primary" />
+          <span className="min-w-0">
+            <span className="block text-sm font-semibold text-foreground">Original Quality</span>
+            <span className="block text-xs leading-snug text-muted-foreground">Full-resolution brochure PDF</span>
+          </span>
+        </a>
+        <a
+          href={lowQualityFile}
+          download={getCompressedDownloadName(downloadName)}
+          className="flex items-start gap-2 rounded-lg px-3 py-2 text-left transition-colors hover:bg-muted/70 focus:bg-muted/70 focus:outline-none"
+        >
+          <Download className="mt-0.5 h-4 w-4 flex-shrink-0 text-primary" />
+          <span className="min-w-0">
+            <span className="block text-sm font-semibold text-foreground">Compressed Version</span>
+            <span className="block text-xs leading-snug text-muted-foreground">Smaller file for faster download</span>
+          </span>
+        </a>
+      </div>
+    </details>
+  );
+}
+
 const MJM_TRACK_CARD_THEME_CLASSES = [
   'border-[#D9D0F7] bg-[linear-gradient(145deg,rgba(255,243,236,0.95)_0%,rgba(247,242,255,0.96)_52%,rgba(236,245,255,0.95)_100%)] dark:border-[#4D3E82] dark:bg-[linear-gradient(145deg,rgba(29,23,56,0.82)_0%,rgba(25,20,48,0.88)_52%,rgba(22,25,44,0.84)_100%)]',
   'border-[#D3E0FF] bg-[linear-gradient(145deg,rgba(239,249,255,0.95)_0%,rgba(247,242,255,0.95)_56%,rgba(255,242,226,0.94)_100%)] dark:border-[#42557F] dark:bg-[linear-gradient(145deg,rgba(20,33,46,0.78)_0%,rgba(28,22,56,0.86)_55%,rgba(40,27,30,0.74)_100%)]',
   'border-[#F2D4DC] bg-[linear-gradient(145deg,rgba(255,240,244,0.94)_0%,rgba(243,243,255,0.96)_52%,rgba(255,246,225,0.95)_100%)] dark:border-[#5A4574] dark:bg-[linear-gradient(145deg,rgba(39,23,44,0.76)_0%,rgba(28,24,58,0.86)_55%,rgba(44,29,24,0.74)_100%)]',
 ];
-const CATALOG_THEME_CLASSES = {
-  euas: {
-    shell:
-      'border-[#CFE5D7] bg-[linear-gradient(135deg,rgba(239,250,244,0.94)_0%,rgba(246,249,255,0.94)_56%,rgba(255,249,231,0.88)_100%)] dark:border-[#31594A] dark:bg-[linear-gradient(135deg,rgba(14,35,31,0.9)_0%,rgba(15,23,42,0.96)_56%,rgba(44,37,18,0.82)_100%)]',
-    accent: 'bg-[#0F7B61] text-white',
-    text: 'text-[#0F7B61] dark:text-[#7EE2BC]',
-    button:
-      'border-[#0F7B61]/25 text-[#0F7B61] hover:bg-[#0F7B61] hover:text-white dark:border-[#7EE2BC]/30 dark:text-[#7EE2BC] dark:hover:bg-[#7EE2BC] dark:hover:text-[#06251D]',
-  },
-  mjmLondon: {
-    shell:
-      'border-[#F5B9B2] bg-[linear-gradient(135deg,rgba(255,239,235,0.96)_0%,rgba(255,246,237,0.9)_45%,rgba(243,247,255,0.94)_100%)] dark:border-[#7C3B46] dark:bg-[linear-gradient(135deg,rgba(56,22,28,0.9)_0%,rgba(45,28,22,0.84)_45%,rgba(18,24,42,0.94)_100%)]',
-    accent: 'bg-[#E8521A] text-white',
-    text: 'text-[#E8521A] dark:text-[#FFB199]',
-    button:
-      'border-[#E8521A]/25 text-[#E8521A] hover:bg-[#E8521A] hover:text-white dark:border-[#FFB199]/35 dark:text-[#FFB199] dark:hover:bg-[#FFB199] dark:hover:text-[#35140F]',
-  },
-  mjmEco: {
-    shell:
-      'border-[#BFDCC9] bg-[linear-gradient(135deg,rgba(239,250,243,0.96)_0%,rgba(246,245,255,0.92)_52%,rgba(255,247,235,0.9)_100%)] dark:border-[#3A6550] dark:bg-[linear-gradient(135deg,rgba(16,42,32,0.9)_0%,rgba(25,22,48,0.92)_52%,rgba(45,31,18,0.82)_100%)]',
-    accent: 'bg-[#2E7D58] text-white',
-    text: 'text-[#2E7D58] dark:text-[#8BE3B2]',
-    button:
-      'border-[#2E7D58]/25 text-[#2E7D58] hover:bg-[#2E7D58] hover:text-white dark:border-[#8BE3B2]/35 dark:text-[#8BE3B2] dark:hover:bg-[#8BE3B2] dark:hover:text-[#082719]',
-  },
-  mjmSummer: {
-    shell:
-      'border-[#D9D0F7] bg-[linear-gradient(135deg,rgba(248,244,255,0.96)_0%,rgba(255,242,232,0.9)_54%,rgba(239,247,255,0.92)_100%)] dark:border-[#584489] dark:bg-[linear-gradient(135deg,rgba(30,21,58,0.92)_0%,rgba(49,28,23,0.82)_54%,rgba(18,27,45,0.9)_100%)]',
-    accent: 'bg-primary text-primary-foreground',
-    text: 'text-primary',
-    button:
-      'border-primary/25 text-primary hover:bg-primary hover:text-primary-foreground dark:border-primary/40',
-  },
-  default: {
-    shell:
-      'border-border/60 bg-[linear-gradient(135deg,rgba(255,255,255,0.94)_0%,rgba(246,248,251,0.94)_100%)] dark:bg-[linear-gradient(135deg,rgba(17,24,39,0.9)_0%,rgba(15,23,42,0.96)_100%)]',
-    accent: 'bg-primary text-primary-foreground',
-    text: 'text-primary',
-    button:
-      'border-primary/25 text-primary hover:bg-primary hover:text-primary-foreground dark:border-primary/40',
-  },
-};
 const ICN_PREMIUM_SPOTLIGHT = {
   subtitle: 'ICN Official Profile',
   heading: 'ICN Creative Business School',
@@ -255,7 +297,6 @@ export default function PortfolioDetailPage() {
   const [portfolio, setPortfolio] = useState(null);
   const [allPortfolios, setAllPortfolios] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [activeCatalogDetails, setActiveCatalogDetails] = useState(null);
   const mjmSpotlightRef = useRef(null);
   const catalogDocumentsRef = useRef(null);
 
@@ -334,6 +375,8 @@ export default function PortfolioDetailPage() {
     const controller = new AbortController();
 
     const loadData = async () => {
+      setIsLoading(true);
+      setLoadError('');
       try {
         const localData = await getPortfolioById(id);
         const detailSlug = localData?.slug || id;
@@ -358,6 +401,7 @@ export default function PortfolioDetailPage() {
       } catch (error) {
         if (isActive) {
           console.error('Error loading portfolio:', error);
+          setLoadError('Unable to load this institution profile right now. Please try again.');
         }
       } finally {
         if (isActive) {
@@ -372,12 +416,16 @@ export default function PortfolioDetailPage() {
       isActive = false;
       controller.abort();
     };
-  }, [id]);
+  }, [id, reloadToken]);
 
   const normalizedSlug = String(portfolio?.slug || '').toLowerCase();
   const normalizedTitle = String(portfolio?.title || '').toLowerCase();
   const isMjmGraphicDesignProfile =
     normalizedSlug === 'mjm-graphic-design' || normalizedTitle.includes('mjm graphic design');
+  const isEuasProfile =
+    normalizedSlug === 'estonian-entrepreneurship-university-of-applied-sciences' ||
+    normalizedTitle.includes('estonian entrepreneurship university of applied sciences') ||
+    normalizedTitle.includes('euas');
   const isIcnBusinessSchoolProfile =
     normalizedSlug === 'icn-business-school' || normalizedTitle.includes('icn business school');
   const isEpitechProfile =
@@ -387,58 +435,65 @@ export default function PortfolioDetailPage() {
     normalizedTitle.includes('eit innoenergy') ||
     normalizedTitle.includes('innoenergy masters');
   const usesDarkLogoBadge = isIcnBusinessSchoolProfile || isEpitechProfile;
+  const catalogDocuments = Array.isArray(portfolio?.details?.catalogs)
+    ? portfolio.details.catalogs
+        .map((item) => {
+          if (!item || typeof item !== 'object') return null;
+          const title = String(item.title || '').trim();
+          const file = String(item.file || '').trim();
+
+          if (!title || !file) return null;
+
+          return {
+            ...item,
+            title,
+            file,
+            eyebrow: String(item.eyebrow || '').trim(),
+            description: String(item.description || '').trim(),
+            imageAlt: String(item.imageAlt || title).trim(),
+            secondaryImageAlt: String(item.secondaryImageAlt || '').trim(),
+          };
+        })
+        .filter(Boolean)
+        .filter((item) => {
+          if (!isMjmGraphicDesignProfile) return true;
+
+          const title = String(item?.title || '').toLowerCase();
+          const file = String(item?.file || '').toLowerCase();
+          const isSummerSchoolDocument =
+            title.includes('summer school') || file.includes('summer-school');
+
+          return !isSummerSchoolDocument;
+        })
+    : [];
+
+  useScrollIntentCelebration({
+    enabled: isMjmGraphicDesignProfile,
+    targetRef: mjmSpotlightRef,
+  });
+
+  useScrollIntentCelebration({
+    enabled: isEuasProfile && catalogDocuments.length > 0,
+    targetRef: catalogDocumentsRef,
+  });
 
   useEffect(() => {
-    const section = mjmSpotlightRef.current;
-    if (!isMjmGraphicDesignProfile || !section || typeof window === 'undefined') return undefined;
+    if (!activeCatalogDetails || typeof document === 'undefined') return undefined;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
 
-    const fireMjmPopper = () => {
-      confetti({
-        angle: 55,
-        spread: 80,
-        particleCount: 120,
-        startVelocity: 45,
-        gravity: 1.2,
-        ticks: 280,
-        origin: { x: 0.0, y: 1.0 },
-        colors: ['#FFD700', '#FF69B4', '#00FFFF', '#ADFF2F', '#FF6347', '#ffffff'],
-        disableForReducedMotion: true,
-      });
-
-      window.setTimeout(() => {
-        confetti({
-          angle: 125,
-          spread: 80,
-          particleCount: 120,
-          startVelocity: 45,
-          gravity: 1.2,
-          ticks: 280,
-          origin: { x: 1.0, y: 1.0 },
-          colors: ['#FFD700', '#FF69B4', '#00FFFF', '#ADFF2F', '#FF6347', '#ffffff'],
-          disableForReducedMotion: true,
-        });
-      }, 150);
+    const handleEscape = (event) => {
+      if (event.key === 'Escape') {
+        setActiveCatalogDetails(null);
+      }
     };
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            if (mjmConfettiFiredInViewRef.current) return;
-            mjmConfettiFiredInViewRef.current = true;
-            fireMjmPopper();
-            return;
-          }
-
-          mjmConfettiFiredInViewRef.current = false;
-        });
-      },
-      { threshold: 0.25, rootMargin: '0px' }
-    );
-
-    observer.observe(section);
-    return () => observer.disconnect();
-  }, [isMjmGraphicDesignProfile]);
+    window.addEventListener('keydown', handleEscape);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener('keydown', handleEscape);
+    };
+  }, [activeCatalogDetails]);
 
   if (isLoading) {
     return (
@@ -448,7 +503,7 @@ export default function PortfolioDetailPage() {
           description="Loading institution profile and partnership details."
           path={`/portfolio/${id || ''}`}
         />
-        <PageLoader />
+        <div className="w-12 h-12 border-4 border-muted border-t-primary rounded-full animate-spin" />
       </div>
     );
   }
@@ -463,6 +518,21 @@ export default function PortfolioDetailPage() {
           noindex
         />
         <h1 className="text-4xl font-bold mb-4">Portfolio Not Found</h1>
+        {loadError ? (
+          <p className="mb-4 max-w-xl px-4 text-center text-muted-foreground">{loadError}</p>
+        ) : null}
+        {loadError ? (
+          <button
+            type="button"
+            onClick={() => {
+              setIsLoading(true);
+              setReloadToken((prev) => prev + 1);
+            }}
+            className="mb-4 rounded-lg bg-primary px-5 py-2.5 font-semibold text-primary-foreground transition-colors hover:bg-secondary"
+          >
+            Retry
+          </button>
+        ) : null}
         <BackNavButton label="Back to Portfolio" onClick={() => navigate('/portfolio')} />
       </div>
     );
@@ -1229,104 +1299,25 @@ export default function PortfolioDetailPage() {
                     {MJM_SUMMER_SCHOOL_HIGHLIGHT.description}
                   </p>
 
-                  <div className="mt-5 grid grid-cols-1 gap-2.5 sm:grid-cols-2">
-                    {[
-                      {
-                        label: 'Destinations',
-                        value: MJM_SUMMER_SCHOOL_HIGHLIGHT.city,
-                        icon: Globe,
-                      },
-                      {
-                        label: 'Dates',
-                        value: MJM_SUMMER_SCHOOL_HIGHLIGHT.dates,
-                        icon: CalendarDays,
-                      },
-                      {
-                        label: 'Duration',
-                        value: MJM_SUMMER_SCHOOL_HIGHLIGHT.duration,
-                        icon: Clock3,
-                      },
-                      {
-                        label: 'Class Size',
-                        value: MJM_SUMMER_SCHOOL_HIGHLIGHT.classSize,
-                        icon: Trophy,
-                      },
-                      {
-                        label: 'Minimum Age',
-                        value: MJM_SUMMER_SCHOOL_HIGHLIGHT.age,
-                        icon: Star,
-                      },
-                      {
-                        label: 'Study Mode',
-                        value: MJM_SUMMER_SCHOOL_HIGHLIGHT.mode,
-                        icon: GraduationCap,
-                      },
-                      {
-                        label: 'Programme Hours',
-                        value: MJM_SUMMER_SCHOOL_HIGHLIGHT.hours,
-                        icon: Clock3,
-                      },
-                      {
-                        label: 'Tuition Package',
-                        value: MJM_SUMMER_SCHOOL_HIGHLIGHT.fee,
-                        icon: Briefcase,
-                      },
-                    ].map(({ label, value, icon: Icon }, index) => (
-                      <motion.div
-                        key={label}
-                        className="rounded-lg border border-[#D8D2E8] bg-white/75 px-3 py-2.5 shadow-[0_10px_24px_rgba(15,23,42,0.06)] dark:border-white/10 dark:bg-white/[0.07]"
-                        whileHover={{ y: -3, scale: 1.01 }}
-                        transition={{ duration: 0.2, delay: index * 0.03 }}
-                      >
-                        <dt className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
-                          <Icon className="h-3.5 w-3.5 text-[#0F766E] dark:text-[#5EEAD4]" />
-                          {label}
-                        </dt>
-                        <dd className="mt-1 font-semibold text-foreground">{value}</dd>
-                      </motion.div>
-                    ))}
-                  </div>
-
-                  <div className="mt-4 flex flex-wrap gap-2.5">
-                    <a
-                      href={MJM_SUMMER_SCHOOL_HIGHLIGHT.pdf}
-                      download
-                      className="group inline-flex items-center gap-2 rounded-lg border border-[#2D1B69]/25 bg-white/70 px-4 py-2 text-sm font-semibold text-[#2D1B69] transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#F2EDFF] hover:shadow-[0_12px_24px_rgba(45,27,105,0.16)] dark:border-white/15 dark:bg-white/10 dark:text-white dark:hover:bg-white/15"
-                    >
-                      <FileText className="h-4 w-4 transition-transform duration-300 group-hover:-rotate-6 group-hover:scale-110" />
-                      Download PDF
-                    </a>
-                    <a
-                      href={MJM_SUMMER_SCHOOL_HIGHLIGHT.pdf}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="group inline-flex items-center gap-2 rounded-lg bg-[linear-gradient(92deg,#2D1B69_0%,#0F766E_54%,#E8521A_100%)] px-4 py-2 text-sm font-semibold text-white transition-all duration-300 hover:-translate-y-0.5 hover:brightness-110 hover:shadow-[0_14px_32px_rgba(45,27,105,0.26)]"
-                    >
-                      Open PDF
-                      <ExternalLink className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-                    </a>
+                  <div className="mt-6 rounded-2xl border border-[#D8CDEE] bg-[linear-gradient(145deg,rgba(255,255,255,0.82)_0%,rgba(247,243,255,0.88)_54%,rgba(255,236,224,0.82)_100%)] p-5 shadow-[0_14px_34px_rgba(25,18,53,0.08)] dark:border-[#443A6E] dark:bg-[linear-gradient(145deg,rgba(28,22,52,0.84)_0%,rgba(18,15,37,0.9)_54%,rgba(30,23,42,0.82)_100%)]">
+                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                      Featured Program
+                    </p>
+                    <h4 className="mt-2 text-2xl font-semibold text-foreground">
+                      {MJM_SUMMER_SCHOOL_HIGHLIGHT.aiBusiness.title}
+                    </h4>
+                    <div className="mt-4 space-y-2.5 text-sm text-muted-foreground">
+                      <div className="flex items-start gap-2.5">
+                        <span className="font-semibold text-foreground">Course Fees:</span>
+                        <span>{MJM_SUMMER_SCHOOL_HIGHLIGHT.aiBusiness.fee}</span>
+                      </div>
+                      <div className="flex items-start gap-2.5">
+                        <span className="font-semibold text-foreground">Deadline to Apply:</span>
+                        <span>{MJM_SUMMER_SCHOOL_HIGHLIGHT.aiBusiness.deadline}</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </div>
-
-              <div className="mt-5 grid grid-cols-1 gap-4 lg:grid-cols-[0.9fr_1.1fr]">
-                <motion.div
-                  className="rounded-xl border border-[#D8D2E8] bg-white/60 p-4 dark:border-white/10 dark:bg-white/[0.05]"
-                  whileHover={{ y: -3 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-                    What's Included?
-                  </p>
-                  <div className="mt-3 grid grid-cols-1 gap-2 text-sm text-muted-foreground sm:grid-cols-2 lg:grid-cols-1">
-                    {MJM_SUMMER_SCHOOL_HIGHLIGHT.included.map((item) => (
-                      <div key={item} className="flex items-start gap-2">
-                        <BadgeCheck className="mt-0.5 h-4 w-4 flex-shrink-0 text-[#0F766E]" />
-                        <span>{item}</span>
-                      </div>
-                    ))}
-                  </div>
-                </motion.div>
 
                 <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
                   {MJM_SUMMER_SCHOOL_HIGHLIGHT.tracks.map((track, index) => (
@@ -1365,122 +1356,37 @@ export default function PortfolioDetailPage() {
             whileInView="visible"
             viewport={{ once: true }}
           >
-            <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
-              <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-                  Official PDF Brochures
-                </p>
-                <h3 className="mt-1 flex items-center gap-2 text-2xl font-bold text-foreground">
-                  <FileText className="h-5 w-5 text-primary" />
-                  Program Documents
-                </h3>
-              </div>
-            </div>
-            <div
-              className={`grid grid-cols-1 gap-4 ${
-                catalogDocuments.length === 1 ? 'max-w-3xl' : 'xl:grid-cols-2'
-              }`}
-            >
-              {catalogDocuments.map((catalog) => {
-                const catalogTheme = CATALOG_THEME_CLASSES[catalog.theme] || CATALOG_THEME_CLASSES.default;
-
-                return (
-                  <article
-                    key={`${catalog.title}-${catalog.file}`}
-                    className={`group relative grid overflow-hidden rounded-2xl border shadow-[0_16px_36px_rgba(15,23,42,0.08)] transition-all hover:-translate-y-0.5 hover:shadow-[0_20px_44px_rgba(15,23,42,0.13)] md:grid-cols-[minmax(11rem,0.42fr)_minmax(0,0.58fr)] ${catalogTheme.shell}`}
-                  >
-                    <div className="pointer-events-none absolute inset-0 opacity-[0.08] [background-image:linear-gradient(90deg,currentColor_1px,transparent_1px),linear-gradient(180deg,currentColor_1px,transparent_1px)] [background-size:22px_22px]" />
-                    {catalog.image ? (
-                      <div className="relative min-h-48 overflow-hidden bg-muted md:min-h-full md:min-w-44">
-                        <img
-                          src={catalog.image}
-                          alt={catalog.imageAlt || catalog.title}
-                          loading="lazy"
-                          decoding="async"
-                          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                        />
-                        <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(15,23,42,0)_38%,rgba(15,23,42,0.58)_100%)]" />
-                        {catalog.secondaryImage && (
-                          <img
-                            src={catalog.secondaryImage}
-                            alt={catalog.secondaryImageAlt || ''}
-                            loading="lazy"
-                            decoding="async"
-                            className="absolute right-3 top-3 h-16 w-16 rounded-xl border border-white/70 object-cover shadow-[0_10px_24px_rgba(15,23,42,0.28)] sm:h-20 sm:w-20"
-                          />
-                        )}
-                        {catalog.eyebrow && (
-                          <span className={`absolute bottom-3 left-3 rounded-full px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] ${catalogTheme.accent}`}>
-                            {catalog.eyebrow}
-                          </span>
-                        )}
-                      </div>
-                    ) : (
-                      <div className="relative flex min-h-40 items-center justify-center bg-primary/10">
-                        <FileText className="h-12 w-12 text-primary" />
-                      </div>
-                    )}
-                    <div className="relative flex min-h-full min-w-0 flex-col p-4 sm:p-5">
-                      {catalog.eyebrow && (
-                        <p className={`text-xs font-semibold uppercase tracking-[0.16em] ${catalogTheme.text}`}>
-                          {catalog.eyebrow}
-                        </p>
-                      )}
-                      <h4 className="mt-2 text-lg font-bold leading-snug text-foreground break-words">
-                        {catalog.title}
-                      </h4>
-                      {catalog.description && (
-                        <p className="mt-3 break-words text-sm leading-relaxed text-muted-foreground">{catalog.description}</p>
-                      )}
-                      {Array.isArray(catalog.facts) && catalog.facts.length > 0 && (
-                        <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-2">
-                          {catalog.facts.map((fact) => (
-                            <span
-                              key={fact}
-                              className="min-w-0 rounded-lg border border-border/55 bg-background/62 px-3 py-2 text-xs font-medium leading-relaxed text-foreground/85 break-words dark:bg-background/20"
-                            >
-                              {fact}
-                            </span>
-                          ))}
-                        </div>
-                      )}
-                      <div className="mt-5 flex flex-col gap-2 pt-1 sm:flex-row sm:flex-wrap">
-                        {catalog.detailPanel && (
-                          <button
-                            type="button"
-                            onClick={() => setActiveCatalogDetails(catalog)}
-                            aria-label={`Open structured details for ${catalog.title}`}
-                            className={`inline-flex min-w-0 flex-1 items-center justify-center gap-2 rounded-xl border bg-background/75 px-3 py-2 text-sm font-semibold transition-colors sm:flex-[1_1_8.25rem] ${catalogTheme.button}`}
-                          >
-                            <Building2 className="h-4 w-4" />
-                            More Info
-                          </button>
-                        )}
-                        <a
-                          href={catalog.file}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          aria-label={`View ${catalog.title} PDF`}
-                          className={`inline-flex min-w-0 flex-1 items-center justify-center gap-2 rounded-xl border bg-background/75 px-3 py-2 text-sm font-semibold transition-colors sm:flex-[1_1_8.25rem] ${catalogTheme.button}`}
-                        >
-                          <Eye className="h-4 w-4" />
-                          View PDF
-                          <ExternalLink className="h-3.5 w-3.5" />
-                        </a>
-                        <a
-                          href={catalog.file}
-                          download={catalog.downloadName || true}
-                          aria-label={`Download ${catalog.title} PDF`}
-                          className={`inline-flex min-w-0 flex-1 items-center justify-center gap-2 rounded-xl border bg-background/75 px-3 py-2 text-sm font-semibold transition-colors sm:flex-[1_1_8.25rem] ${catalogTheme.button}`}
-                        >
-                          <Download className="h-4 w-4" />
-                          Download PDF
-                        </a>
-                      </div>
-                    </div>
-                  </article>
-                );
-              })}
+            <h3 className="text-2xl font-bold text-foreground mb-2 flex items-center gap-2">
+              <FileText className="w-5 h-5 text-primary" />
+              Official Program Catalogs
+            </h3>
+            <p className="text-sm text-muted-foreground mb-5">
+              Download the official university catalogs for complete program structures, curriculum information, and policy details.
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {catalogDocuments.map((catalog) => (
+                <a
+                  key={`${catalog.title || 'catalog'}-${catalog.file}`}
+                  href={catalog.file}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="rounded-xl border border-border/50 bg-background/80 p-4 transition-all hover:border-primary/40 hover:-translate-y-0.5"
+                >
+                  <p className="text-xs font-semibold uppercase tracking-[0.12em] text-primary mb-1">
+                    PDF Catalog
+                  </p>
+                  <h4 className="text-base font-semibold text-foreground mb-2">
+                    {catalog.title || 'Program Catalog'}
+                  </h4>
+                  {catalog.description && (
+                    <p className="text-sm text-muted-foreground mb-3">{catalog.description}</p>
+                  )}
+                  <span className="inline-flex items-center gap-2 text-sm font-semibold text-primary">
+                    Open PDF
+                    <ExternalLink className="w-4 h-4" />
+                  </span>
+                </a>
+              ))}
             </div>
           </motion.div>
         )}
