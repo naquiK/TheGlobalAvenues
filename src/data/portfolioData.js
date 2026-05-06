@@ -98,6 +98,77 @@ export const portfolioData = [
       eligibility:
         'Admission is program-specific; EUAS admissions evaluate academic profile and country-based visa requirements per intake.',
       scholarshipAvailable: true,
+      catalogs: [
+        {
+          title: 'Shape your future in Business, IT & Design',
+          eyebrow: 'EUAS Booklet',
+          description:
+            'Estonian Entrepreneurship University of Applied Sciences is the largest private university in Estonia, with innovative and collaborative learning in business, IT, people management, and arts.',
+          file: '/universities/estonian-entrepreneurship-university-of-applied-sciences/brochures/euas-english-booklet-business-it-design.pdf',
+          fileLow:
+            '/universities/estonian-entrepreneurship-university-of-applied-sciences/brochures/euas-english-booklet-business-it-design-low.pdf',
+          downloadName: 'euas-english-booklet-business-it-design.pdf',
+          image:
+            '/universities/estonian-entrepreneurship-university-of-applied-sciences/brochures/euas-tallinn-campus.jpg',
+          imageAlt: 'Tallinn Academic Building',
+          secondaryImage:
+            '/universities/estonian-entrepreneurship-university-of-applied-sciences/brochures/euas-booklet-cover.jpg',
+          secondaryImageAlt: 'Shape your future in Business, IT & Design',
+          theme: 'euas',
+          facts: [
+            'Bachelor: 3 years / 180 ECTS',
+            'Master: 2 years / 120 ECTS',
+            'Tallinn Academic Building',
+            'Ülemiste City'
+          ],
+          detailPanel: {
+            heading: 'EUAS Booklet Snapshot',
+            source: 'Structured from the official EUAS English brochure',
+            keyStats: [
+              { label: 'Institution', value: "Estonia's largest private university of applied sciences" },
+              { label: 'Location', value: 'Tallinn Academic Building, Ulemiste City' },
+              { label: 'Guest Lecturers', value: '200+ industry guest lecturers' },
+              { label: 'Curriculum', value: 'Institutionally accredited and industry-collaborative' }
+            ],
+            sections: [
+              {
+                title: 'Programs in English',
+                points: [
+                  'Creativity and Business Innovations, BA - EUR 8,380/year',
+                  'Creativity and Business Innovations: Joint Programme, BA - EUR 6,760/year',
+                  'Game Design and Development, BA - EUR 8,380/year',
+                  'Software Development and Entrepreneurship, BSc - EUR 8,380/year',
+                  'International Business Administration, MBA - EUR 8,740/year'
+                ]
+              },
+              {
+                title: 'Program Structure',
+                points: [
+                  "Bachelor's programs: 3 years (180 ECTS)",
+                  "Master's programs: 2 years (120 ECTS)",
+                  'Small-group learning designed for personalized support'
+                ]
+              },
+              {
+                title: 'Admissions Snapshot',
+                points: [
+                  'Undergraduate pathway: high school completion with 60% marks or equivalent',
+                  'Postgraduate pathway: first division undergraduate degree',
+                  'Non-EU applicants should follow country-specific document guidance on the university site'
+                ]
+              },
+              {
+                title: 'International Exposure',
+                points: [
+                  'Erasmus+ exchange options from short mobility to full academic year',
+                  'Internship and networking ecosystem inside Ülemiste City business campus',
+                  'Research partnerships with private and public sector organizations'
+                ]
+              }
+            ]
+          }
+        }
+      ],
       studentTestimonials: [
         {
           name: 'Rahul Mehta',
@@ -153,14 +224,24 @@ export const portfolioData = [
       catalogs: [
         {
           title: 'School of Medicine Catalog - January 5, 2026',
+          eyebrow: 'School of Medicine',
+          theme: 'sguMedicine',
+          coverLabel: 'MD Program PDF',
+          coverTitle: 'Medicine Catalog',
           description:
             'Official SGU School of Medicine catalog covering MD tracks, curriculum, policies, and student support.',
+          facts: ['MD tracks and curriculum', 'Academic policies', 'Student support'],
           file: '/universities/st-georges-university/brochures/sgu-school-of-medicine-catalog-jan-2026.pdf'
         },
         {
           title: 'School of Veterinary Medicine Catalog - January 5, 2026',
+          eyebrow: 'School of Veterinary Medicine',
+          theme: 'sguVeterinary',
+          coverLabel: 'DVM Program PDF',
+          coverTitle: 'Veterinary Catalog',
           description:
             'Official SGU School of Veterinary Medicine catalog detailing DVM pathways, accreditation context, and academic policies.',
+          facts: ['DVM pathways', 'Accreditation context', 'Academic policies'],
           file: '/universities/st-georges-university/brochures/sgu-school-of-veterinary-medicine-catalog-jan-2026.pdf'
         }
       ],
@@ -354,7 +435,7 @@ export const portfolioData = [
     slug: 'mjm-graphic-design',
     category: 'Design & Creative',
     country: 'France',
-    image: '/universities/mjm-graphic-design-hero.jpg',
+    image: '/universities/mjm-graphic-design/summer-school/mjm-summer-school-cover.jpg',
     logo: '/universities/mjm-graphic-design-logo.ico',
     studentsPlaced: 2500,
     programs: 5,
@@ -388,6 +469,201 @@ export const portfolioData = [
       scholarshipAvailable: true,
       staffQuality: 'All courses taught by working professionals',
       practicalFocus: '70% Practice, 30% Theory',
+      catalogs: [
+        {
+          title: 'MJM International Programmes | Paris & London',
+          eyebrow: 'Paris & London',
+          description:
+            'Central Paris, taught in English, international and French students welcome: Bachelor in Graphic Design, Bachelor in Interior Architecture, Bachelor in Fashion Design.',
+          file: '/universities/mjm-graphic-design/brochures/mjm-paris-london-international-programmes.pdf',
+          fileLow:
+            '/universities/mjm-graphic-design/brochures/mjm-paris-london-international-programmes-low.pdf',
+          downloadName: 'mjm-paris-london-international-programmes.pdf',
+          image: '/universities/mjm-graphic-design/brochures/mjm-paris-london-programmes-cover.jpg',
+          imageAlt: 'MJM International Programmes',
+          theme: 'mjmLondon',
+          facts: [
+            'September 2026 entry',
+            'Full time: 3 years',
+            'MJM Paris',
+            '180 ECTS'
+          ],
+          detailPanel: {
+            heading: 'MJM International Programmes Snapshot',
+            source: 'Structured from the official MJM international programmes brochure',
+            keyStats: [
+              { label: 'Level', value: 'Undergraduate bachelor pathways' },
+              { label: 'Duration', value: '3 years full time' },
+              { label: 'Credits', value: '180 ECTS' },
+              { label: 'Language', value: 'English-taught programs' }
+            ],
+            sections: [
+              {
+                title: 'Bachelor Pathways',
+                points: [
+                  'Bachelor in Graphic Design',
+                  'Bachelor in Interior Architecture',
+                  'Bachelor in Fashion Design'
+                ]
+              },
+              {
+                title: 'Program Format',
+                points: [
+                  'September 2026 entry',
+                  'Central Paris academic environment',
+                  'International and French students welcome',
+                  'Practice-led learning through studios, workshops, and specialist digital facilities'
+                ]
+              },
+              {
+                title: 'Learning Areas',
+                points: [
+                  'Visual communication, typography, layout, and editorial design',
+                  'Branding, visual identity, digital design, and UX/UI fundamentals',
+                  'Interior space planning, CAD, 3D modelling, and sustainable design thinking',
+                  'Fashion concept development, materials exploration, and creative production'
+                ]
+              },
+              {
+                title: 'Application Flow',
+                points: [
+                  'Application submission and interview stage',
+                  'Offer letter and pre-enrolment steps',
+                  'Tuition fee payment and administrative documentation'
+                ]
+              }
+            ]
+          }
+        },
+        {
+          title: 'International Masters in Interior Architecture and Eco Design Management',
+          eyebrow: 'Eco Design Master',
+          description:
+            'Master the art of eco-conscious interior architecture and lead impactful global projects.',
+          file: '/universities/mjm-graphic-design/brochures/mjm-international-master-interior-architecture-eco-design-management.pdf',
+          fileLow:
+            '/universities/mjm-graphic-design/brochures/mjm-international-master-interior-architecture-eco-design-management-low.pdf',
+          downloadName: 'mjm-international-master-interior-architecture-eco-design-management.pdf',
+          image: '/universities/mjm-graphic-design/brochures/mjm-eco-design-master-cover.jpg',
+          imageAlt: 'Eco-conscious architecture',
+          theme: 'mjmEco',
+          facts: [
+            '2 years',
+            'Back-to-school: September-October',
+            "Bachelor's degree or equivalent",
+            'Training by active professionals'
+          ],
+          detailPanel: {
+            heading: 'Eco Design Master Snapshot',
+            source: 'Structured from the official MJM international master brochure',
+            keyStats: [
+              { label: 'Level', value: 'International master program' },
+              { label: 'Duration', value: '2 years' },
+              { label: 'Start', value: 'September-October back-to-school sessions' },
+              { label: 'Training', value: 'Delivered by active professionals' }
+            ],
+            sections: [
+              {
+                title: 'Program Overview',
+                points: [
+                  'English-taught pathway in sustainable interior architecture and project management',
+                  'Prepares students for leadership roles in sustainable design',
+                  'Balances creativity, advanced technical knowledge, and eco-conscious strategy'
+                ]
+              },
+              {
+                title: 'Program Objectives',
+                points: [
+                  'Develop leaders in sustainable interior architecture',
+                  'Master eco-design principles and advanced project tools',
+                  'Apply bioclimatic design and eco-conscious strategies',
+                  'Manage resources, budgets, timelines, teams, and client collaboration'
+                ]
+              },
+              {
+                title: 'Curriculum Focus',
+                points: [
+                  'Year 1: energy renovation, BIM training, materials innovation, site visits, and workshops',
+                  'Year 2: strategic leadership, bioclimatic architecture, branding, and capstone project',
+                  'Tools include BIM, 3D rendering, and energy analysis'
+                ]
+              },
+              {
+                title: 'Career Directions',
+                points: [
+                  'Interior Architect for sustainable interior projects',
+                  'Sustainability Consultant for eco-friendly design strategies',
+                  'Project Manager for renovation and design projects'
+                ]
+              }
+            ]
+          }
+        },
+        {
+          title: 'MJM France Summer School',
+          eyebrow: 'Summer School',
+          description:
+            "Our Summer School in France is a two-week immersive programme combining artistic courses, cultural activities, and language learning.",
+          file: '/universities/mjm-graphic-design/brochures/mjm-summer-school-france.pdf',
+          fileLow: '/universities/mjm-graphic-design/brochures/mjm-summer-school-france-low.pdf',
+          downloadName: 'mjm-summer-school-france.pdf',
+          image: '/universities/mjm-graphic-design/summer-school/mjm-campus-inspiration.jpg',
+          imageAlt: 'MJM France Summer School creative programme',
+          theme: 'mjmSummer',
+          facts: [
+            'Paris & Lille',
+            '15-26 June 2026',
+            '16 and above',
+            '15-25 students'
+          ],
+          detailPanel: {
+            heading: 'MJM France Summer School Snapshot',
+            source: 'Structured from the official MJM France Summer School brochure',
+            keyStats: [
+              { label: 'Destinations', value: 'Paris and Lille' },
+              { label: 'Dates', value: '15-26 June 2026' },
+              { label: 'Duration', value: 'Two weeks' },
+              { label: 'Class Size', value: '15-25 students' }
+            ],
+            sections: [
+              {
+                title: 'Program Experience',
+                points: [
+                  'Two-week creative immersion through art, culture, and contemporary design',
+                  'Hands-on workshops, guided cultural visits, and creative projects',
+                  'Designed for international students aged 16 and above'
+                ]
+              },
+              {
+                title: 'Creative Courses',
+                points: [
+                  'Drawing and illustration',
+                  'Colour and composition',
+                  'Perspective and volume',
+                  'Creative expression and mixed media'
+                ]
+              },
+              {
+                title: 'Cultural Activities',
+                points: [
+                  'Guided experiences across Lille and Paris',
+                  'Visits connected to museums, monuments, and creative districts',
+                  'Outdoor creative labs such as sketching, photo challenges, cafe drawing, and visual journaling'
+                ]
+              },
+              {
+                title: 'Included Support',
+                points: [
+                  'English teaching and activities',
+                  'Accommodation and student support',
+                  'Language classes and cultural visits',
+                  'Certificate of completion'
+                ]
+              }
+            ]
+          }
+        }
+      ],
       studentTestimonials: [
         {
           name: 'Neha Gupta',

@@ -121,6 +121,13 @@ your-project/
 - Smooth scroll animation
 - Appears/disappears based on scroll position
 
+### 9. **Portfolio Brochure Cards**
+- EUAS and MJM brochure PDFs are stored under university-specific `public/universities/.../brochures/` folders with normalized filenames.
+- Brochure cards are configured in `src/data/portfolioData.js` and rendered in `src/pages/PortfolioDetailPage.jsx`.
+- Each card uses PDF-derived title, description, facts, and extracted brochure imagery.
+- View actions open in a separate tab with `rel="noopener noreferrer"`; download actions use the browser `download` attribute.
+- A lead form gate is not implemented because frontend-only gating cannot secure PDF access. Use a backend or trusted form service before protecting brochure files.
+
 ---
 
 ## 🎨 Design System

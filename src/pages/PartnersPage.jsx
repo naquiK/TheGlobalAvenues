@@ -4,6 +4,8 @@ import { Link } from 'react-router-dom';
 import { Users, Award, Building2, Globe, CheckCircle } from 'lucide-react';
 import { industryPartners, schoolCounsellors, educationAgents, universities } from '../data/partnersData';
 import Seo from '../components/seo/Seo';
+import LazySection from '../components/ui/LazySection';
+import { CardGridSkeleton } from '../components/ui/SkeletonLayouts';
 
 export default function PartnersPage() {
   const [activeTab, setActiveTab] = useState('universities');
@@ -82,6 +84,7 @@ export default function PartnersPage() {
           })}
         </motion.div>
 
+        <LazySection fallback={<CardGridSkeleton count={4} columns="md:grid-cols-2 lg:grid-cols-4" showHeading={false} />}>
         <motion.div key={activeTab} variants={tabVariants} initial="hidden" animate="visible">
           {activeTab === 'universities' && (
             <motion.div variants={containerVariants} initial="hidden" animate="visible" className="space-y-12">
@@ -222,6 +225,7 @@ export default function PartnersPage() {
             </motion.div>
           )}
         </motion.div>
+        </LazySection>
       </div>
     </div>
   );

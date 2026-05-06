@@ -6,13 +6,25 @@ import {
   ChevronRight,
   Clock3,
   Euro,
+  FileText,
   Flame,
   MapPin,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import useScrollAnimation from '../../hooks/useScrollAnimation';
 
-const spotlightProgram = {
+const MJM_SUMMER_SCHOOL_PDF =
+  '/universities/mjm-graphic-design/brochures/mjm-summer-school-france.pdf';
+
+const detailIcons = {
+  calendar: CalendarDays,
+  euro: Euro,
+  file: FileText,
+  map: MapPin,
+  time: Clock3,
+};
+
+const aiBusinessSpotlightProgram = {
   title: 'AI Business Summer School',
   city: 'Rennes, France',
   fee: 'Between EUR 1,250 and EUR 3,500',
@@ -21,33 +33,110 @@ const spotlightProgram = {
     'These summer opportunities allow students to study in France, gain practical skills, experience life in Rennes, and discover our learning environment.',
 };
 
-const shortCourses = [
+const aiBusinessShortCourses = [
   {
+    label: 'Short Course',
     title: 'Digital Marketing and Branding',
-    dates: 'June 1 - June 12, 2026',
-    fee: 'EUR 1,640',
-    deadline: 'April 30, 2026',
+    details: [
+      { icon: 'calendar', text: 'June 1 - June 12, 2026' },
+      { icon: 'euro', text: 'EUR 1,640' },
+      { icon: 'time', text: 'Apply by April 30, 2026' },
+    ],
   },
   {
+    label: 'Short Course',
     title: 'Sustainable Business',
-    dates: 'June 23 - July 3, 2026',
-    fee: 'EUR 1,640',
-    deadline: 'April 30, 2026',
+    details: [
+      { icon: 'calendar', text: 'June 23 - July 3, 2026' },
+      { icon: 'euro', text: 'EUR 1,640' },
+      { icon: 'time', text: 'Apply by April 30, 2026' },
+    ],
   },
   {
+    label: 'Short Course',
     title: 'Cross-Cultural Management',
-    dates: 'July 20 - July 29, 2026',
-    fee: 'EUR 1,640',
-    deadline: 'April 30, 2026',
+    details: [
+      { icon: 'calendar', text: 'July 20 - July 29, 2026' },
+      { icon: 'euro', text: 'EUR 1,640' },
+      { icon: 'time', text: 'Apply by April 30, 2026' },
+    ],
   },
 ];
-const seasonalProgramSlides = Array.from({ length: 3 }, (_, index) => ({
-  id: `short-term-program-${index + 1}`,
-  spotlightProgram: {
-    ...spotlightProgram,
+
+const mjmSummerSchoolHighlights = [
+  {
+    label: 'Creative Module',
+    title: 'Creative Arts Workshops',
+    details: [
+      { icon: 'calendar', text: 'June 15 - June 26, 2026' },
+      { icon: 'time', text: '36 programme hours' },
+      { icon: 'file', text: 'Drawing, illustration, colour and mixed media' },
+    ],
   },
-  shortCourses: shortCourses.map((course) => ({ ...course })),
-}));
+  {
+    label: 'Cultural Immersion',
+    title: 'Paris and Lille Design Visits',
+    details: [
+      { icon: 'map', text: 'Museums, landmarks and creative districts' },
+      { icon: 'time', text: 'On-campus and outdoor learning' },
+      { icon: 'file', text: 'French or English e-learning access' },
+    ],
+  },
+  {
+    label: 'Student Support',
+    title: 'Accommodation and Certificate',
+    details: [
+      { icon: 'euro', text: 'Package fee: EUR 2,000 per student' },
+      { icon: 'time', text: 'Minimum age: 16+' },
+      { icon: 'file', text: 'Accommodation, supervision and certificate included' },
+    ],
+  },
+];
+
+const seasonalProgramSlides = [
+  {
+    id: 'ai-business-summer-school',
+    spotlightProgram: aiBusinessSpotlightProgram,
+    shortCourses: aiBusinessShortCourses,
+    profilePath: '/portfolio/mjm-graphic-design',
+    quickInfo: {
+      title: 'SUMMER SCHOOL',
+      description:
+        'Flexible short-format modules designed for international exposure and practical classroom outcomes.',
+      items: [
+        'Location: Rennes, France',
+        'AI Business: fee range based on number of courses selected',
+      ],
+    },
+  },
+  {
+    id: 'mjm-france-summer-school',
+    spotlightProgram: {
+      title: 'MJM Graphic Design France Summer School',
+      city: 'Paris & Lille, France',
+      fee: 'EUR 2,000 package',
+      deadline: 'June 15, 2026',
+      deadlinePrefix: 'Starts',
+      description:
+        'A two-week creative arts and design immersion for international students aged 16+, combining studio workshops, outdoor creative labs, cultural visits, language learning, accommodation, and student support.',
+    },
+    shortCourses: mjmSummerSchoolHighlights,
+    profilePath: '/portfolio/mjm-graphic-design',
+    quickInfo: {
+      title: 'MJM GRAPHIC DESIGN',
+      description:
+        'Two-week creative arts and design immersion with full details available on the MJM university profile.',
+      items: [
+        'Destinations: Paris & Lille, France',
+        'Dates: June 15 - June 26, 2026',
+      ],
+      pdf: {
+        title: 'MJM Summer School - France PDF',
+        href: MJM_SUMMER_SCHOOL_PDF,
+      },
+    },
+  },
+];
 const AUTO_SLIDE_INTERVAL_MS = 4200;
 
 export default function SummerSchoolHighlightSection() {
@@ -101,7 +190,7 @@ export default function SummerSchoolHighlightSection() {
                     <div key={slide.id} className="w-full flex-shrink-0">
                       <div className="flex flex-wrap items-center gap-2.5">
                         <Link
-                          to="/portfolio/mjm-graphic-design"
+                          to={slide.profilePath}
                           className="summer-hot-blink-btn inline-flex min-h-[44px] items-center gap-1.5 rounded-full border px-4 py-2 text-xs font-bold uppercase tracking-[0.16em]"
                         >
                           <Flame className="h-3.5 w-3.5" />
@@ -140,7 +229,8 @@ export default function SummerSchoolHighlightSection() {
                             </span>
                             <span className="inline-flex items-center gap-2 rounded-full border border-border/70 bg-background/80 px-4 py-2 text-sm font-medium text-foreground">
                               <Clock3 className="h-4 w-4 text-primary" />
-                              Apply by {slide.spotlightProgram.deadline}
+                              {slide.spotlightProgram.deadlinePrefix || 'Apply by'}{' '}
+                              {slide.spotlightProgram.deadline}
                             </span>
                           </div>
                         </div>
@@ -149,28 +239,42 @@ export default function SummerSchoolHighlightSection() {
                           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
                             Quick Info
                           </p>
-                          <h3 className="mt-2 text-xl font-semibold text-foreground">SUMMER SCHOOL</h3>
+                          <h3 className="mt-2 text-xl font-semibold text-foreground">
+                            {slide.quickInfo.title}
+                          </h3>
                           <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-                            Flexible short-format modules designed for international exposure and practical classroom outcomes.
+                            {slide.quickInfo.description}
                           </p>
 
                           <div className="mt-5 space-y-2.5 text-sm">
-                            <p className="rounded-xl border border-border/70 bg-background/80 px-3 py-2 text-foreground dark:border-white/15 dark:bg-white/[0.08]">
-                              Location: Rennes, France
-                            </p>
-                            <p className="rounded-xl border border-border/70 bg-background/80 px-3 py-2 text-foreground dark:border-white/15 dark:bg-white/[0.08]">
-                              AI Business: fee range based on number of courses selected
-                            </p>
+                            {slide.quickInfo.items.map((item) => (
+                              <p
+                                key={item}
+                                className="rounded-xl border border-border/70 bg-background/80 px-3 py-2 text-foreground dark:border-white/15 dark:bg-white/[0.08]"
+                              >
+                                {item}
+                              </p>
+                            ))}
                           </div>
 
                           <div className="mt-6 flex flex-col gap-2.5 sm:flex-row sm:flex-wrap">
                             <Link
-                              to="/portfolio/mjm-graphic-design"
+                              to={slide.profilePath}
                               className="inline-flex items-center justify-center gap-2 rounded-xl bg-[linear-gradient(92deg,#2D1B69_0%,#5B45C6_52%,#E8521A_100%)] px-4 py-2.5 text-sm font-semibold text-white transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_14px_30px_rgba(45,27,105,0.3)] dark:shadow-[0_10px_24px_rgba(10,8,22,0.35)]"
                             >
                               View University Profile
                               <ArrowRight className="h-4 w-4" />
                             </Link>
+                            {slide.quickInfo.pdf && (
+                              <a
+                                href={slide.quickInfo.pdf.href}
+                                download
+                                className="inline-flex items-center justify-center gap-2 rounded-xl border border-primary/30 px-4 py-2.5 text-sm font-semibold text-primary transition-colors hover:bg-primary/10 dark:border-[#5A469E] dark:bg-[#1B1436] dark:text-[#EAE4FF] dark:hover:bg-[#241A49]"
+                              >
+                                <FileText className="h-4 w-4" />
+                                Download PDF
+                              </a>
+                            )}
                             <Link
                               to="/collaborate"
                               className="inline-flex items-center justify-center rounded-xl border border-primary/30 px-4 py-2.5 text-sm font-semibold text-primary transition-colors hover:bg-primary/10 dark:border-[#5A469E] dark:bg-[#1B1436] dark:text-[#EAE4FF] dark:hover:bg-[#241A49]"
@@ -190,25 +294,23 @@ export default function SummerSchoolHighlightSection() {
                             >
                               <span className="mb-3 block h-[2px] w-14 rounded-full bg-[linear-gradient(90deg,#FF7F50_0%,#FFC84E_100%)] opacity-80" aria-hidden="true" />
                               <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-                                Short Course
+                                {course.label}
                               </p>
                               <h3 className="mt-2 text-xl font-semibold leading-tight text-foreground">
                                 {course.title}
                               </h3>
 
                               <div className="mt-4 space-y-2.5 text-sm text-muted-foreground">
-                                <div className="flex items-start gap-2.5">
-                                  <CalendarDays className="mt-0.5 h-4 w-4 flex-shrink-0 text-primary" />
-                                  <span>{course.dates}</span>
-                                </div>
-                                <div className="flex items-start gap-2.5">
-                                  <Euro className="mt-0.5 h-4 w-4 flex-shrink-0 text-primary" />
-                                  <span>{course.fee}</span>
-                                </div>
-                                <div className="flex items-start gap-2.5">
-                                  <Clock3 className="mt-0.5 h-4 w-4 flex-shrink-0 text-primary" />
-                                  <span>Apply by {course.deadline}</span>
-                                </div>
+                                {course.details.map((detail) => {
+                                  const DetailIcon = detailIcons[detail.icon] || FileText;
+
+                                  return (
+                                    <div key={detail.text} className="flex items-start gap-2.5">
+                                      <DetailIcon className="mt-0.5 h-4 w-4 flex-shrink-0 text-primary" />
+                                      <span>{detail.text}</span>
+                                    </div>
+                                  );
+                                })}
                               </div>
                             </article>
                           ))}

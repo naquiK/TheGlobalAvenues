@@ -101,7 +101,7 @@ const fetchCmsPortfolios = async () => {
   }
 
   try {
-    const data = await getPortfolioList();
+    const data = await getPortfolioList({ timeoutMs: 2500 });
     const mapped = (Array.isArray(data) ? data : [])
       .map(mapCmsPortfolio)
       .filter((item) => item.slug && item.title);

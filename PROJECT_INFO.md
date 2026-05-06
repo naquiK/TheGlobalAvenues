@@ -31,6 +31,7 @@ This is a complete redesign of The Global Avenues website with modern UI/UX, smo
 4. **Testimonials** - Carousel with client feedback
 5. **Contact** - Form with location and communication details
 6. **Footer** - Newsletter signup and comprehensive links
+7. **Portfolio Brochure Cards** - Official university PDFs with extracted brochure imagery, responsive cards, and explicit view/download actions
 
 ## 🛠️ Technical Stack
 
@@ -165,6 +166,17 @@ Replace the following with your actual content:
 - Service descriptions in Services section
 - Testimonials in Testimonials component
 - Social media links in Footer
+
+### Portfolio Brochure PDFs
+
+University brochure metadata lives in `src/data/portfolioData.js` under each profile's `details.catalogs` array. Static PDF and extracted brochure image assets live under `public/universities/<university-slug>/brochures/`.
+
+Current brochure assets:
+- `public/universities/estonian-entrepreneurship-university-of-applied-sciences/brochures/euas-english-booklet-business-it-design.pdf`
+- `public/universities/mjm-graphic-design/brochures/mjm-paris-london-international-programmes.pdf`
+- `public/universities/mjm-graphic-design/brochures/mjm-international-master-interior-architecture-eco-design-management.pdf`
+
+Security note: the app exposes PDFs as static public files, so a lead form cannot securely block access without a backend or trusted form service. The current implementation keeps safe browser behavior with `noopener noreferrer` for PDF viewing and browser-native download links.
 
 ## 🌐 Responsive Breakpoints
 

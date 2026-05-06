@@ -3,6 +3,13 @@ import SectionSkeleton from '../components/ui/SectionSkeleton';
 import useLazySection from '../hooks/useLazySection';
 import Seo from '../components/seo/Seo';
 import { SITE_URL } from '../seo/siteMeta';
+import {
+  CardGridSkeleton,
+  FormContactSkeleton,
+  GalleryGridSkeleton,
+  HeroPanelSkeleton,
+  ProcessSkeleton,
+} from '../components/ui/SkeletonLayouts';
 
 const HeroSection = lazy(() => import('../components/home/HeroSection'));
 const UniversityTrustBar = lazy(() => import('../components/home/UniversityTrustBar'));
@@ -56,55 +63,55 @@ export default function HomePage() {
           ENABLE_HOME_TEXTURED_BG ? 'home-page-gradient--textured' : ''
         }`}
       >
-        <Suspense fallback={<SectionSkeleton height="h-screen" />}>
+        <Suspense fallback={<HeroPanelSkeleton className="min-h-screen" />}>
           <HeroSection />
         </Suspense>
-        <Suspense fallback={<SectionSkeleton height="h-24" />}>
+        <Suspense fallback={<SectionSkeleton height="h-24" cards={0} rows={1} />}>
           <UniversityTrustBar />
         </Suspense>
         <div ref={servicesRef}>
           {servicesVisible ? (
-            <Suspense fallback={<SectionSkeleton height="h-[600px]" />}>
+            <Suspense fallback={<CardGridSkeleton count={6} columns="md:grid-cols-2 lg:grid-cols-3" />}>
               <Services />
             </Suspense>
           ) : (
-            <SectionSkeleton height="h-[600px]" />
+            <CardGridSkeleton count={6} columns="md:grid-cols-2 lg:grid-cols-3" />
           )}
         </div>
         <div ref={carouselRef}>
           {carouselVisible ? (
-            <Suspense fallback={<SectionSkeleton height="h-[500px]" />}>
+            <Suspense fallback={<GalleryGridSkeleton count={4} withFilters={false} />}>
               <ImageCarousel />
             </Suspense>
           ) : (
-            <SectionSkeleton height="h-[500px]" />
+            <GalleryGridSkeleton count={4} withFilters={false} />
           )}
         </div>
         <div ref={portfolioRef}>
           {portfolioVisible ? (
-            <Suspense fallback={<SectionSkeleton height="h-[600px]" />}>
+            <Suspense fallback={<CardGridSkeleton count={6} image />}>
               <PortfolioSection />
             </Suspense>
           ) : (
-            <SectionSkeleton height="h-[600px]" />
+            <CardGridSkeleton count={6} image />
           )}
         </div>
         <div ref={testimonialsRef}>
           {testimonialsVisible ? (
-            <Suspense fallback={<SectionSkeleton height="h-[500px]" />}>
+            <Suspense fallback={<ProcessSkeleton count={4} />}>
               <Testimonials />
             </Suspense>
           ) : (
-            <SectionSkeleton height="h-[500px]" />
+            <ProcessSkeleton count={4} />
           )}
         </div>
         <div ref={contactRef}>
           {contactVisible ? (
-            <Suspense fallback={<SectionSkeleton height="h-[600px]" />}>
+            <Suspense fallback={<FormContactSkeleton />}>
               <Contact />
             </Suspense>
           ) : (
-            <SectionSkeleton height="h-[600px]" />
+            <FormContactSkeleton />
           )}
         </div>
       </div>

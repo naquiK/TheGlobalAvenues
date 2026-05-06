@@ -18,6 +18,8 @@ import { getDegreeDetails, getProgramById } from '../data/educationProgramsData'
 import { getOfferingDetail } from '../services/contentApi';
 import BackNavButton from '../components/ui/BackNavButton';
 import Seo from '../components/seo/Seo';
+import LazySection from '../components/ui/LazySection';
+import { CardGridSkeleton, CtaSkeleton, TrackListSkeleton } from '../components/ui/SkeletonLayouts';
 import { trimDescription } from '../seo/siteMeta';
 
 const TAB_ORDER = ['undergraduate', 'postgraduate', 'doctorate'];
@@ -230,6 +232,7 @@ export default function EducationProgramPage() {
           )}
         </motion.section>
 
+        <LazySection fallback={<CardGridSkeleton count={4} columns="md:grid-cols-2 xl:grid-cols-4" showHeading={false} className="py-0 px-0 sm:px-0 lg:px-0" />}>
         <section className="mt-10 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
           {clarityCards.map((item, index) => {
             const CardIcon = item.icon;
@@ -251,7 +254,9 @@ export default function EducationProgramPage() {
             );
           })}
         </section>
+        </LazySection>
 
+        <LazySection fallback={<TrackListSkeleton count={2} className="py-0 px-0 sm:px-0 lg:px-0" />}>
         <section className="mt-10 grid grid-cols-1 gap-8 xl:grid-cols-12">
           <div className="space-y-5 xl:col-span-7">
             <div className="rounded-2xl border border-border/70 bg-background p-6 shadow-sm sm:p-7">
@@ -304,7 +309,9 @@ export default function EducationProgramPage() {
             </div>
           </div>
         </section>
+        </LazySection>
 
+        <LazySection fallback={<TrackListSkeleton count={2} className="py-0 px-0 sm:px-0 lg:px-0" />}>
         <section className="mt-10 grid grid-cols-1 gap-8 xl:grid-cols-12">
           <div className="space-y-5 xl:col-span-7">
             <div className="rounded-2xl border border-border/70 bg-background p-6 shadow-sm sm:p-7">
@@ -360,7 +367,9 @@ export default function EducationProgramPage() {
             </div>
           </div>
         </section>
+        </LazySection>
 
+        <LazySection fallback={<CtaSkeleton className="py-0 px-0 sm:px-0 lg:px-0" />}>
         <section className="mt-10 rounded-2xl border border-border/70 bg-background p-6 text-center shadow-sm sm:p-8">
           <h3 className="text-3xl font-bold text-foreground">Ready To Start This Service?</h3>
           <p className="mx-auto mt-3 max-w-3xl text-sm leading-relaxed text-muted-foreground sm:text-base">
@@ -384,6 +393,7 @@ export default function EducationProgramPage() {
             </button>
           </div>
         </section>
+        </LazySection>
       </div>
     </div>
   );

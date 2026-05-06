@@ -17,6 +17,8 @@ import {
 import { educationPrograms } from '../data/educationProgramsData';
 import { getOfferings } from '../services/contentApi';
 import Seo from '../components/seo/Seo';
+import LazySection from '../components/ui/LazySection';
+import { CardGridSkeleton, CtaSkeleton, TrackListSkeleton } from '../components/ui/SkeletonLayouts';
 
 const CORE_SERVICES = [
   {
@@ -154,6 +156,7 @@ export default function WhatWeOfferPage() {
         </div>
       </section>
 
+      <LazySection fallback={<CardGridSkeleton count={6} columns="md:grid-cols-2 xl:grid-cols-3" />}>
       <section className="px-4 py-8 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-7xl">
           <h2 className="text-2xl font-bold text-foreground sm:text-3xl">Core Services</h2>
@@ -183,7 +186,9 @@ export default function WhatWeOfferPage() {
           </div>
         </div>
       </section>
+      </LazySection>
 
+      <LazySection fallback={<TrackListSkeleton count={5} />}>
       <section className="px-4 py-8 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-7xl">
           <h2 className="text-2xl font-bold text-foreground sm:text-3xl">Service Tracks</h2>
@@ -297,7 +302,9 @@ export default function WhatWeOfferPage() {
           </div>
         </div>
       </section>
+      </LazySection>
 
+      <LazySection fallback={<CtaSkeleton />}>
       <section className="px-4 py-10 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-7xl rounded-2xl border border-border/70 bg-background p-6 text-center shadow-sm sm:p-8">
           <h2 className="text-3xl font-bold text-foreground">Ready To Plan Your Next Intake?</h2>
@@ -313,6 +320,7 @@ export default function WhatWeOfferPage() {
           </Link>
         </div>
       </section>
+      </LazySection>
     </div>
   );
 }

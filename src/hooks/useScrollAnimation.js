@@ -17,6 +17,17 @@ const isSmallScreen = () => {
   return window.innerWidth < 768;
 };
 
+const getViewportHeight = () =>
+  window.innerHeight || document.documentElement.clientHeight || 0;
+
+const isNearViewport = (element, offset = 160) => {
+  const viewportHeight = getViewportHeight();
+  if (!viewportHeight) return false;
+
+  const rect = element.getBoundingClientRect();
+  return rect.top <= viewportHeight + offset && rect.bottom >= -offset;
+};
+
 export default function useScrollAnimationObserver(options = {}) {
   const ref = useRef(null);
   const {
@@ -60,27 +71,80 @@ export default function useScrollAnimationObserver(options = {}) {
     element.style.transition = transitionValue;
     element.style.transitionDelay = `${resolvedDelay}ms`;
 
-    const observer = new IntersectionObserver(
+    let observer;
+    let rafId = 0;
+    let restoreTimer = 0;
+    let hasRevealed = false;
+
+    const cleanupRevealWatchers = () => {
+      observer?.disconnect();
+      if (rafId) {
+        window.cancelAnimationFrame(rafId);
+        rafId = 0;
+      }
+      window.removeEventListener('scroll', scheduleVisibilityCheck);
+      window.removeEventListener('resize', scheduleVisibilityCheck);
+    };
+
+    const reveal = ({ immediate = false } = {}) => {
+      if (hasRevealed) return;
+      hasRevealed = true;
+
+      if (immediate) {
+        element.style.transitionDelay = '0ms';
+      }
+      element.style.opacity = '1';
+      element.style.transform = 'translateX(0) translateY(0) scale(1)';
+
+      if (once) {
+        cleanupRevealWatchers();
+        restoreTimer = window.setTimeout(() => {
+          element.style.transition = previousTransition;
+          element.style.transitionDelay = previousTransitionDelay;
+        }, resolvedDuration + resolvedDelay + 50);
+      }
+    };
+
+    function checkVisibility() {
+      rafId = 0;
+      if (isNearViewport(element, mobile ? 260 : 220)) {
+        reveal({ immediate: true });
+      }
+    }
+
+    function scheduleVisibilityCheck() {
+      if (hasRevealed || rafId) return;
+      rafId = window.requestAnimationFrame(checkVisibility);
+    }
+
+    if (typeof IntersectionObserver === 'undefined') {
+      reveal();
+      return () => {
+        if (restoreTimer) window.clearTimeout(restoreTimer);
+      };
+    }
+
+    observer = new IntersectionObserver(
       ([entry]) => {
-        if (!entry.isIntersecting) return;
-
-        element.style.opacity = '1';
-        element.style.transform = 'translateX(0) translateY(0) scale(1)';
-
-        if (once) {
-          observer.disconnect();
-          window.setTimeout(() => {
-            element.style.transition = previousTransition;
-            element.style.transitionDelay = previousTransitionDelay;
-          }, resolvedDuration + resolvedDelay + 50);
+        if (entry.isIntersecting) {
+          reveal();
         }
       },
-      { rootMargin: '-60px 0px' }
+      {
+        rootMargin: mobile ? '220px 0px 220px 0px' : '180px 0px 180px 0px',
+        threshold: 0.01,
+      }
     );
 
     observer.observe(element);
+    window.addEventListener('scroll', scheduleVisibilityCheck, { passive: true });
+    window.addEventListener('resize', scheduleVisibilityCheck);
+    scheduleVisibilityCheck();
 
-    return () => observer.disconnect();
+    return () => {
+      cleanupRevealWatchers();
+      if (restoreTimer) window.clearTimeout(restoreTimer);
+    };
   }, [delay, duration, y, x, scale, once]);
 
   return ref;
@@ -91,24 +155,67 @@ export function useScrollAnimation() {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
-    const observer = new IntersectionObserver(
+    let observer;
+    let rafId = 0;
+    let revealed = false;
+
+    const reveal = () => {
+      if (revealed) return;
+      revealed = true;
+      setIsVisible(true);
+      observer?.disconnect();
+      if (rafId) {
+        window.cancelAnimationFrame(rafId);
+        rafId = 0;
+      }
+      window.removeEventListener('scroll', scheduleVisibilityCheck);
+      window.removeEventListener('resize', scheduleVisibilityCheck);
+    };
+
+    const checkVisibility = () => {
+      rafId = 0;
+      if (ref.current && isNearViewport(ref.current, 180)) {
+        reveal();
+      }
+    };
+
+    function scheduleVisibilityCheck() {
+      if (revealed || rafId) return;
+      rafId = window.requestAnimationFrame(checkVisibility);
+    }
+
+    if (typeof IntersectionObserver === 'undefined') {
+      reveal();
+      return undefined;
+    }
+
+    observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          setIsVisible(true);
-          observer.unobserve(entry.target);
+          reveal();
         }
       },
       {
-        threshold: 0.1,
-        rootMargin: '0px 0px -50px 0px',
+        threshold: 0.01,
+        rootMargin: '160px 0px 160px 0px',
       }
     );
 
     if (ref.current) {
       observer.observe(ref.current);
     }
+    window.addEventListener('scroll', scheduleVisibilityCheck, { passive: true });
+    window.addEventListener('resize', scheduleVisibilityCheck);
+    scheduleVisibilityCheck();
 
-    return () => observer.disconnect();
+    return () => {
+      observer.disconnect();
+      if (rafId) {
+        window.cancelAnimationFrame(rafId);
+      }
+      window.removeEventListener('scroll', scheduleVisibilityCheck);
+      window.removeEventListener('resize', scheduleVisibilityCheck);
+    };
   }, []);
 
   return [ref, isVisible];

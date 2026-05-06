@@ -260,6 +260,11 @@ Do not delete them unless you first confirm no future dependency.
 - Hero video/poster:
   - `public/videos/hero.mp4`
   - `public/videos/hero-poster.png`
+- University brochure PDFs and extracted brochure imagery live in each university folder:
+  - `public/universities/estonian-entrepreneurship-university-of-applied-sciences/brochures/*`
+  - `public/universities/mjm-graphic-design/brochures/*`
+- Brochure card metadata is in `src/data/portfolioData.js` under `details.catalogs`; rendering is in `src/pages/PortfolioDetailPage.jsx`.
+- Static public PDFs cannot be protected by a frontend-only lead form. Use a backend or trusted form service if brochure access must require verification.
 - Logos and general images are referenced by absolute `/...` paths in components/config.
 
 ---

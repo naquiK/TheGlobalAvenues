@@ -4,10 +4,9 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { SettingsProvider } from './context/SettingsContext';
 import { HomeContentProvider } from './context/HomeContentContext';
 import { Header } from './components/Header';
-import { Footer } from './components/Footer';
-import { FloatingContactButton } from './components/FloatingContactButton';
 import { ScrollRestoration } from './components/ScrollRestoration';
 import PageLoader from './components/ui/PageLoader';
+import RouteTransitionLoader from './components/ui/RouteTransitionLoader';
 
 // Pages
 const HomePage = lazy(() => import('./pages/HomePage'));
@@ -25,11 +24,49 @@ const NewsDetailPage = lazy(() => import('./pages/NewsDetailPage'));
 const EducationProgramPage = lazy(() => import('./pages/EducationProgramPage'));
 const WhatWeOfferPage = lazy(() => import('./pages/WhatWeOfferPage'));
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage'));
+const Footer = lazy(() =>
+  import('./components/Footer').then((module) => ({ default: module.Footer }))
+);
+const FloatingContactButton = lazy(() =>
+  import('./components/FloatingContactButton').then((module) => ({
+    default: module.FloatingContactButton,
+  }))
+);
+
+function FooterFallback() {
+  return (
+    <div className="h-[360px] border-t border-border/50 bg-muted/20 px-4 py-8 sm:px-6 lg:px-8">
+      <div className="mx-auto grid h-full max-w-7xl grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
+        {Array.from({ length: 4 }).map((_, index) => (
+          <div key={`footer-fallback-${index + 1}`} className="space-y-4">
+            {index === 0 ? <div className="skeleton-card h-16 w-72 max-w-full rounded-xl" /> : null}
+            <div className="skeleton-line h-6 w-32 rounded-xl" />
+            <div className="skeleton-line h-3 w-full rounded-full" />
+            <div className="skeleton-line h-3 w-5/6 rounded-full" />
+            <div className="skeleton-line h-3 w-4/6 rounded-full" />
+            <div className="flex gap-3 pt-3">
+              <div className="skeleton-card h-10 w-10 rounded-full" />
+              <div className="skeleton-card h-10 w-10 rounded-full" />
+              <div className="skeleton-card h-10 w-10 rounded-full" />
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function FloatingButtonFallback() {
+  return (
+    <div className="skeleton-card fixed bottom-4 right-4 z-30 h-14 w-14 rounded-full" />
+  );
+}
 
 function App() {
   return (
     <SettingsProvider>
       <div className="min-h-screen bg-background text-foreground flex flex-col">
+        <RouteTransitionLoader />
         <ScrollRestoration />
         <Header />
         <main className="flex-grow">
@@ -68,8 +105,12 @@ function App() {
             </Routes>
           </Suspense>
         </main>
-        <Footer />
-        <FloatingContactButton />
+        <Suspense fallback={<FooterFallback />}>
+          <Footer />
+        </Suspense>
+        <Suspense fallback={<FloatingButtonFallback />}>
+          <FloatingContactButton />
+        </Suspense>
       </div>
     </SettingsProvider>
   );

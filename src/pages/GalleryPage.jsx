@@ -4,6 +4,8 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { galleryCollections } from '../data/galleryCollectionsData';
 import Seo from '../components/seo/Seo';
+import LazySection from '../components/ui/LazySection';
+import { GalleryGridSkeleton } from '../components/ui/SkeletonLayouts';
 
 const ALL_CATEGORIES_KEY = 'all-categories';
 const FALLBACK_COVER_IMAGE = '/videos/hero-poster.jpg';
@@ -110,6 +112,7 @@ export default function GalleryPage() {
         </motion.div>
       </section>
 
+      <LazySection fallback={<GalleryGridSkeleton count={6} />}>
       <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <motion.div
           className="mb-8 rounded-2xl border border-border/70 bg-background/80 p-4 shadow-sm backdrop-blur-sm"
@@ -201,6 +204,7 @@ export default function GalleryPage() {
           ))}
         </div>
       </section>
+      </LazySection>
     </div>
   );
 }

@@ -3,10 +3,13 @@ import { Link } from 'react-router-dom';
 import { ArrowRight, ChevronLeft, ChevronRight, Landmark, MapPin } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { getFeaturedPortfolios } from '../services/portfolioService';
+import { portfolioData } from '../data/portfolioData';
+
+const getLocalFeaturedPortfolios = (limit) => portfolioData.slice(0, limit);
 
 export default function PortfolioDisplay({ limit = 10 }) {
-  const [portfolios, setPortfolios] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [portfolios, setPortfolios] = useState(() => getLocalFeaturedPortfolios(limit));
+  const [isLoading, setIsLoading] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [itemsPerRow, setItemsPerRow] = useState(5);
 
@@ -14,15 +17,17 @@ export default function PortfolioDisplay({ limit = 10 }) {
     let isMounted = true;
 
     const loadFeatured = async () => {
-      setIsLoading(true);
+      const localPortfolios = getLocalFeaturedPortfolios(limit);
+      setPortfolios(localPortfolios);
+      setIsLoading(localPortfolios.length === 0);
       try {
         const data = await getFeaturedPortfolios(limit);
         if (isMounted) {
-          setPortfolios(Array.isArray(data) ? data : []);
+          setPortfolios(Array.isArray(data) && data.length > 0 ? data : localPortfolios);
         }
       } catch (error) {
         if (isMounted) {
-          setPortfolios([]);
+          setPortfolios(localPortfolios);
         }
       } finally {
         if (isMounted) {
@@ -123,7 +128,7 @@ export default function PortfolioDisplay({ limit = 10 }) {
       <div className="relative">
         {/* Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 sm:gap-6">
-          <AnimatePresence mode="wait">
+          <AnimatePresence mode="sync">
             {visiblePortfolios.map((portfolio) => (
               <motion.div
                 key={`${currentIndex}-${portfolio.id}`}
@@ -246,10 +251,10 @@ export default function PortfolioDisplay({ limit = 10 }) {
             <button
               key={index}
               onClick={() => setCurrentIndex(index)}
-              className={`w-2 h-2 sm:w-3 sm:h-3 rounded-full transition-all duration-300 ${
+              className={`h-2.5 rounded-full transition-all duration-300 ${
                 index === currentIndex
-                  ? 'bg-primary w-6 sm:w-8'
-                  : 'bg-muted hover:bg-primary/50'
+                  ? 'w-8 bg-brand-purple dark:bg-brand-orange'
+                  : 'w-2.5 bg-brand-purple/25 hover:bg-brand-purple/45 dark:bg-white/25 dark:hover:bg-white/45'
               }`}
               aria-label={`Go to slide ${index + 1}`}
             />

@@ -9,7 +9,6 @@ import {
   LayoutGrid,
   Newspaper,
   Sparkles,
-  Users2,
   X,
 } from 'lucide-react';
 import useTheme from '../hooks/useTheme';
@@ -39,10 +38,12 @@ export function Header() {
   const [openMobileDropdown, setOpenMobileDropdown] = useState(null);
   const [hasScrolled, setHasScrolled] = useState(false);
   const [portfolioItems, setPortfolioItems] = useState(portfolioData);
+  const [isPortfolioMenuLoading, setIsPortfolioMenuLoading] = useState(false);
   const { isDark } = useTheme();
   const { siteConfig } = useSettings();
   const location = useLocation();
   const dropdownRef = useRef(null);
+  const portfolioMenuStateRef = useRef({ loading: false, loaded: false });
 
   const isActive = (path) => {
     if (path === '/') {
@@ -66,6 +67,7 @@ export function Header() {
   const primaryEndItems = primaryNavItems.slice(2);
   const offeringItems = siteConfig.navigation.offerings;
   const logoSrc = isDark ? siteConfig.company.logo.darkSrc : siteConfig.company.logo.lightSrc;
+  const hasPortfolioItems = portfolioItems.length > 0;
   const prioritizedPortfolioItems = useMemo(() => {
     const isIcnBusinessSchool = (item = {}) => {
       const slug = String(item.slug || '').toLowerCase();
@@ -168,29 +170,29 @@ export function Header() {
     }
   };
 
-  useEffect(() => {
-    let isMounted = true;
+  const loadPortfolioMenu = async () => {
+    if (portfolioMenuStateRef.current.loading || portfolioMenuStateRef.current.loaded) {
+      return;
+    }
 
-    const loadPortfolioMenu = async () => {
-      try {
-        const result = await getPortfolios({}, 1, 200);
-        const list = Array.isArray(result?.data) ? result.data : [];
-        if (isMounted && list.length > 0) {
-          setPortfolioItems(list);
-        }
-      } catch (error) {
-        if (isMounted) {
-          setPortfolioItems(portfolioData);
-        }
+    portfolioMenuStateRef.current.loading = true;
+    setIsPortfolioMenuLoading(true);
+
+    try {
+      const result = await getPortfolios({}, 1, 300);
+      const list = Array.isArray(result?.data) ? result.data : [];
+
+      if (list.length > 0) {
+        setPortfolioItems(list);
       }
-    };
-
-    loadPortfolioMenu();
-
-    return () => {
-      isMounted = false;
-    };
-  }, []);
+    } catch {
+      setPortfolioItems(portfolioData);
+    } finally {
+      portfolioMenuStateRef.current.loading = false;
+      portfolioMenuStateRef.current.loaded = true;
+      setIsPortfolioMenuLoading(false);
+    }
+  };
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -279,6 +281,7 @@ export function Header() {
               type="button"
               onMouseEnter={() => {
                 preloadRoute('/portfolio');
+                void loadPortfolioMenu();
                 setOpenDropdown('portfolio');
               }}
               className={`nav-link nav-trigger ${isPortfolioActive ? 'nav-link-active' : ''} group flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium ${
@@ -307,28 +310,43 @@ export function Header() {
                   </div>
 
                   <div className="grid max-h-[20rem] grid-cols-1 gap-1.5 overflow-y-auto p-2.5">
-                    {prioritizedPortfolioItems.map((portfolio) => (
-                      <Link
-                        key={portfolio.id}
-                        to={`/portfolio/${portfolio.slug || portfolio.id}`}
-                        onMouseEnter={() =>
-                          preloadRoute(`/portfolio/${portfolio.slug || portfolio.id}`)
-                        }
-                        className="mega-link group flex items-start gap-2.5 rounded-2xl border border-transparent p-2 transition-all duration-200 ease-out hover:border-brand-orange/20 hover:bg-brand-orange/5"
-                      >
-                        <div className="mega-link-icon flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl bg-brand-purple-light text-xs font-semibold text-primary transition-all duration-200 ease-out group-hover:-translate-y-0.5 group-hover:bg-brand-orange group-hover:text-white">
-                          <span className="leading-none">
-                            {portfolioIconMap[portfolio.country] || 'GL'}
-                          </span>
-                        </div>
-                        <div className="mega-link-text">
-                          <h4 className="text-sm font-semibold text-foreground transition-colors duration-200 ease-out group-hover:text-primary">
-                            {portfolio.title}
-                          </h4>
-                          <p className="text-xs text-muted-foreground">{portfolio.country}</p>
-                        </div>
-                      </Link>
-                    ))}
+                    {isPortfolioMenuLoading
+                      ? Array.from({ length: 6 }).map((_, index) => (
+                          <div
+                            key={`portfolio-loader-${index + 1}`}
+                            className="h-14 rounded-2xl bg-brand-purple-light/70 animate-pulse dark:bg-white/10"
+                          />
+                        ))
+                      : null}
+                    {!isPortfolioMenuLoading && hasPortfolioItems
+                      ? prioritizedPortfolioItems.map((portfolio) => (
+                          <Link
+                            key={portfolio.id}
+                            to={`/portfolio/${portfolio.slug || portfolio.id}`}
+                            onMouseEnter={() =>
+                              preloadRoute(`/portfolio/${portfolio.slug || portfolio.id}`)
+                            }
+                            className="mega-link group flex items-start gap-2.5 rounded-2xl border border-transparent p-2 transition-all duration-200 ease-out hover:border-brand-orange/20 hover:bg-brand-orange/5"
+                          >
+                            <div className="mega-link-icon flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl bg-brand-purple-light text-xs font-semibold text-primary transition-all duration-200 ease-out group-hover:-translate-y-0.5 group-hover:bg-brand-orange group-hover:text-white">
+                              <span className="leading-none">
+                                {portfolioIconMap[portfolio.country] || 'GL'}
+                              </span>
+                            </div>
+                            <div className="mega-link-text">
+                              <h4 className="text-sm font-semibold text-foreground transition-colors duration-200 ease-out group-hover:text-primary">
+                                {portfolio.title}
+                              </h4>
+                              <p className="text-xs text-muted-foreground">{portfolio.country}</p>
+                            </div>
+                          </Link>
+                        ))
+                      : null}
+                    {!isPortfolioMenuLoading && !hasPortfolioItems ? (
+                      <p className="rounded-xl border border-dashed border-brand-purple/25 px-3 py-4 text-center text-xs text-muted-foreground">
+                        Portfolio menu is loading from API. Open portfolio page to view all entries.
+                      </p>
+                    ) : null}
                   </div>
 
                   <div className="border-t border-brand-purple/10 bg-brand-purple-light/45 p-3">
@@ -512,7 +530,13 @@ export function Header() {
               <div className="rounded-2xl border border-brand-purple/15 bg-brand-purple-light/30 px-2 py-2 dark:border-white/12 dark:bg-white/[0.04]">
                 <button
                   onClick={() =>
-                    setOpenMobileDropdown((value) => (value === 'portfolio' ? null : 'portfolio'))
+                    setOpenMobileDropdown((value) => {
+                      const nextValue = value === 'portfolio' ? null : 'portfolio';
+                      if (nextValue === 'portfolio') {
+                        void loadPortfolioMenu();
+                      }
+                      return nextValue;
+                    })
                   }
                   className="flex w-full items-center justify-between rounded-xl px-3 py-3 text-left text-sm font-medium text-foreground transition-all duration-200 ease-out hover:bg-brand-purple-light active:bg-brand-purple-light/80 dark:hover:bg-white/10 dark:active:bg-white/15"
                   type="button"
@@ -532,26 +556,41 @@ export function Header() {
 
                 {openMobileDropdown === 'portfolio' && (
                   <div className="space-y-2 px-2 pb-2">
-                    {prioritizedPortfolioItems.map((portfolio) => (
-                      <Link
-                        key={portfolio.id}
-                        to={`/portfolio/${portfolio.slug || portfolio.id}`}
-                        onMouseEnter={() =>
-                          preloadRoute(`/portfolio/${portfolio.slug || portfolio.id}`)
-                        }
-                        className="mobile-drawer-link flex items-center gap-3 rounded-2xl border border-transparent px-3 py-3 text-sm transition-all duration-200 ease-out hover:bg-brand-purple-light active:bg-brand-purple-light/80 dark:hover:bg-white/10 dark:active:bg-white/15"
-                      >
-                        <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-white/80 text-primary dark:bg-white/10 dark:text-white">
-                          <span className="text-sm font-semibold leading-none">
-                            {portfolioIconMap[portfolio.country] || 'GL'}
-                          </span>
-                        </div>
-                        <div>
-                          <p className="font-medium text-foreground">{portfolio.title}</p>
-                          <p className="text-xs text-muted-foreground">{portfolio.country}</p>
-                        </div>
-                      </Link>
-                    ))}
+                    {isPortfolioMenuLoading
+                      ? Array.from({ length: 5 }).map((_, index) => (
+                          <div
+                            key={`portfolio-mobile-loader-${index + 1}`}
+                            className="h-14 rounded-2xl bg-brand-purple-light/80 animate-pulse dark:bg-white/10"
+                          />
+                        ))
+                      : null}
+                    {!isPortfolioMenuLoading && hasPortfolioItems
+                      ? prioritizedPortfolioItems.map((portfolio) => (
+                          <Link
+                            key={portfolio.id}
+                            to={`/portfolio/${portfolio.slug || portfolio.id}`}
+                            onMouseEnter={() =>
+                              preloadRoute(`/portfolio/${portfolio.slug || portfolio.id}`)
+                            }
+                            className="mobile-drawer-link flex items-center gap-3 rounded-2xl border border-transparent px-3 py-3 text-sm transition-all duration-200 ease-out hover:bg-brand-purple-light active:bg-brand-purple-light/80 dark:hover:bg-white/10 dark:active:bg-white/15"
+                          >
+                            <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-white/80 text-primary dark:bg-white/10 dark:text-white">
+                              <span className="text-sm font-semibold leading-none">
+                                {portfolioIconMap[portfolio.country] || 'GL'}
+                              </span>
+                            </div>
+                            <div>
+                              <p className="font-medium text-foreground">{portfolio.title}</p>
+                              <p className="text-xs text-muted-foreground">{portfolio.country}</p>
+                            </div>
+                          </Link>
+                        ))
+                      : null}
+                    {!isPortfolioMenuLoading && !hasPortfolioItems ? (
+                      <p className="rounded-xl border border-dashed border-brand-purple/25 px-3 py-3 text-xs text-muted-foreground">
+                        Portfolio items will appear after API load.
+                      </p>
+                    ) : null}
                   </div>
                 )}
               </div>

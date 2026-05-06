@@ -218,13 +218,13 @@ export function InteractiveGlobe() {
             rimColor: 0x6b5aa8,
             rimIntensity: 0.12,
             rimPosition: [-10, 6, -8],
-            ringPrimary: '255, 255, 255',
-            ringAccent: '255, 210, 140',
-            ringAlpha: 1,
-            ringScale: 1.2,
-            ringSpeed: 1.15,
-            ringPeriod: 920,
-            ringAltitude: 0.04,
+            ringPrimary: '232, 92, 18',
+            ringAccent: '198, 38, 96',
+            ringAlpha: 0.95,
+            ringScale: 1.24,
+            ringSpeed: 1.16,
+            ringPeriod: 900,
+            ringAltitude: 0.026,
           };
 
       const material = dark
@@ -283,8 +283,10 @@ export function InteractiveGlobe() {
 
     const initializeGlobe = async () => {
       try {
-        await loadExternalScript(THREE_CDN);
         await loadExternalScript(GLOBE_CDN);
+        if (!window.THREE) {
+          await loadExternalScript(THREE_CDN);
+        }
 
         if (cancelled) return;
 
