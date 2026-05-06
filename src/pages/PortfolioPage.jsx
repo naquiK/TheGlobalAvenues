@@ -183,14 +183,20 @@ export default function PortfolioPage() {
               animate="visible"
             >
               <AnimatePresence mode="wait">
-                {filteredPortfolios.map((portfolio) => (
-                  <motion.div
-                    key={portfolio.id}
-                    variants={cardVariants}
-                    whileHover="hover"
-                    exit="exit"
-                    className="group relative overflow-hidden rounded-2xl bg-muted/30 backdrop-blur-sm border border-border/50 hover:border-primary/50 transition-all duration-300"
-                  >
+                {filteredPortfolios.map((portfolio) => {
+                  const normalizedSlug = String(portfolio.slug || '').toLowerCase();
+                  const isLightLogo =
+                    normalizedSlug === 'icn-business-school' || normalizedSlug === 'epitech';
+                  const useContainedHeroImage = normalizedSlug === 'epitech';
+
+                  return (
+                    <motion.div
+                      key={portfolio.id}
+                      variants={cardVariants}
+                      whileHover="hover"
+                      exit="exit"
+                      className="group relative overflow-hidden rounded-2xl bg-muted/30 backdrop-blur-sm border border-border/50 hover:border-primary/50 transition-all duration-300"
+                    >
                     {/* Image Container */}
                     <div className="relative h-64 overflow-hidden bg-gradient-to-br from-primary/20 to-secondary/20">
                       <motion.img
@@ -198,19 +204,29 @@ export default function PortfolioPage() {
                         alt={portfolio.partnerName || portfolio.title}
                         loading="lazy"
                         decoding="async"
-                        className="w-full h-full object-cover"
+                        className={`h-full w-full ${
+                          useContainedHeroImage ? 'object-contain bg-[#E5E5E5] p-5' : 'object-cover'
+                        }`}
                         whileHover={{ scale: 1.1 }}
                         transition={{ duration: 0.4 }}
                       />
 
                       {portfolio.logo && (
-                        <div className="absolute top-4 left-4 rounded-xl border border-white/35 bg-white/95 p-1.5 shadow-md">
+                        <div
+                          className={`absolute top-4 left-4 rounded-xl border p-1.5 shadow-md ${
+                            isLightLogo
+                              ? 'border-white/30 bg-[#20184A]/88 backdrop-blur-sm'
+                              : 'border-white/35 bg-white/95'
+                          }`}
+                        >
                           <img
                             src={portfolio.logo}
                             alt={`${portfolio.title} logo`}
                             loading="lazy"
                             decoding="async"
-                            className="h-7 w-auto max-w-[5.5rem] object-contain"
+                            className={`h-7 w-auto max-w-[5.5rem] object-contain ${
+                              isLightLogo ? 'brightness-110 contrast-110' : ''
+                            }`}
                           />
                         </div>
                       )}
@@ -261,7 +277,8 @@ export default function PortfolioPage() {
                       </Link>
                     </motion.div>
                   </motion.div>
-                ))}
+                  );
+                })}
               </AnimatePresence>
             </motion.div>
           ) : (

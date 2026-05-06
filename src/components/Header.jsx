@@ -54,8 +54,16 @@ export function Header() {
   const isPortfolioActive = location.pathname.startsWith('/portfolio');
   const isOfferingActive =
     location.pathname === '/what-we-offer' || location.pathname.startsWith('/education-program');
-  const primaryStartItems = siteConfig.navigation.primary.slice(0, 2);
-  const primaryEndItems = siteConfig.navigation.primary.slice(2);
+  const primaryNavItems = useMemo(
+    () =>
+      siteConfig.navigation.primary.filter((item = {}) => {
+        const label = String(item.label || '').toLowerCase();
+        return item.path !== '/universities' && !label.includes('university') && !label.includes('universities');
+      }),
+    [siteConfig.navigation.primary]
+  );
+  const primaryStartItems = primaryNavItems.slice(0, 2);
+  const primaryEndItems = primaryNavItems.slice(2);
   const offeringItems = siteConfig.navigation.offerings;
   const logoSrc = isDark ? siteConfig.company.logo.darkSrc : siteConfig.company.logo.lightSrc;
   const prioritizedPortfolioItems = useMemo(() => {

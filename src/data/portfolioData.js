@@ -849,6 +849,7 @@ export const portfolioData = [
     category: 'Hospitality School',
     country: 'France',
     image: '/universities/ifh-institut-francais-de-l-hotellerie-hero.jpg',
+    logo: '/universities/ifh-institut-francais-de-l-hotellerie/ifh-logo-official.svg',
     studentsPlaced: 1700,
     programs: 9,
     successRate: 93,
