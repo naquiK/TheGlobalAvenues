@@ -27,7 +27,9 @@ import { getUniversityDetail } from '../services/contentApi';
 import { resolveMediaUrl } from '../services/apiClient';
 import useScrollIntentCelebration from '../hooks/useScrollIntentCelebration';
 import BackNavButton from '../components/ui/BackNavButton';
+
 import { DetailSkeleton } from '../components/ui/SkeletonLayouts';
+
 import Seo from '../components/seo/Seo';
 import { SITE_URL, trimDescription, toAbsoluteUrl } from '../seo/siteMeta';
 import { SITE_CONFIG } from '../config';
@@ -44,6 +46,7 @@ const MJM_SUMMER_SCHOOL_HIGHLIGHT = {
   hours: '36 hours from 10:00 to 18:00',
   pdf: '/universities/mjm-graphic-design/brochures/mjm-summer-school-france.pdf',
   pdfLow: '/universities/mjm-graphic-design/brochures/mjm-summer-school-france-low.pdf',
+
   description:
     "Our Summer School in France is a two-week immersive programme combining artistic courses, cultural activities, and language learning. Designed for international students aged 16 and above, the programme blends MJM's 45 years of creative expertise with the unique cultural richness of France.",
   images: [
@@ -374,9 +377,11 @@ export default function PortfolioDetailPage() {
   const [portfolio, setPortfolio] = useState(null);
   const [allPortfolios, setAllPortfolios] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+
   const [loadError, setLoadError] = useState('');
   const [reloadToken, setReloadToken] = useState(0);
   const [activeCatalogDetails, setActiveCatalogDetails] = useState(null);
+
   const mjmSpotlightRef = useRef(null);
   const catalogDocumentsRef = useRef(null);
 
@@ -583,7 +588,10 @@ export default function PortfolioDetailPage() {
           description="Loading institution profile and partnership details."
           path={`/portfolio/${id || ''}`}
         />
+        <div className="w-12 h-12 border-4 border-muted border-t-primary rounded-full animate-spin" />
+
         <DetailSkeleton />
+
       </div>
     );
   }
@@ -1297,7 +1305,7 @@ export default function PortfolioDetailPage() {
           </motion.div>
         )}
 
-        {isMjmGraphicDesignProfile && (
+        {isMjmGraphicDesignProfile && isMjmSummerSchoolCardEnabled && (
           <motion.div
             ref={mjmSpotlightRef}
             className="relative mb-12 overflow-hidden rounded-2xl border border-[#D8D2E8] bg-[linear-gradient(132deg,#FFF7ED_0%,#F8FAFC_36%,#EEF6F3_72%,#FFF2E5_100%)] p-4 shadow-[0_22px_52px_rgba(17,24,39,0.14)] dark:border-[#374151] dark:bg-[linear-gradient(132deg,#171923_0%,#111827_45%,#16221F_100%)] sm:p-5 lg:p-6"
@@ -1379,6 +1387,26 @@ export default function PortfolioDetailPage() {
                     {MJM_SUMMER_SCHOOL_HIGHLIGHT.description}
                   </p>
 
+
+                  <div className="mt-6 rounded-2xl border border-[#D8CDEE] bg-[linear-gradient(145deg,rgba(255,255,255,0.82)_0%,rgba(247,243,255,0.88)_54%,rgba(255,236,224,0.82)_100%)] p-5 shadow-[0_14px_34px_rgba(25,18,53,0.08)] dark:border-[#443A6E] dark:bg-[linear-gradient(145deg,rgba(28,22,52,0.84)_0%,rgba(18,15,37,0.9)_54%,rgba(30,23,42,0.82)_100%)]">
+                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                      Featured Program
+                    </p>
+                    <h4 className="mt-2 text-2xl font-semibold text-foreground">
+                      {MJM_SUMMER_SCHOOL_HIGHLIGHT.aiBusiness.title}
+                    </h4>
+                    <div className="mt-4 space-y-2.5 text-sm text-muted-foreground">
+                      <div className="flex items-start gap-2.5">
+                        <span className="font-semibold text-foreground">Course Fees:</span>
+                        <span>{MJM_SUMMER_SCHOOL_HIGHLIGHT.aiBusiness.fee}</span>
+                      </div>
+                      <div className="flex items-start gap-2.5">
+                        <span className="font-semibold text-foreground">Deadline to Apply:</span>
+                        <span>{MJM_SUMMER_SCHOOL_HIGHLIGHT.aiBusiness.deadline}</span>
+                      </div>
+                    </div>
+                  </div>
+
                   <div className="mt-5 grid grid-cols-1 gap-2.5 sm:grid-cols-2">
                     {[
                       {
@@ -1454,6 +1482,7 @@ export default function PortfolioDetailPage() {
                       Open PDF
                       <ExternalLink className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                     </a>
+
                   </div>
                 </div>
 
