@@ -6,20 +6,16 @@ import {
   ChevronRight,
   Clock3,
   Euro,
-  FileText,
   Flame,
   MapPin,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import useScrollAnimation from '../../hooks/useScrollAnimation';
 
-const MJM_SUMMER_SCHOOL_PDF =
-  '/universities/mjm-graphic-design/brochures/mjm-summer-school-france.pdf';
-
 const detailIcons = {
   calendar: CalendarDays,
   euro: Euro,
-  file: FileText,
+  file: Clock3,
   map: MapPin,
   time: Clock3,
 };
@@ -130,10 +126,6 @@ const seasonalProgramSlides = [
         'Destinations: Paris & Lille, France',
         'Dates: June 15 - June 26, 2026',
       ],
-      pdf: {
-        title: 'MJM Summer School - France PDF',
-        href: MJM_SUMMER_SCHOOL_PDF,
-      },
     },
   },
 ];
@@ -265,16 +257,6 @@ export default function SummerSchoolHighlightSection() {
                               View University Profile
                               <ArrowRight className="h-4 w-4" />
                             </Link>
-                            {slide.quickInfo.pdf && (
-                              <a
-                                href={slide.quickInfo.pdf.href}
-                                download
-                                className="inline-flex items-center justify-center gap-2 rounded-xl border border-primary/30 px-4 py-2.5 text-sm font-semibold text-primary transition-colors hover:bg-primary/10 dark:border-[#5A469E] dark:bg-[#1B1436] dark:text-[#EAE4FF] dark:hover:bg-[#241A49]"
-                              >
-                                <FileText className="h-4 w-4" />
-                                Download PDF
-                              </a>
-                            )}
                             <Link
                               to="/collaborate"
                               className="inline-flex items-center justify-center rounded-xl border border-primary/30 px-4 py-2.5 text-sm font-semibold text-primary transition-colors hover:bg-primary/10 dark:border-[#5A469E] dark:bg-[#1B1436] dark:text-[#EAE4FF] dark:hover:bg-[#241A49]"
@@ -302,7 +284,7 @@ export default function SummerSchoolHighlightSection() {
 
                               <div className="mt-4 space-y-2.5 text-sm text-muted-foreground">
                                 {course.details.map((detail) => {
-                                  const DetailIcon = detailIcons[detail.icon] || FileText;
+                                  const DetailIcon = detailIcons[detail.icon] || CalendarDays;
 
                                   return (
                                     <div key={detail.text} className="flex items-start gap-2.5">

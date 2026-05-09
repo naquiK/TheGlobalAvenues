@@ -92,11 +92,20 @@ export default function UniversitiesPage() {
   return (
     <div className="collaborate-page-gradient min-h-screen pt-16 text-foreground">
       <Seo
-        title="Partner Universities"
-        description="Browse partner universities and institutions across Europe and beyond with The Global Avenues."
+        title="Partner Universities — Browse Global Institutions | The Global Avenues"
+        description="Browse partner universities and institutions across Europe, USA, Cyprus, and beyond. Compare programs, explore campus profiles, and discover study abroad opportunities with The Global Avenues."
         path="/universities"
         image="/universities/benedictine-university-hero.jpg"
-        keywords={['partner universities', 'study abroad institutions', 'international universities']}
+        keywords={[
+          'partner universities',
+          'study abroad institutions',
+          'international universities',
+          'universities in Europe',
+          'study in Cyprus',
+          'study in France',
+          'study in USA',
+          'university program comparison',
+        ]}
       />
 
       <section className="collaborate-section-shell px-4 py-20 sm:px-6 lg:px-8">

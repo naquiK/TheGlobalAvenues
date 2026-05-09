@@ -16,7 +16,7 @@ import { useSettings } from '../context/SettingsContext';
 import useScrollAnimation from '../hooks/useScrollAnimation';
 import useLazySection from '../hooks/useLazySection';
 import { ProcessSkeleton } from '../components/ui/SkeletonLayouts';
-import { CONTACT_FORM_RECIPIENT_EMAIL, submitContactForm } from '../services/contactFormService';
+import { submitContactForm } from '../services/contactFormService';
 import Seo from '../components/seo/Seo';
 
 const inputClassName =
@@ -128,7 +128,6 @@ export default function CollaboratePage() {
 
     try {
       await submitContactForm({
-        toEmail: CONTACT_FORM_RECIPIENT_EMAIL,
         formName: 'Collaborate Form',
         source: '/collaborate',
         fields: {
@@ -154,11 +153,19 @@ export default function CollaboratePage() {
   return (
     <div className="collaborate-page-gradient min-h-screen pt-16 text-foreground">
       <Seo
-        title="Collaborate With The Global Avenues"
-        description="Connect with The Global Avenues for institutional partnerships, admissions support, and strategic market expansion in international education."
+        title="Collaborate With The Global Avenues — Partner for University Growth"
+        description="Connect with The Global Avenues to scale your university's international student enrolment. Strategic partnerships, admissions operations, and market expansion support for institutions targeting India & South Asia."
         path="/collaborate"
         image="/videos/hero-poster.jpg"
-        keywords={['collaborate', 'institution partnerships', 'global education consulting']}
+        keywords={[
+          'collaborate The Global Avenues',
+          'university partnership India',
+          'global education consulting',
+          'international student recruitment partner',
+          'university market expansion India',
+          'admissions operations outsourcing',
+          'education channel partner',
+        ]}
       />
       <section className="collaborate-section-shell px-4 py-20 sm:px-6 lg:px-8">
         <div ref={heroRef} className="mx-auto max-w-5xl text-center">

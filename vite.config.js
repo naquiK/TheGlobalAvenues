@@ -2,6 +2,9 @@ import { defineConfig } from 'vite'
 
 // https://vite.dev/config/
 export default defineConfig({
+  esbuild: {
+    jsx: 'automatic',
+  },
   build: {
     // Keep framework chunks cacheable while avoiding one huge vendor bundle.
     rollupOptions: {

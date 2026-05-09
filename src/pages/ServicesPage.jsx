@@ -137,11 +137,19 @@ export default function ServicesPage() {
   return (
     <div className="pt-16 min-h-screen">
       <Seo
-        title="Education Growth Services"
-        description="Discover services from The Global Avenues including market entry strategy, admissions operations, brand enablement, and partnership success management."
+        title="Education Growth Services — Market Entry, Admissions & Recruitment"
+        description="Discover The Global Avenues services: market entry strategy, admissions operations, brand enablement, recruitment partner network, compliance support, and performance analytics for universities."
         path="/services"
         image="/videos/hero-poster.jpg"
-        keywords={['education consulting services', 'admissions operations', 'market entry strategy']}
+        keywords={[
+          'education consulting services',
+          'admissions operations support',
+          'market entry strategy India',
+          'university recruitment services',
+          'brand enablement education',
+          'recruitment partner management',
+          'performance analytics education',
+        ]}
         jsonLd={[servicesSchema, faqSchema, breadcrumbSchema]}
       />
       {/* Hero Section */}

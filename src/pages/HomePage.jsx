@@ -40,21 +40,29 @@ export default function HomePage() {
   const { ref: servicesRef, isVisible: servicesVisible } = useLazySection();
   const { ref: portfolioRef, isVisible: portfolioVisible } = useLazySection();
   const { ref: testimonialsRef, isVisible: testimonialsVisible } = useLazySection();
-  const { ref: contactRef, isVisible: contactVisible } = useLazySection();
+  const { ref: contactRef, isVisible: contactVisible } = useLazySection({
+    rootMargin: '350px',
+    preloadOnIdle: false,
+  });
 
   return (
     <>
       <Seo
-        title="Global Education Partnerships and Student Recruitment"
-        description="Partner with The Global Avenues for international education consulting, university market entry strategy, and measurable enrollment growth support."
+        title="Global Education Partnerships & Student Recruitment | The Global Avenues"
+        description="The Global Avenues — Asia's trusted education partner. We help universities build market presence in India, manage recruitment channels, and grow international enrolment with ICEF-certified quality."
         path="/"
         image="/videos/hero-poster.jpg"
         keywords={[
           'international education consulting',
-          'university partnerships',
-          'student recruitment',
+          'university partnerships India',
+          'student recruitment South Asia',
           'admissions support',
           'The Global Avenues',
+          'ICEF accredited agency India',
+          'study abroad consultants',
+          'university market entry',
+          'channel partner management',
+          'education recruitment',
         ]}
         jsonLd={HOME_SCHEMA}
       />

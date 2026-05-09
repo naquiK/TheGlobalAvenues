@@ -119,9 +119,12 @@ export default function Seo({
     setMetaTag('name', 'robots', robotsContent);
     setMetaTag('name', 'keywords', keywordList || null);
     setMetaTag('name', 'twitter:card', 'summary_large_image');
+    setMetaTag('name', 'twitter:site', '@theglobalavenues');
+    setMetaTag('name', 'twitter:creator', '@theglobalavenues');
     setMetaTag('name', 'twitter:title', pageTitle);
     setMetaTag('name', 'twitter:description', pageDescription);
     setMetaTag('name', 'twitter:image', imageUrl);
+    setMetaTag('name', 'twitter:image:alt', pageTitle);
     setMetaTag('name', 'twitter:url', canonicalUrl);
     setMetaTag('property', 'og:type', type || 'website');
     setMetaTag('property', 'og:site_name', SITE_NAME);
@@ -130,6 +133,9 @@ export default function Seo({
     setMetaTag('property', 'og:description', pageDescription);
     setMetaTag('property', 'og:url', canonicalUrl);
     setMetaTag('property', 'og:image', imageUrl);
+    setMetaTag('property', 'og:image:width', '1280');
+    setMetaTag('property', 'og:image:height', '720');
+    setMetaTag('property', 'og:image:type', 'image/jpeg');
     setMetaTag('property', 'og:image:alt', pageTitle);
     setMetaTag(
       'property',

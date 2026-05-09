@@ -19,6 +19,7 @@ import {
   ProfileGridSkeleton,
 } from '../components/ui/SkeletonLayouts';
 import Seo from '../components/seo/Seo';
+import { SITE_URL } from '../seo/siteMeta';
 
 const ProfileCard = memo(function ProfileCard({ member, featured }) {
   const cardRef = useScrollAnimation({ y: 24, duration: 600, delay: featured ? 0 : 80 });
@@ -284,11 +285,28 @@ export default function AboutPage() {
   return (
     <div className="about-page-gradient min-h-screen pt-16 text-foreground">
       <Seo
-        title="About The Global Avenues"
-        description="Learn about The Global Avenues, our mission, values, leadership team, and our trusted approach to international education partnerships."
+        title="About The Global Avenues — Mission, Team & ICEF Accreditation"
+        description="Discover The Global Avenues — an ICEF & PIER certified education consultancy with 12+ years of experience. Meet our leadership team and learn how we help universities grow across India and South Asia."
         path="/about"
         image="/team/neetu-verma-gupta.webp"
-        keywords={['about The Global Avenues', 'international education partner', 'ICEF accredited agency']}
+        keywords={[
+          'about The Global Avenues',
+          'international education partner India',
+          'ICEF accredited agency',
+          'PIER certified education consultant',
+          'university recruitment team',
+          'education consultancy India',
+          'Neetu Verma Gupta',
+          'global education partnerships',
+        ]}
+        jsonLd={[{
+          '@context': 'https://schema.org',
+          '@type': 'BreadcrumbList',
+          itemListElement: [
+            { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE_URL}/` },
+            { '@type': 'ListItem', position: 2, name: 'About', item: `${SITE_URL}/about` },
+          ],
+        }]}
       />
       <section className="about-section-shell px-4 py-20 sm:px-6 lg:px-8">
         <div ref={heroRef} className="relative mx-auto max-w-5xl text-center">

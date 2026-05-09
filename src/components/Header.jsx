@@ -477,6 +477,15 @@ export function Header() {
           <div
             className="fixed inset-0 top-0 z-40 bg-[#0D0A1A]/45 backdrop-blur-sm lg:hidden"
             onClick={() => setIsMenuOpen(false)}
+            onKeyDown={(event) => {
+              if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                setIsMenuOpen(false);
+              }
+            }}
+            role="button"
+            tabIndex={0}
+            aria-label="Close navigation menu"
           />
           <nav className="animate-fade-in-right fixed right-0 top-0 z-50 flex h-screen w-full max-w-[320px] flex-col border-l border-brand-purple/10 bg-background/95 px-5 pb-6 pt-5 shadow-[0_28px_80px_rgba(26,16,51,0.22)] backdrop-blur-xl transition-all duration-200 ease-out dark:border-white/12 dark:bg-[#0F0C1E]/96 lg:hidden">
             <div className="mb-5 flex items-center justify-between">

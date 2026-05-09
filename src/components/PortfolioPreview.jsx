@@ -13,8 +13,8 @@ export function PortfolioPreview() {
       try {
         const data = await getFeaturedPortfolios(3);
         setPortfolios(data);
-      } catch (error) {
-        console.error('Error loading portfolios:', error);
+      } catch {
+        // Falls back to empty list gracefully
       } finally {
         setIsLoading(false);
       }

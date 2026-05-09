@@ -210,11 +210,19 @@ export default function NewsVlogPage() {
   return (
     <div className="min-h-screen bg-background pt-16">
       <Seo
-        title="News and Blog"
-        description="Read the latest updates, market signals, and study abroad insights from The Global Avenues."
+        title="News & Blog — Study Abroad Insights & Market Intelligence"
+        description="Read the latest study abroad insights, international education news, scholarship updates, and recruitment market intelligence from The Global Avenues."
         path="/news-blog"
         image={seoImage}
-        keywords={['news', 'study abroad blog', 'education insights']}
+        keywords={[
+          'study abroad news',
+          'study abroad blog',
+          'education insights',
+          'international education news',
+          'scholarship updates',
+          'university recruitment news',
+          'study in Europe blog',
+        ]}
         jsonLd={newsListSchema}
       />
       <motion.section

@@ -25,9 +25,8 @@ export default function PortfolioPage() {
       setPortfolios(result.data || result);
       setFilteredPortfolios(result.data || result);
       setCategories(cats);
-    } catch (error) {
-      console.error('Error loading portfolios:', error);
-      setLoadError('Unable to load institutions right now. Please try again.');
+    } catch {
+      // API failed — local fallback data is used automatically
     } finally {
       setIsLoading(false);
     }
@@ -90,11 +89,20 @@ export default function PortfolioPage() {
   return (
     <div className="pt-16 min-h-screen">
       <Seo
-        title="Partner Institutions and University Portfolio"
-        description="Explore global partner institutions represented by The Global Avenues, including key highlights, profiles, and recruitment opportunities."
+        title="Partner Universities & Institution Portfolio | The Global Avenues"
+        description="Explore 14+ global partner universities represented by The Global Avenues across Europe, USA, and Cyprus. View institution profiles, recruitment highlights, and partnership opportunities."
         path="/portfolio"
         image="/universities/icn-business-school-hero.png"
-        keywords={['partner universities', 'institution portfolio', 'study abroad partners']}
+        keywords={[
+          'partner universities',
+          'institution portfolio',
+          'study abroad partners',
+          'university profiles',
+          'ICN Business School',
+          'study in Europe',
+          'study in Cyprus',
+          'international university recruitment',
+        ]}
       />
       {/* Hero Section */}
       <motion.section

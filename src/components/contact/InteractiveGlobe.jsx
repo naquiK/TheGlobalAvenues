@@ -1,7 +1,6 @@
 import { useEffect, useRef } from 'react';
 
-const THREE_CDN = 'https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js';
-const GLOBE_CDN = 'https://unpkg.com/globe.gl@2.32.2/dist/globe.gl.min.js';
+const GLOBE_CDN = 'https://unpkg.com/globe.gl@2.45.3/dist/globe.gl.min.js';
 const GEOJSON_URL =
   'https://raw.githubusercontent.com/vasturiano/globe.gl/master/example/datasets/ne_110m_admin_0_countries.geojson';
 
@@ -17,6 +16,8 @@ const LOCATIONS = [
   { lat: 61.524, lng: 105.3188, radius: 2.0, colorRgb: '255, 0, 85' },
   { lat: 15.87, lng: 100.9925, radius: 2.0, colorRgb: '255, 0, 85' },
 ];
+
+let countryFeaturesPromise = null;
 
 function loadExternalScript(src) {
   return new Promise((resolve, reject) => {
@@ -52,6 +53,25 @@ function loadExternalScript(src) {
   });
 }
 
+function loadCountryFeatures() {
+  if (!countryFeaturesPromise) {
+    countryFeaturesPromise = fetch(GEOJSON_URL)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`Country data failed with ${response.status}`);
+        }
+        return response.json();
+      })
+      .then((countries) => countries.features || [])
+      .catch((error) => {
+        countryFeaturesPromise = null;
+        throw error;
+      });
+  }
+
+  return countryFeaturesPromise;
+}
+
 export function InteractiveGlobe() {
   const containerRef = useRef(null);
 
@@ -61,7 +81,6 @@ export function InteractiveGlobe() {
     }
 
     let cancelled = false;
-    let frameId = 0;
     let globe = null;
     let scene = null;
     let ambientLight = null;
@@ -69,19 +88,18 @@ export function InteractiveGlobe() {
     let rimLight = null;
     let countriesLoaded = false;
     let isDarkMode = document.documentElement.classList.contains('dark');
-    let THREERef = null;
     let controls = null;
-    let resizeObserver = null;
-    let raycaster = null;
-    let mouse = null;
-    let hoveringMesh = false;
+    let initTimer = 0;
+    let idlePauseTimer = 0;
     let pointerDown = false;
     const container = containerRef.current;
-    const geoAbortController = new AbortController();
     let viewportSettings = { altitude: 1.55, autoRotateSpeed: 3.0 };
     const isCoarsePointer =
       typeof window.matchMedia === 'function' &&
       (window.matchMedia('(pointer: coarse)').matches || window.matchMedia('(hover: none)').matches);
+    const prefersReducedMotion =
+      typeof window.matchMedia === 'function' &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     container.style.touchAction = isCoarsePointer ? 'pan-y' : 'auto';
     container.style.pointerEvents = isCoarsePointer ? 'none' : 'auto';
@@ -101,8 +119,62 @@ export function InteractiveGlobe() {
       return { altitude: 1.55, autoRotateSpeed: 3.0 };
     };
 
+    const setAutoRotate = (enabled) => {
+      if (!controls || prefersReducedMotion) return;
+      controls.autoRotate = enabled;
+    };
+
+    const pauseWhenIdle = () => {
+      if (idlePauseTimer) {
+        window.clearTimeout(idlePauseTimer);
+      }
+      idlePauseTimer = window.setTimeout(() => {
+        globe?.pauseAnimation?.();
+      }, 180);
+    };
+
+    const handleMouseEnter = () => {
+      if (!controls) return;
+      globe?.resumeAnimation?.();
+      setAutoRotate(false);
+      controls.enableRotate = true;
+      container.style.cursor = pointerDown ? 'grabbing' : 'grab';
+    };
+
+    const handleMouseLeave = () => {
+      pointerDown = false;
+      setAutoRotate(false);
+      if (controls) {
+        controls.enableRotate = false;
+      }
+      container.style.cursor = 'default';
+      pauseWhenIdle();
+    };
+
+    const handlePointerDown = () => {
+      pointerDown = true;
+      globe?.resumeAnimation?.();
+      container.style.cursor = 'grabbing';
+    };
+
+    const handlePointerUp = () => {
+      pointerDown = false;
+      if (controls?.enableRotate && !isCoarsePointer) {
+        container.style.cursor = 'grab';
+      }
+      if (!controls?.enableRotate) {
+        pauseWhenIdle();
+      }
+    };
+
     const handleResize = () => {
       if (!globe || !container) return;
+
+      const renderer = globe.renderer?.();
+      if (renderer) {
+        renderer.setPixelRatio(1);
+      }
+
       globe.width(container.clientWidth);
       globe.height(container.clientHeight);
 
@@ -115,72 +187,22 @@ export function InteractiveGlobe() {
       }
 
       if (controls && altitudeChanged) {
-        globe.pointOfView({ lat: 30, lng: 40, altitude: viewportSettings.altitude }, 700);
+        globe.resumeAnimation?.();
+        globe.pointOfView({ lat: 30, lng: 40, altitude: viewportSettings.altitude }, 0);
+        pauseWhenIdle();
       }
-    };
-
-    const handleMouseMove = (event) => {
-      if (!mouse) return;
-      const rect = container.getBoundingClientRect();
-      mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
-      mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
-    };
-
-    const handleMouseLeave = () => {
-      if (!mouse) return;
-      mouse.x = -2;
-      mouse.y = -2;
-      hoveringMesh = false;
-      pointerDown = false;
-      container.style.cursor = 'default';
-    };
-
-    const handlePointerDown = () => {
-      pointerDown = true;
-      if (hoveringMesh) {
-        container.style.cursor = 'grabbing';
-      }
-    };
-
-    const handlePointerUp = () => {
-      pointerDown = false;
-      container.style.cursor = hoveringMesh ? 'grab' : 'default';
-    };
-
-    const animate = () => {
-      if (cancelled || !controls || !raycaster || !scene || !globe) return;
-
-      controls.update();
-
-      raycaster.setFromCamera(mouse, globe.camera());
-      const intersections = raycaster.intersectObjects(scene.children, true);
-
-      let hoveringGlobe = false;
-      for (let index = 0; index < intersections.length; index += 1) {
-        if (intersections[index].object.type === 'Mesh') {
-          hoveringGlobe = true;
-          break;
-        }
-      }
-
-      hoveringMesh = hoveringGlobe;
-      controls.autoRotate = isCoarsePointer ? true : !hoveringGlobe;
-      controls.enableRotate = isCoarsePointer ? false : hoveringGlobe;
-      container.style.cursor = isCoarsePointer
-        ? 'default'
-        : hoveringGlobe
-          ? (pointerDown ? 'grabbing' : 'grab')
-          : 'default';
-      frameId = window.requestAnimationFrame(animate);
     };
 
     const applyTheme = (dark) => {
-      if (!globe || !THREERef) return;
+      if (!globe) return;
 
       const theme = dark
         ? {
             globeColor: 0x050203,
             shininess: 0.18,
+            specularColor: 0x1b0b13,
+            emissiveColor: 0x000000,
+            emissiveIntensity: 0.05,
             atmosphereColor: '#6e1428',
             atmosphereAltitude: 0.18,
             hexColor: 'rgba(255, 150, 182, 0.64)',
@@ -203,20 +225,23 @@ export function InteractiveGlobe() {
             ringAltitude: 0.012,
           }
         : {
-            globeColor: 0x444852,
-            shininess: 0.08,
+            globeColor: 0xf4f7ff,
+            shininess: 0.12,
+            specularColor: 0xc8d2ec,
+            emissiveColor: 0xcfd8ec,
+            emissiveIntensity: 0.16,
             atmosphereColor: '#7e7ab8',
             atmosphereAltitude: 0.09,
-            hexColor: 'rgba(20, 20, 26, 0.98)',
-            hexAltitude: 0.018,
+            hexColor: 'rgba(20, 20, 26, 0.94)',
+            hexAltitude: 0.014,
             hexMargin: 0.25,
-            ambientColor: 0x40434c,
-            ambientIntensity: 0.2,
-            keyColor: 0x8f95a6,
-            keyIntensity: 0.12,
+            ambientColor: 0xffffff,
+            ambientIntensity: 1.25,
+            keyColor: 0xffffff,
+            keyIntensity: 0.48,
             keyPosition: [-6, 6, 4],
-            rimColor: 0x6b5aa8,
-            rimIntensity: 0.12,
+            rimColor: 0xb8c8ff,
+            rimIntensity: 0.18,
             rimPosition: [-10, 6, -8],
             ringPrimary: '232, 92, 18',
             ringAccent: '198, 38, 96',
@@ -227,25 +252,24 @@ export function InteractiveGlobe() {
             ringAltitude: 0.026,
           };
 
-      const material = dark
-        ? new THREERef.MeshPhongMaterial({
-            color: theme.globeColor,
-            shininess: theme.shininess,
-            specular: new THREERef.Color(0x1b0b13),
-            emissive: new THREERef.Color(0x000000),
-            emissiveIntensity: 0.05,
-          })
-        : new THREERef.MeshLambertMaterial({
-            color: theme.globeColor,
-            emissive: new THREERef.Color(0x2a2d36),
-            emissiveIntensity: 0.12,
-          });
+      const material = globe.globeMaterial?.();
+      if (material) {
+        material.color?.setHex?.(theme.globeColor);
+        material.emissive?.setHex?.(theme.emissiveColor);
+        material.specular?.setHex?.(theme.specularColor);
+        if ('shininess' in material) {
+          material.shininess = theme.shininess;
+        }
+        if ('emissiveIntensity' in material) {
+          material.emissiveIntensity = theme.emissiveIntensity;
+        }
+        material.needsUpdate = true;
+      }
 
       globe
         .showAtmosphere(true)
         .atmosphereColor(theme.atmosphereColor)
-        .atmosphereAltitude(theme.atmosphereAltitude)
-        .globeMaterial(material);
+        .atmosphereAltitude(theme.atmosphereAltitude);
 
       if (countriesLoaded) {
         globe
@@ -266,17 +290,17 @@ export function InteractiveGlobe() {
         .ringRepeatPeriod(theme.ringPeriod);
 
       if (ambientLight) {
-        ambientLight.color = new THREERef.Color(theme.ambientColor);
+        ambientLight.color?.setHex?.(theme.ambientColor);
         ambientLight.intensity = theme.ambientIntensity;
       }
       if (keyLight) {
-        keyLight.color = new THREERef.Color(theme.keyColor);
-        keyLight.intensity = dark ? theme.keyIntensity : 0;
+        keyLight.color?.setHex?.(theme.keyColor);
+        keyLight.intensity = theme.keyIntensity;
         keyLight.position.set(...theme.keyPosition);
       }
       if (rimLight) {
-        rimLight.color = new THREERef.Color(theme.rimColor);
-        rimLight.intensity = dark ? theme.rimIntensity : 0;
+        rimLight.color?.setHex?.(theme.rimColor);
+        rimLight.intensity = theme.rimIntensity;
         rimLight.position.set(...theme.rimPosition);
       }
     };
@@ -284,18 +308,24 @@ export function InteractiveGlobe() {
     const initializeGlobe = async () => {
       try {
         await loadExternalScript(GLOBE_CDN);
-        if (!window.THREE) {
-          await loadExternalScript(THREE_CDN);
-        }
 
         if (cancelled) return;
 
-        const THREE = window.THREE;
         const GlobeFactory = window.Globe;
 
-        if (!THREE || !GlobeFactory) return;
+        if (!GlobeFactory) return;
 
-        THREERef = THREE;
+        const testCanvas = document.createElement('canvas');
+        const gl = testCanvas.getContext('webgl') || testCanvas.getContext('experimental-webgl');
+        if (!gl) {
+          console.warn('Globe skipped: WebGL not available.');
+          return;
+        }
+        const ext = gl.getExtension('WEBGL_lose_context');
+        if (ext) {
+          ext.loseContext();
+        }
+
         viewportSettings = getResponsiveSettings();
         globe = GlobeFactory()(container)
           .backgroundColor('rgba(0,0,0,0)')
@@ -308,17 +338,10 @@ export function InteractiveGlobe() {
         handleResize();
 
         scene = globe.scene();
-        scene.children = scene.children.filter(
-          (child) => !(child instanceof THREE.AmbientLight || child instanceof THREE.DirectionalLight)
-        );
-        ambientLight = new THREE.AmbientLight(0x4a1525, 3.6);
-        keyLight = new THREE.DirectionalLight(0xffffff, 0.6);
-        keyLight.position.set(10, 8, 12);
-        rimLight = new THREE.DirectionalLight(0x6e1428, 0.35);
-        rimLight.position.set(-12, 4, -6);
-        scene.add(ambientLight);
-        scene.add(keyLight);
-        scene.add(rimLight);
+        ambientLight = scene.children.find((child) => child.type === 'AmbientLight') || null;
+        const directionalLights = scene.children.filter((child) => child.type === 'DirectionalLight');
+        keyLight = directionalLights[0] || null;
+        rimLight = directionalLights[1] || null;
 
         controls = globe.controls();
         controls.enableDamping = true;
@@ -326,53 +349,49 @@ export function InteractiveGlobe() {
         controls.enablePan = false;
         controls.enableZoom = false;
         controls.enableRotate = false;
-        controls.autoRotate = true;
+        controls.autoRotate = false;
         controls.autoRotateSpeed = viewportSettings.autoRotateSpeed;
 
-        raycaster = new THREE.Raycaster();
-        mouse = new THREE.Vector2(-2, -2);
-
         if (!isCoarsePointer) {
-          container.addEventListener('mousemove', handleMouseMove);
+          container.addEventListener('mouseenter', handleMouseEnter);
           container.addEventListener('mouseleave', handleMouseLeave);
           container.addEventListener('mousedown', handlePointerDown);
           window.addEventListener('mouseup', handlePointerUp);
         }
         window.addEventListener('resize', handleResize);
-        if (typeof window.ResizeObserver === 'function') {
-          resizeObserver = new window.ResizeObserver(() => handleResize());
-          resizeObserver.observe(container);
-        }
 
-        globe.pointOfView({ lat: 30, lng: 40, altitude: viewportSettings.altitude }, 2000);
+        globe.pointOfView({ lat: 30, lng: 40, altitude: viewportSettings.altitude }, 0);
+        applyTheme(isDarkMode);
         window.requestAnimationFrame(() => {
           handleResize();
+          pauseWhenIdle();
         });
 
-        const response = await fetch(GEOJSON_URL, { signal: geoAbortController.signal });
-        const countries = await response.json();
+        try {
+          const countryFeatures = await loadCountryFeatures();
 
-        if (!cancelled && globe) {
-          globe
-            .hexPolygonsData(countries.features)
-            .hexPolygonResolution(3)
-            .hexPolygonMargin(0.52);
-          countriesLoaded = true;
-          applyTheme(isDarkMode);
-        }
-
-        if (!cancelled) {
-          applyTheme(isDarkMode);
-          animate();
+          if (!cancelled && globe) {
+            globe
+              .hexPolygonsData(countryFeatures)
+              .hexPolygonResolution(3)
+              .hexPolygonMargin(isDarkMode ? 0.52 : 0.25);
+            countriesLoaded = true;
+            applyTheme(isDarkMode);
+            pauseWhenIdle();
+          }
+        } catch (error) {
+          if (!cancelled) {
+            console.warn('Globe country dots skipped:', error.message || error);
+          }
         }
       } catch (error) {
         if (error.name !== 'AbortError') {
-          console.error('Failed to initialize globe:', error);
+          console.warn('Globe visual skipped:', error.message || error);
         }
       }
     };
 
-    initializeGlobe();
+    initTimer = window.setTimeout(initializeGlobe, 0);
 
     const themeObserver = new MutationObserver(() => {
       const nextDark = document.documentElement.classList.contains('dark');
@@ -385,17 +404,53 @@ export function InteractiveGlobe() {
 
     return () => {
       cancelled = true;
-      geoAbortController.abort();
       themeObserver.disconnect();
-      if (resizeObserver) {
-        resizeObserver.disconnect();
+      if (initTimer) {
+        window.clearTimeout(initTimer);
       }
-      window.cancelAnimationFrame(frameId);
+      if (idlePauseTimer) {
+        window.clearTimeout(idlePauseTimer);
+      }
       window.removeEventListener('resize', handleResize);
       window.removeEventListener('mouseup', handlePointerUp);
-      container.removeEventListener('mousemove', handleMouseMove);
+      container.removeEventListener('mouseenter', handleMouseEnter);
       container.removeEventListener('mouseleave', handleMouseLeave);
       container.removeEventListener('mousedown', handlePointerDown);
+
+      if (globe) {
+        try {
+          globe.pauseAnimation?.();
+          const renderer = globe.renderer();
+          if (renderer) {
+            renderer.dispose();
+          }
+        } catch {
+          // Renderer may already be disposed.
+        }
+
+        if (scene) {
+          scene.traverse((object) => {
+            if (object.geometry) object.geometry.dispose();
+            if (object.material) {
+              if (Array.isArray(object.material)) {
+                object.material.forEach((mat) => mat.dispose());
+              } else {
+                object.material.dispose();
+              }
+            }
+          });
+        }
+
+        globe._destructor?.();
+      }
+
+      ambientLight = null;
+      keyLight = null;
+      rimLight = null;
+      scene = null;
+      globe = null;
+      controls = null;
+
       container.replaceChildren();
     };
   }, []);

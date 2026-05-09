@@ -75,11 +75,18 @@ export default function GalleryPage() {
   return (
     <div className="min-h-screen bg-background pb-20 pt-20">
       <Seo
-        title="Gallery"
-        description="View The Global Avenues gallery with counselling events, conferences, campus highlights, and partner university collections."
+        title="Photo Gallery — Events, Campus Tours & Partner Highlights"
+        description="Browse The Global Avenues photo gallery featuring counselling events, international education conferences, university campus showcases, and partner highlights from around the world."
         path="/gallery"
         image="/gallery/collections/conferences/conference-events-2026/conference-cover-team-introduction.jpg"
-        keywords={['education gallery', 'university events', 'partner university photos']}
+        keywords={[
+          'education gallery',
+          'university events photos',
+          'partner university photos',
+          'education conference gallery',
+          'campus showcase images',
+          'international education events',
+        ]}
       />
       <section className="relative overflow-hidden px-4 pb-12 pt-8 sm:px-6 lg:px-8">
         <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-64 bg-[radial-gradient(60%_100%_at_50%_0%,rgba(83,64,176,0.22),transparent)]" />

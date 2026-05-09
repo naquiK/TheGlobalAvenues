@@ -27,18 +27,14 @@ import { getUniversityDetail } from '../services/contentApi';
 import { resolveMediaUrl } from '../services/apiClient';
 import useScrollIntentCelebration from '../hooks/useScrollIntentCelebration';
 import BackNavButton from '../components/ui/BackNavButton';
-<<<<<<< HEAD
-=======
+
 import { DetailSkeleton } from '../components/ui/SkeletonLayouts';
->>>>>>> 3e8bec7 (add skeleton load effect, dolve some bugs, improve ui)
+
 import Seo from '../components/seo/Seo';
 import { SITE_URL, trimDescription, toAbsoluteUrl } from '../seo/siteMeta';
 import { SITE_CONFIG } from '../config';
 
 const MJM_SUMMER_SCHOOL_HIGHLIGHT = {
-<<<<<<< HEAD
-  city: 'Rennes, France',
-=======
   title: 'MJM France Summer School',
   city: 'Paris & Lille',
   dates: '15-26 June 2026',
@@ -50,7 +46,12 @@ const MJM_SUMMER_SCHOOL_HIGHLIGHT = {
   hours: '36 hours from 10:00 to 18:00',
   pdf: '/universities/mjm-graphic-design/brochures/mjm-summer-school-france.pdf',
   pdfLow: '/universities/mjm-graphic-design/brochures/mjm-summer-school-france-low.pdf',
->>>>>>> 3e8bec7 (add skeleton load effect, dolve some bugs, improve ui)
+  featuredProgram: {
+    title: 'Creative Summer School in France',
+    fee: '2000Euro Per Student',
+    deadline: 'Apply early for the June 2026 intake',
+  },
+
   description:
     "Our Summer School in France is a two-week immersive programme combining artistic courses, cultural activities, and language learning. Designed for international students aged 16 and above, the programme blends MJM's 45 years of creative expertise with the unique cultural richness of France.",
   images: [
@@ -209,8 +210,6 @@ const MJM_TRACK_CARD_THEME_CLASSES = [
   'border-[#D3E0FF] bg-[linear-gradient(145deg,rgba(239,249,255,0.95)_0%,rgba(247,242,255,0.95)_56%,rgba(255,242,226,0.94)_100%)] dark:border-[#42557F] dark:bg-[linear-gradient(145deg,rgba(20,33,46,0.78)_0%,rgba(28,22,56,0.86)_55%,rgba(40,27,30,0.74)_100%)]',
   'border-[#F2D4DC] bg-[linear-gradient(145deg,rgba(255,240,244,0.94)_0%,rgba(243,243,255,0.96)_52%,rgba(255,246,225,0.95)_100%)] dark:border-[#5A4574] dark:bg-[linear-gradient(145deg,rgba(39,23,44,0.76)_0%,rgba(28,24,58,0.86)_55%,rgba(44,29,24,0.74)_100%)]',
 ];
-<<<<<<< HEAD
-=======
 const CATALOG_THEME_CLASSES = {
   euas: {
     shell:
@@ -277,7 +276,6 @@ const CATALOG_THEME_CLASSES = {
       'border-primary/25 text-primary hover:bg-primary hover:text-primary-foreground dark:border-primary/40',
   },
 };
->>>>>>> 3e8bec7 (add skeleton load effect, dolve some bugs, improve ui)
 const ICN_PREMIUM_SPOTLIGHT = {
   subtitle: 'ICN Official Profile',
   heading: 'ICN Creative Business School',
@@ -384,12 +382,11 @@ export default function PortfolioDetailPage() {
   const [portfolio, setPortfolio] = useState(null);
   const [allPortfolios, setAllPortfolios] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-<<<<<<< HEAD
-=======
+
   const [loadError, setLoadError] = useState('');
   const [reloadToken, setReloadToken] = useState(0);
   const [activeCatalogDetails, setActiveCatalogDetails] = useState(null);
->>>>>>> 3e8bec7 (add skeleton load effect, dolve some bugs, improve ui)
+
   const mjmSpotlightRef = useRef(null);
   const catalogDocumentsRef = useRef(null);
 
@@ -493,8 +490,8 @@ export default function PortfolioDetailPage() {
         }
       } catch (error) {
         if (isActive) {
-          console.error('Error loading portfolio:', error);
-          setLoadError('Unable to load this institution profile right now. Please try again.');
+          console.warn('Portfolio detail load used local fallback only.');
+          setLoadError('');
         }
       } finally {
         if (isActive) {
@@ -515,6 +512,7 @@ export default function PortfolioDetailPage() {
   const normalizedTitle = String(portfolio?.title || '').toLowerCase();
   const isMjmGraphicDesignProfile =
     normalizedSlug === 'mjm-graphic-design' || normalizedTitle.includes('mjm graphic design');
+  const isMjmSummerSchoolCardEnabled = true;
   const isEuasProfile =
     normalizedSlug === 'estonian-entrepreneurship-university-of-applied-sciences' ||
     normalizedTitle.includes('estonian entrepreneurship university of applied sciences') ||
@@ -596,11 +594,10 @@ export default function PortfolioDetailPage() {
           description="Loading institution profile and partnership details."
           path={`/portfolio/${id || ''}`}
         />
-<<<<<<< HEAD
         <div className="w-12 h-12 border-4 border-muted border-t-primary rounded-full animate-spin" />
-=======
+
         <DetailSkeleton />
->>>>>>> 3e8bec7 (add skeleton load effect, dolve some bugs, improve ui)
+
       </div>
     );
   }
@@ -1396,25 +1393,26 @@ export default function PortfolioDetailPage() {
                     {MJM_SUMMER_SCHOOL_HIGHLIGHT.description}
                   </p>
 
-<<<<<<< HEAD
+
                   <div className="mt-6 rounded-2xl border border-[#D8CDEE] bg-[linear-gradient(145deg,rgba(255,255,255,0.82)_0%,rgba(247,243,255,0.88)_54%,rgba(255,236,224,0.82)_100%)] p-5 shadow-[0_14px_34px_rgba(25,18,53,0.08)] dark:border-[#443A6E] dark:bg-[linear-gradient(145deg,rgba(28,22,52,0.84)_0%,rgba(18,15,37,0.9)_54%,rgba(30,23,42,0.82)_100%)]">
                     <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
                       Featured Program
                     </p>
                     <h4 className="mt-2 text-2xl font-semibold text-foreground">
-                      {MJM_SUMMER_SCHOOL_HIGHLIGHT.aiBusiness.title}
+                      {MJM_SUMMER_SCHOOL_HIGHLIGHT.featuredProgram.title}
                     </h4>
                     <div className="mt-4 space-y-2.5 text-sm text-muted-foreground">
                       <div className="flex items-start gap-2.5">
                         <span className="font-semibold text-foreground">Course Fees:</span>
-                        <span>{MJM_SUMMER_SCHOOL_HIGHLIGHT.aiBusiness.fee}</span>
+                        <span>{MJM_SUMMER_SCHOOL_HIGHLIGHT.featuredProgram.fee}</span>
                       </div>
                       <div className="flex items-start gap-2.5">
                         <span className="font-semibold text-foreground">Deadline to Apply:</span>
-                        <span>{MJM_SUMMER_SCHOOL_HIGHLIGHT.aiBusiness.deadline}</span>
+                        <span>{MJM_SUMMER_SCHOOL_HIGHLIGHT.featuredProgram.deadline}</span>
                       </div>
                     </div>
-=======
+                  </div>
+
                   <div className="mt-5 grid grid-cols-1 gap-2.5 sm:grid-cols-2">
                     {[
                       {
@@ -1490,7 +1488,7 @@ export default function PortfolioDetailPage() {
                       Open PDF
                       <ExternalLink className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                     </a>
->>>>>>> 3e8bec7 (add skeleton load effect, dolve some bugs, improve ui)
+
                   </div>
                 </div>
 
@@ -1531,39 +1529,6 @@ export default function PortfolioDetailPage() {
             whileInView="visible"
             viewport={{ once: true }}
           >
-<<<<<<< HEAD
-            <h3 className="text-2xl font-bold text-foreground mb-2 flex items-center gap-2">
-              <FileText className="w-5 h-5 text-primary" />
-              Official Program Catalogs
-            </h3>
-            <p className="text-sm text-muted-foreground mb-5">
-              Download the official university catalogs for complete program structures, curriculum information, and policy details.
-            </p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {catalogDocuments.map((catalog) => (
-                <a
-                  key={`${catalog.title || 'catalog'}-${catalog.file}`}
-                  href={catalog.file}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="rounded-xl border border-border/50 bg-background/80 p-4 transition-all hover:border-primary/40 hover:-translate-y-0.5"
-                >
-                  <p className="text-xs font-semibold uppercase tracking-[0.12em] text-primary mb-1">
-                    PDF Catalog
-                  </p>
-                  <h4 className="text-base font-semibold text-foreground mb-2">
-                    {catalog.title || 'Program Catalog'}
-                  </h4>
-                  {catalog.description && (
-                    <p className="text-sm text-muted-foreground mb-3">{catalog.description}</p>
-                  )}
-                  <span className="inline-flex items-center gap-2 text-sm font-semibold text-primary">
-                    Open PDF
-                    <ExternalLink className="w-4 h-4" />
-                  </span>
-                </a>
-              ))}
-=======
             <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
               <div>
                 <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
@@ -1707,7 +1672,6 @@ export default function PortfolioDetailPage() {
                   </article>
                 );
               })}
->>>>>>> 3e8bec7 (add skeleton load effect, dolve some bugs, improve ui)
             </div>
           </motion.div>
         )}

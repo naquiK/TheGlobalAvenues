@@ -31,11 +31,18 @@ export default function PartnersPage() {
   return (
     <div className="min-h-screen pt-24 pb-20 px-4 sm:px-6 lg:px-8 bg-background">
       <Seo
-        title="Partnership Ecosystem"
-        description="Explore The Global Avenues partner ecosystem across universities, industry partners, counselor networks, and education agents."
+        title="Partnership Ecosystem — Universities, Agents & Counselor Networks"
+        description="Explore The Global Avenues partner ecosystem: 215+ universities, industry leaders, counselor networks, and education agents across India and global markets."
         path="/partners"
         image="/universities/university-of-nicosia-hero.jpg"
-        keywords={['education partners', 'university partnerships', 'counselor network']}
+        keywords={[
+          'education partners',
+          'university partnerships India',
+          'counselor network education',
+          'education agent network',
+          'B2B education partnerships',
+          'recruitment agent collaboration',
+        ]}
       />
       <div className="max-w-7xl mx-auto">
         <motion.div
