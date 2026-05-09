@@ -179,7 +179,7 @@ export function Footer() {
             <div className={`${logo.hotspot} flex items-center justify-center`}>
               <img
                 src={logo.src}
-                alt="University partner placeholder"
+                alt=""
                 loading="lazy"
                 decoding="async"
                 className={`${logo.size} object-contain will-change-transform transition-all duration-1000 ease-out ${

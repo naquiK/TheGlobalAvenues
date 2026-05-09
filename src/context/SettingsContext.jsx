@@ -177,7 +177,7 @@ export function SettingsProvider({ children }) {
         setSettings(data || null);
       } catch (error) {
         if (error.name !== 'AbortError') {
-          setErrorMessage(error.message || 'Unable to load settings');
+          // Silently fall back to default config — no user-facing error
         }
       } finally {
         setIsLoading(false);

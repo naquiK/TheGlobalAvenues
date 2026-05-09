@@ -46,6 +46,11 @@ const MJM_SUMMER_SCHOOL_HIGHLIGHT = {
   hours: '36 hours from 10:00 to 18:00',
   pdf: '/universities/mjm-graphic-design/brochures/mjm-summer-school-france.pdf',
   pdfLow: '/universities/mjm-graphic-design/brochures/mjm-summer-school-france-low.pdf',
+  featuredProgram: {
+    title: 'Creative Summer School in France',
+    fee: '2000Euro Per Student',
+    deadline: 'Apply early for the June 2026 intake',
+  },
 
   description:
     "Our Summer School in France is a two-week immersive programme combining artistic courses, cultural activities, and language learning. Designed for international students aged 16 and above, the programme blends MJM's 45 years of creative expertise with the unique cultural richness of France.",
@@ -485,8 +490,8 @@ export default function PortfolioDetailPage() {
         }
       } catch (error) {
         if (isActive) {
-          console.error('Error loading portfolio:', error);
-          setLoadError('Unable to load this institution profile right now. Please try again.');
+          console.warn('Portfolio detail load used local fallback only.');
+          setLoadError('');
         }
       } finally {
         if (isActive) {
@@ -507,6 +512,7 @@ export default function PortfolioDetailPage() {
   const normalizedTitle = String(portfolio?.title || '').toLowerCase();
   const isMjmGraphicDesignProfile =
     normalizedSlug === 'mjm-graphic-design' || normalizedTitle.includes('mjm graphic design');
+  const isMjmSummerSchoolCardEnabled = true;
   const isEuasProfile =
     normalizedSlug === 'estonian-entrepreneurship-university-of-applied-sciences' ||
     normalizedTitle.includes('estonian entrepreneurship university of applied sciences') ||
@@ -1393,16 +1399,16 @@ export default function PortfolioDetailPage() {
                       Featured Program
                     </p>
                     <h4 className="mt-2 text-2xl font-semibold text-foreground">
-                      {MJM_SUMMER_SCHOOL_HIGHLIGHT.aiBusiness.title}
+                      {MJM_SUMMER_SCHOOL_HIGHLIGHT.featuredProgram.title}
                     </h4>
                     <div className="mt-4 space-y-2.5 text-sm text-muted-foreground">
                       <div className="flex items-start gap-2.5">
                         <span className="font-semibold text-foreground">Course Fees:</span>
-                        <span>{MJM_SUMMER_SCHOOL_HIGHLIGHT.aiBusiness.fee}</span>
+                        <span>{MJM_SUMMER_SCHOOL_HIGHLIGHT.featuredProgram.fee}</span>
                       </div>
                       <div className="flex items-start gap-2.5">
                         <span className="font-semibold text-foreground">Deadline to Apply:</span>
-                        <span>{MJM_SUMMER_SCHOOL_HIGHLIGHT.aiBusiness.deadline}</span>
+                        <span>{MJM_SUMMER_SCHOOL_HIGHLIGHT.featuredProgram.deadline}</span>
                       </div>
                     </div>
                   </div>

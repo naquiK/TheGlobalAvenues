@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Send } from 'lucide-react';
 import useScrollAnimation from '../hooks/useScrollAnimation';
 import { InteractiveGlobe } from './contact/InteractiveGlobe';
-import { CONTACT_FORM_RECIPIENT_EMAIL, submitContactForm } from '../services/contactFormService';
+import { submitContactForm } from '../services/contactFormService';
 
 export function Contact() {
   const [formData, setFormData] = useState({ name: '', email: '', message: '' });
@@ -12,7 +12,6 @@ export function Contact() {
   const headingRef = useScrollAnimation({ y: 20, duration: 600 });
   const globeRef = useScrollAnimation({ x: -20, duration: 700 });
   const formRef = useScrollAnimation({ x: 20, duration: 700, delay: 150 });
-  const recipientEmail = CONTACT_FORM_RECIPIENT_EMAIL;
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -29,7 +28,6 @@ export function Contact() {
 
     try {
       await submitContactForm({
-        toEmail: recipientEmail,
         formName: 'Home Contact Form',
         source: '/',
         fields: {
@@ -51,7 +49,7 @@ export function Contact() {
   };
 
   return (
-    <section id="contact" className="relative overflow-hidden bg-transparent px-4 pb-0 pt-20">
+    <section id="contact" className="relative overflow-hidden bg-transparent px-4 pb-0 pt-20" style={{ overflowAnchor: 'none' }}>
 
       <div className="relative z-10 mx-auto w-full max-w-7xl">
         <div
@@ -73,6 +71,7 @@ export function Contact() {
           <div
             ref={globeRef}
             className="order-2 overflow-visible rounded-[24px] lg:order-1 lg:overflow-hidden lg:rounded-[28px] lg:pt-20"
+            style={{ overflowAnchor: 'none' }}
           >
             <div className="mx-auto h-[320px] w-full max-w-[34rem] sm:h-[430px] sm:max-w-[42rem] lg:h-[620px] lg:max-w-[52rem]">
               <InteractiveGlobe />
@@ -85,8 +84,9 @@ export function Contact() {
           >
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label className="mb-2 block text-sm font-medium text-foreground">Full Name</label>
+                <label htmlFor="contact-name" className="mb-2 block text-sm font-medium text-foreground">Full Name</label>
                 <input
+                  id="contact-name"
                   type="text"
                   name="name"
                   value={formData.name}
@@ -98,8 +98,9 @@ export function Contact() {
               </div>
 
               <div>
-                <label className="mb-2 block text-sm font-medium text-foreground">Email Address</label>
+                <label htmlFor="contact-email" className="mb-2 block text-sm font-medium text-foreground">Email Address</label>
                 <input
+                  id="contact-email"
                   type="email"
                   name="email"
                   value={formData.email}
@@ -111,8 +112,9 @@ export function Contact() {
               </div>
 
               <div>
-                <label className="mb-2 block text-sm font-medium text-foreground">Message</label>
+                <label htmlFor="contact-message" className="mb-2 block text-sm font-medium text-foreground">Message</label>
                 <textarea
+                  id="contact-message"
                   name="message"
                   value={formData.message}
                   onChange={handleChange}

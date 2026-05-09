@@ -5,6 +5,17 @@ const DEFAULT_REQUEST_TIMEOUT_MS = 12000;
 export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || DEFAULT_API_BASE_URL;
 export const MEDIA_BASE_URL = import.meta.env.VITE_API_MEDIA_BASE_URL || DEFAULT_MEDIA_BASE_URL;
 
+const isLocalBrowser =
+  typeof window !== 'undefined' &&
+  ['localhost', '127.0.0.1', '::1'].includes(window.location.hostname);
+
+const isUsingDefaultRemoteApi = API_BASE_URL === DEFAULT_API_BASE_URL;
+
+export const CONTENT_API_ENABLED =
+  import.meta.env.VITE_ENABLE_REMOTE_CONTENT === 'true' ||
+  !isLocalBrowser ||
+  !isUsingDefaultRemoteApi;
+
 const joinUrl = (base, path) => {
   if (!base) return path;
   const trimmedBase = base.replace(/\/+$/, '');
@@ -89,6 +100,10 @@ const createRequestSignal = (externalSignal, timeoutMs) => {
 };
 
 export async function fetchJson(url, options = {}) {
+  if (!CONTENT_API_ENABLED) {
+    throw new Error('Remote content API disabled in local development.');
+  }
+
   const {
     headers: optionHeaders = {},
     signal: externalSignal,

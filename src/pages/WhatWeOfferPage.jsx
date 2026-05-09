@@ -129,11 +129,19 @@ export default function WhatWeOfferPage() {
   return (
     <div className="min-h-screen bg-background pb-20 pt-20">
       <Seo
-        title="What We Offer"
-        description="Explore The Global Avenues offerings including in-country representation, admissions support, market intelligence, and recruitment partner management."
+        title="What We Offer — University Representation, Admissions & Recruitment Support"
+        description="Explore The Global Avenues B2B offerings: in-country university representation, admissions process support, market intelligence, recruitment partner management, and full-cycle enrolment growth in India."
         path="/what-we-offer"
         image="/videos/hero-poster.jpg"
-        keywords={['what we offer', 'education support services', 'international recruitment support']}
+        keywords={[
+          'what we offer',
+          'education support services',
+          'international recruitment support',
+          'university representation India',
+          'admissions process support',
+          'in-country representation education',
+          'recruitment partner management India',
+        ]}
       />
       <section className="relative overflow-hidden px-4 pb-12 pt-10 sm:px-6 lg:px-8">
         <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-72 bg-[radial-gradient(60%_90%_at_50%_0%,rgba(83,64,176,0.22),transparent)]" />
