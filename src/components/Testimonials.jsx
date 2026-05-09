@@ -167,13 +167,10 @@ const RatingStars = ({ rating }) => (
   </div>
 );
 
-const TestimonialCard = ({ children, delay = 0, className, onMouseEnter, onMouseLeave }) => {
-  const cardRef = useScrollAnimation({ delay, duration: 500, y: 24 });
-
+const TestimonialCard = ({ children, className, onMouseEnter, onMouseLeave }) => {
   return (
     <article
-      ref={cardRef}
-      className={`${className} transition-all duration-300 ease-out hover:-translate-y-1 hover:border-[rgba(232,82,26,0.3)] active:-translate-y-1 active:border-[rgba(232,82,26,0.3)]`}
+      className={`${className} carousel-motion-card transition-all duration-300 ease-out hover:-translate-y-1 hover:border-[rgba(232,82,26,0.3)] active:-translate-y-1 active:border-[rgba(232,82,26,0.3)]`}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
     >
@@ -302,10 +299,9 @@ export function Testimonials() {
   const pauseAutoPlay = () => setIsAutoPlay(false);
   const resumeAutoPlay = () => setIsAutoPlay(true);
 
-  const renderBigCard = (item, keyPrefix, tone = 'blue', index = 0) => (
+  const renderBigCard = (item, keyPrefix, tone = 'blue') => (
     <TestimonialCard
       key={`${keyPrefix}-${item.id}`}
-      delay={index * 120}
       className={
         tone === 'blue'
           ? 'relative min-h-[220px] overflow-hidden rounded-2xl border border-[#7E8CFF]/40 bg-gradient-to-br from-[#2E3FAE] via-[#3850C8] to-[#4361EE] p-5 shadow-[0_16px_34px_rgba(34,49,132,0.32)]'
@@ -333,10 +329,9 @@ export function Testimonials() {
     </TestimonialCard>
   );
 
-  const renderSmallCard = (item, keyPrefix, index = 0) => (
+  const renderSmallCard = (item, keyPrefix) => (
     <TestimonialCard
       key={`${keyPrefix}-${item.id}`}
-      delay={index * 120}
       className="min-h-[220px] rounded-2xl border border-[#D8D2EE] bg-white/92 p-4 shadow-[0_14px_32px_rgba(37,23,90,0.12)] dark:border-[#2B2354] dark:bg-[#17122E]/84 dark:shadow-[0_20px_42px_rgba(0,0,0,0.45)]"
       onMouseEnter={pauseAutoPlay}
       onMouseLeave={resumeAutoPlay}
@@ -360,7 +355,7 @@ export function Testimonials() {
     if (activeLayoutKey === 'four_small') {
       return (
         <div className="grid grid-cols-2 gap-4 xl:grid-cols-4">
-          {visibleCards.map((item, index) => renderSmallCard(item, `${keyPrefix}-${index}`, index))}
+          {visibleCards.map((item, index) => renderSmallCard(item, `${keyPrefix}-${index}`))}
         </div>
       );
     }
@@ -368,7 +363,7 @@ export function Testimonials() {
     return (
       <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
         {visibleCards.map((item, index) =>
-          renderBigCard(item, `${keyPrefix}-${index}`, index % 2 === 0 ? 'blue' : 'light', index)
+          renderBigCard(item, `${keyPrefix}-${index}`, index % 2 === 0 ? 'blue' : 'light')
         )}
       </div>
     );
@@ -398,15 +393,15 @@ export function Testimonials() {
         {isLoading ? (
           <ProcessSkeleton count={4} className="py-0 px-0 sm:px-0 lg:px-0" />
         ) : (
-          <div className="mx-auto max-w-6xl overflow-hidden rounded-2xl">
+          <div className="carousel-scroll-stable mx-auto max-w-6xl overflow-hidden rounded-2xl">
             <div
-              className={`flex ${
+              className={`carousel-motion-track flex min-h-[456px] items-stretch xl:min-h-[220px] ${
                 isSliding
                   ? 'transition-transform ease-[cubic-bezier(0.22,1,0.36,1)]'
                   : 'transition-none'
               }`}
               style={{
-                transform: `translateX(-${isSliding ? 100 : 0}%)`,
+                transform: `translate3d(-${isSliding ? 100 : 0}%, 0, 0)`,
                 transitionDuration: `${SLIDE_DURATION_MS}ms`,
               }}
             >

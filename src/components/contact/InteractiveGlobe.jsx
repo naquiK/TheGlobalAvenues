@@ -89,9 +89,17 @@ export function InteractiveGlobe() {
     let countriesLoaded = false;
     let isDarkMode = document.documentElement.classList.contains('dark');
     let controls = null;
-    let initTimer = 0;
-    let idlePauseTimer = 0;
+    let initTask = null;
+    let countryLoadTask = null;
+    let resizeFrame = 0;
+    let resizeObserver = null;
+    let visibilityObserver = null;
+    let globeCanvas = null;
     let pointerDown = false;
+    let pointerOverGlobe = false;
+    let isGlobeVisible = true;
+    let lastWidth = 0;
+    let lastHeight = 0;
     const container = containerRef.current;
     let viewportSettings = { altitude: 1.55, autoRotateSpeed: 3.0 };
     const isCoarsePointer =
@@ -101,8 +109,33 @@ export function InteractiveGlobe() {
       typeof window.matchMedia === 'function' &&
       window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    container.style.touchAction = isCoarsePointer ? 'pan-y' : 'auto';
-    container.style.pointerEvents = isCoarsePointer ? 'none' : 'auto';
+    container.style.touchAction = 'auto';
+    container.style.pointerEvents = 'auto';
+
+    const requestDeferredTask = (callback, timeout = 1500) => {
+      if ('requestIdleCallback' in window) {
+        return {
+          type: 'idle',
+          id: window.requestIdleCallback(() => callback(), { timeout }),
+        };
+      }
+
+      return {
+        type: 'raf',
+        id: window.requestAnimationFrame(() => callback()),
+      };
+    };
+
+    const cancelDeferredTask = (task) => {
+      if (!task) return;
+      if (task.type === 'idle' && 'cancelIdleCallback' in window) {
+        window.cancelIdleCallback(task.id);
+        return;
+      }
+      if (task.type === 'raf') {
+        window.cancelAnimationFrame(task.id);
+      }
+    };
 
     const getResponsiveSettings = () => {
       const width = container?.clientWidth || window.innerWidth;
@@ -121,62 +154,125 @@ export function InteractiveGlobe() {
 
     const setAutoRotate = (enabled) => {
       if (!controls || prefersReducedMotion) return;
-      controls.autoRotate = enabled;
-    };
-
-    const pauseWhenIdle = () => {
-      if (idlePauseTimer) {
-        window.clearTimeout(idlePauseTimer);
+      controls.autoRotate = enabled && isGlobeVisible;
+      if (controls.autoRotate) {
+        globe?.resumeAnimation?.();
       }
-      idlePauseTimer = window.setTimeout(() => {
-        globe?.pauseAnimation?.();
-      }, 180);
     };
 
-    const handleMouseEnter = () => {
-      if (!controls) return;
+    const isPointerOnGlobe = (event) => {
+      const target = globeCanvas || container;
+      const rect = target.getBoundingClientRect();
+      if (!rect.width || !rect.height) return false;
+
+      const x = event.clientX - rect.left;
+      const y = event.clientY - rect.top;
+      const centerX = rect.width / 2;
+      const centerY = rect.height / 2;
+      const radius = Math.min(rect.width, rect.height) * 0.46;
+      const distance = Math.hypot(x - centerX, y - centerY);
+
+      return distance <= radius;
+    };
+
+    const activateGlobeInteraction = () => {
+      if (!controls || pointerOverGlobe) return;
+      pointerOverGlobe = true;
       globe?.resumeAnimation?.();
       setAutoRotate(false);
       controls.enableRotate = true;
-      container.style.cursor = pointerDown ? 'grabbing' : 'grab';
+      const cursor = pointerDown ? 'grabbing' : 'grab';
+      container.style.cursor = cursor;
+      if (globeCanvas) globeCanvas.style.cursor = cursor;
     };
 
-    const handleMouseLeave = () => {
+    const deactivateGlobeInteraction = () => {
+      if (!controls || pointerDown) return;
+      pointerOverGlobe = false;
+      controls.enableRotate = false;
+      container.style.cursor = 'default';
+      if (globeCanvas) globeCanvas.style.cursor = 'default';
+      setAutoRotate(true);
+    };
+
+    const handlePointerMove = (event) => {
+      if (!controls || isCoarsePointer) return;
+      if (isPointerOnGlobe(event)) {
+        activateGlobeInteraction();
+      } else {
+        deactivateGlobeInteraction();
+      }
+    };
+
+    const handlePointerLeave = () => {
       pointerDown = false;
+      deactivateGlobeInteraction();
+    };
+
+    const handlePointerDown = (event) => {
+      if (!isPointerOnGlobe(event)) {
+        pointerOverGlobe = false;
+        if (controls) {
+          controls.enableRotate = false;
+        }
+        return;
+      }
+
+      pointerDown = true;
+      pointerOverGlobe = true;
+      globe?.resumeAnimation?.();
       setAutoRotate(false);
+      if (controls) {
+        controls.enableRotate = true;
+      }
+      container.style.cursor = 'grabbing';
+      if (globeCanvas) globeCanvas.style.cursor = 'grabbing';
+    };
+
+    const handlePointerUp = (event) => {
+      pointerDown = false;
+      if (isCoarsePointer) {
+        pointerOverGlobe = false;
+        if (controls) {
+          controls.enableRotate = false;
+        }
+        container.style.cursor = 'default';
+        if (globeCanvas) globeCanvas.style.cursor = 'default';
+        setAutoRotate(true);
+      }
+
+      if (!isCoarsePointer && event && isPointerOnGlobe(event)) {
+        pointerOverGlobe = true;
+        if (controls) {
+          controls.enableRotate = true;
+        }
+        container.style.cursor = 'grab';
+        if (globeCanvas) globeCanvas.style.cursor = 'grab';
+        return;
+      }
+
+      pointerOverGlobe = false;
       if (controls) {
         controls.enableRotate = false;
       }
       container.style.cursor = 'default';
-      pauseWhenIdle();
+      if (globeCanvas) globeCanvas.style.cursor = 'default';
+      setAutoRotate(true);
     };
 
-    const handlePointerDown = () => {
-      pointerDown = true;
-      globe?.resumeAnimation?.();
-      container.style.cursor = 'grabbing';
-    };
-
-    const handlePointerUp = () => {
-      pointerDown = false;
-      if (controls?.enableRotate && !isCoarsePointer) {
-        container.style.cursor = 'grab';
-      }
-      if (!controls?.enableRotate) {
-        pauseWhenIdle();
-      }
-    };
-
-    const handleResize = () => {
+    const syncGlobeSize = () => {
       if (!globe || !container) return;
 
-      const renderer = globe.renderer?.();
-      if (renderer) {
-        renderer.setPixelRatio(1);
-      }
+      const width = container.clientWidth;
+      const height = container.clientHeight;
+      if (!width || !height) return;
+      if (width === lastWidth && height === lastHeight) return;
 
-      globe.width(container.clientWidth);
-      globe.height(container.clientHeight);
+      lastWidth = width;
+      lastHeight = height;
+
+      globe.width(width);
+      globe.height(height);
 
       const nextSettings = getResponsiveSettings();
       const altitudeChanged = Math.abs(nextSettings.altitude - viewportSettings.altitude) > 0.01;
@@ -189,8 +285,16 @@ export function InteractiveGlobe() {
       if (controls && altitudeChanged) {
         globe.resumeAnimation?.();
         globe.pointOfView({ lat: 30, lng: 40, altitude: viewportSettings.altitude }, 0);
-        pauseWhenIdle();
+        setAutoRotate(true);
       }
+    };
+
+    const scheduleResize = () => {
+      if (resizeFrame || cancelled) return;
+      resizeFrame = window.requestAnimationFrame(() => {
+        resizeFrame = 0;
+        syncGlobeSize();
+      });
     };
 
     const applyTheme = (dark) => {
@@ -220,6 +324,7 @@ export function InteractiveGlobe() {
             ringAccent: '255, 0, 85',
             ringAlpha: 1,
             ringScale: 0.72,
+            primaryRingScale: 0.72,
             ringSpeed: 1.75,
             ringPeriod: 780,
             ringAltitude: 0.012,
@@ -247,6 +352,7 @@ export function InteractiveGlobe() {
             ringAccent: '198, 38, 96',
             ringAlpha: 0.95,
             ringScale: 1.24,
+            primaryRingScale: 0.78,
             ringSpeed: 1.16,
             ringPeriod: 900,
             ringAltitude: 0.026,
@@ -284,7 +390,11 @@ export function InteractiveGlobe() {
         return `rgba(${rgb}, ${Math.min(1, theme.ringAlpha * fade)})`;
       });
       globe
-        .ringMaxRadius((location) => location.radius * theme.ringScale)
+        .ringMaxRadius((location) => {
+          const scale =
+            location.colorRgb === '255, 255, 255' ? theme.primaryRingScale : theme.ringScale;
+          return location.radius * scale;
+        })
         .ringAltitude(theme.ringAltitude)
         .ringPropagationSpeed(theme.ringSpeed)
         .ringRepeatPeriod(theme.ringPeriod);
@@ -321,10 +431,6 @@ export function InteractiveGlobe() {
           console.warn('Globe skipped: WebGL not available.');
           return;
         }
-        const ext = gl.getExtension('WEBGL_lose_context');
-        if (ext) {
-          ext.loseContext();
-        }
 
         viewportSettings = getResponsiveSettings();
         globe = GlobeFactory()(container)
@@ -335,7 +441,18 @@ export function InteractiveGlobe() {
           .ringPropagationSpeed(1.75)
           .ringRepeatPeriod(780);
 
-        handleResize();
+        const renderer = globe.renderer?.();
+        if (renderer) {
+          renderer.setPixelRatio(1);
+          globeCanvas = renderer.domElement || null;
+          if (globeCanvas) {
+            globeCanvas.style.touchAction = 'none';
+            globeCanvas.style.pointerEvents = 'auto';
+            globeCanvas.style.cursor = 'default';
+          }
+        }
+
+        scheduleResize();
 
         scene = globe.scene();
         ambientLight = scene.children.find((child) => child.type === 'AmbientLight') || null;
@@ -349,41 +466,63 @@ export function InteractiveGlobe() {
         controls.enablePan = false;
         controls.enableZoom = false;
         controls.enableRotate = false;
-        controls.autoRotate = false;
+        controls.autoRotate = !prefersReducedMotion;
         controls.autoRotateSpeed = viewportSettings.autoRotateSpeed;
 
-        if (!isCoarsePointer) {
-          container.addEventListener('mouseenter', handleMouseEnter);
-          container.addEventListener('mouseleave', handleMouseLeave);
-          container.addEventListener('mousedown', handlePointerDown);
-          window.addEventListener('mouseup', handlePointerUp);
+        if (globeCanvas) {
+          globeCanvas.addEventListener('pointermove', handlePointerMove);
+          globeCanvas.addEventListener('pointerleave', handlePointerLeave);
+          globeCanvas.addEventListener('pointerdown', handlePointerDown, true);
+          window.addEventListener('pointerup', handlePointerUp);
+          window.addEventListener('pointercancel', handlePointerUp);
         }
-        window.addEventListener('resize', handleResize);
+        if (typeof ResizeObserver !== 'undefined') {
+          resizeObserver = new ResizeObserver(scheduleResize);
+          resizeObserver.observe(container);
+        } else {
+          window.addEventListener('resize', scheduleResize);
+        }
+        if (typeof IntersectionObserver !== 'undefined') {
+          visibilityObserver = new IntersectionObserver(
+            ([entry]) => {
+              isGlobeVisible = entry.isIntersecting;
+              if (isGlobeVisible) {
+                setAutoRotate(true);
+                globe.resumeAnimation?.();
+                return;
+              }
+              setAutoRotate(false);
+              globe.pauseAnimation?.();
+            },
+            { rootMargin: '160px 0px', threshold: 0.01 }
+          );
+          visibilityObserver.observe(container);
+        }
 
         globe.pointOfView({ lat: 30, lng: 40, altitude: viewportSettings.altitude }, 0);
         applyTheme(isDarkMode);
-        window.requestAnimationFrame(() => {
-          handleResize();
-          pauseWhenIdle();
-        });
+        scheduleResize();
+        setAutoRotate(true);
 
-        try {
-          const countryFeatures = await loadCountryFeatures();
+        countryLoadTask = requestDeferredTask(async () => {
+          try {
+            const countryFeatures = await loadCountryFeatures();
 
-          if (!cancelled && globe) {
-            globe
-              .hexPolygonsData(countryFeatures)
-              .hexPolygonResolution(3)
-              .hexPolygonMargin(isDarkMode ? 0.52 : 0.25);
-            countriesLoaded = true;
-            applyTheme(isDarkMode);
-            pauseWhenIdle();
+            if (!cancelled && globe) {
+              globe
+                .hexPolygonsData(countryFeatures)
+                .hexPolygonResolution(3)
+                .hexPolygonMargin(isDarkMode ? 0.52 : 0.25);
+              countriesLoaded = true;
+              applyTheme(isDarkMode);
+              setAutoRotate(true);
+            }
+          } catch (error) {
+            if (!cancelled) {
+              console.warn('Globe country dots skipped:', error.message || error);
+            }
           }
-        } catch (error) {
-          if (!cancelled) {
-            console.warn('Globe country dots skipped:', error.message || error);
-          }
-        }
+        }, 2200);
       } catch (error) {
         if (error.name !== 'AbortError') {
           console.warn('Globe visual skipped:', error.message || error);
@@ -391,7 +530,7 @@ export function InteractiveGlobe() {
       }
     };
 
-    initTimer = window.setTimeout(initializeGlobe, 0);
+    initTask = requestDeferredTask(initializeGlobe, 1000);
 
     const themeObserver = new MutationObserver(() => {
       const nextDark = document.documentElement.classList.contains('dark');
@@ -405,17 +544,19 @@ export function InteractiveGlobe() {
     return () => {
       cancelled = true;
       themeObserver.disconnect();
-      if (initTimer) {
-        window.clearTimeout(initTimer);
+      cancelDeferredTask(initTask);
+      cancelDeferredTask(countryLoadTask);
+      if (resizeFrame) {
+        window.cancelAnimationFrame(resizeFrame);
       }
-      if (idlePauseTimer) {
-        window.clearTimeout(idlePauseTimer);
-      }
-      window.removeEventListener('resize', handleResize);
-      window.removeEventListener('mouseup', handlePointerUp);
-      container.removeEventListener('mouseenter', handleMouseEnter);
-      container.removeEventListener('mouseleave', handleMouseLeave);
-      container.removeEventListener('mousedown', handlePointerDown);
+      resizeObserver?.disconnect();
+      visibilityObserver?.disconnect();
+      window.removeEventListener('resize', scheduleResize);
+      window.removeEventListener('pointerup', handlePointerUp);
+      window.removeEventListener('pointercancel', handlePointerUp);
+      globeCanvas?.removeEventListener('pointermove', handlePointerMove);
+      globeCanvas?.removeEventListener('pointerleave', handlePointerLeave);
+      globeCanvas?.removeEventListener('pointerdown', handlePointerDown, true);
 
       if (globe) {
         try {
@@ -450,6 +591,7 @@ export function InteractiveGlobe() {
       scene = null;
       globe = null;
       controls = null;
+      globeCanvas = null;
 
       container.replaceChildren();
     };
