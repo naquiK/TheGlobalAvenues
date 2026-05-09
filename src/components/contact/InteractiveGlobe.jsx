@@ -533,7 +533,7 @@ export function InteractiveGlobe() {
             }
           } catch (error) {
             if (!cancelled) {
-              logDebugWarn('Globe country dots skipped:', error.message || error);
+              console.warn('Globe country dots skipped:', error.message || error);
             }
           }
         }, 2200);
