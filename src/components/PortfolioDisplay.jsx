@@ -1,7 +1,6 @@
-import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { ArrowRight, ChevronLeft, ChevronRight, Landmark, MapPin } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { getFeaturedPortfolios } from '../services/portfolioService';
 import { portfolioData } from '../data/portfolioData';
 
@@ -12,6 +11,8 @@ export default function PortfolioDisplay({ limit = 10 }) {
   const [isLoading, setIsLoading] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [itemsPerRow, setItemsPerRow] = useState(5);
+  const [carouselMetrics, setCarouselMetrics] = useState({ width: 0, gap: 24 });
+  const viewportRef = useRef(null);
 
   useEffect(() => {
     let isMounted = true;
@@ -60,36 +61,70 @@ export default function PortfolioDisplay({ limit = 10 }) {
     return () => window.removeEventListener('resize', updateItemsPerRow);
   }, []);
 
+  const updateCarouselMetrics = useCallback(() => {
+    const width = viewportRef.current?.clientWidth || 0;
+    const gap = window.innerWidth < 640 ? 16 : 24;
+    setCarouselMetrics((previous) =>
+      previous.width === width && previous.gap === gap ? previous : { width, gap }
+    );
+  }, []);
+
+  useEffect(() => {
+    updateCarouselMetrics();
+    window.addEventListener('resize', updateCarouselMetrics);
+
+    let resizeObserver;
+    if (typeof ResizeObserver !== 'undefined' && viewportRef.current) {
+      resizeObserver = new ResizeObserver(updateCarouselMetrics);
+      resizeObserver.observe(viewportRef.current);
+    }
+
+    return () => {
+      window.removeEventListener('resize', updateCarouselMetrics);
+      resizeObserver?.disconnect();
+    };
+  }, [updateCarouselMetrics]);
+
+  const maxIndex = Math.max(0, portfolios.length - itemsPerRow);
+  const hasMultipleRows = portfolios.length > itemsPerRow;
+  const cardWidth =
+    carouselMetrics.width > 0
+      ? Math.max(0, (carouselMetrics.width - carouselMetrics.gap * (itemsPerRow - 1)) / itemsPerRow)
+      : 0;
+  const cardStep = cardWidth + carouselMetrics.gap;
+  const fallbackBasis =
+    itemsPerRow === 1
+      ? '100%'
+      : `calc((100% - ${(itemsPerRow - 1) * carouselMetrics.gap}px) / ${itemsPerRow})`;
+
+  useEffect(() => {
+    setCurrentIndex((prev) => Math.min(prev, maxIndex));
+  }, [maxIndex]);
+
   // Auto-rotate through items
   useEffect(() => {
     if (portfolios.length <= itemsPerRow) return;
 
     const interval = setInterval(() => {
       setCurrentIndex((prev) => {
-        const maxIndex = portfolios.length - itemsPerRow;
         return prev >= maxIndex ? 0 : prev + 1;
       });
     }, 5000);
 
     return () => clearInterval(interval);
-  }, [portfolios.length, itemsPerRow]);
+  }, [maxIndex, portfolios.length, itemsPerRow]);
 
   const handlePrevious = () => {
     setCurrentIndex((prev) => {
-      const maxIndex = portfolios.length - itemsPerRow;
       return prev <= 0 ? maxIndex : prev - 1;
     });
   };
 
   const handleNext = () => {
     setCurrentIndex((prev) => {
-      const maxIndex = portfolios.length - itemsPerRow;
       return prev >= maxIndex ? 0 : prev + 1;
     });
   };
-
-  const visiblePortfolios = portfolios.slice(currentIndex, currentIndex + itemsPerRow);
-  const hasMultipleRows = portfolios.length > itemsPerRow;
 
   const getInitials = (title = '') =>
     title
@@ -105,13 +140,6 @@ export default function PortfolioDisplay({ limit = 10 }) {
     return `${text.slice(0, maxLength).trim()}...`;
   };
 
-  const cardVariants = {
-    hidden: { opacity: 0, x: 20 },
-    visible: { opacity: 1, x: 0, transition: { duration: 0.4 } },
-    exit: { opacity: 0, x: -20, transition: { duration: 0.4 } },
-    hover: { y: -8, transition: { duration: 0.3 } }
-  };
-
   if (isLoading) {
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
@@ -123,24 +151,26 @@ export default function PortfolioDisplay({ limit = 10 }) {
   }
 
   return (
-    <div className="w-full">
+    <div className="carousel-scroll-stable w-full">
       {/* Carousel Container */}
       <div className="relative">
         {/* Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 sm:gap-6">
-          <AnimatePresence mode="sync">
-            {visiblePortfolios.map((portfolio) => (
-              <motion.div
-                key={`${currentIndex}-${portfolio.id}`}
-                variants={cardVariants}
-                initial="hidden"
-                animate="visible"
-                exit="exit"
-                whileHover="hover"
-                className="group cursor-pointer"
+        <div ref={viewportRef} className="overflow-hidden px-1 pb-10 pt-4">
+          <div
+            className="carousel-motion-track flex items-stretch transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]"
+            style={{
+              gap: `${carouselMetrics.gap}px`,
+              transform: `translate3d(-${currentIndex * cardStep}px, 0, 0)`,
+            }}
+          >
+            {portfolios.map((portfolio) => (
+              <div
+                key={portfolio.id}
+                className="carousel-motion-card group flex-shrink-0 cursor-pointer transition-transform duration-300 ease-out hover:-translate-y-2"
+                style={{ flexBasis: cardWidth > 0 ? `${cardWidth}px` : fallbackBasis }}
               >
                 <Link to={`/portfolio/${portfolio.slug || portfolio.id}`} className="block h-full">
-                  <div className="relative h-full overflow-hidden rounded-2xl border border-primary/25 bg-gradient-to-b from-primary/10 via-background to-background shadow-[0_20px_45px_-34px_rgba(45,27,105,0.95)] transition-all duration-300 group-hover:border-accent/60 group-hover:shadow-[0_22px_55px_-30px_rgba(232,82,26,0.6)]">
+                  <div className="relative flex h-full min-h-[460px] flex-col overflow-hidden rounded-2xl border border-primary/25 bg-gradient-to-b from-primary/10 via-background to-background shadow-[0_20px_45px_-34px_rgba(45,27,105,0.95)] transition-all duration-300 group-hover:border-accent/60 group-hover:shadow-[0_22px_55px_-30px_rgba(232,82,26,0.6)]">
                     <div className="pointer-events-none absolute -right-12 -top-12 h-28 w-28 rounded-full bg-accent/20 blur-2xl transition-all duration-500 group-hover:scale-125 group-hover:bg-accent/30" />
                     <div className="pointer-events-none absolute -left-10 bottom-20 h-24 w-24 rounded-full bg-primary/20 blur-2xl transition-all duration-500 group-hover:scale-125" />
 
@@ -217,9 +247,9 @@ export default function PortfolioDisplay({ limit = 10 }) {
                     </div>
                   </div>
                 </Link>
-              </motion.div>
+              </div>
             ))}
-          </AnimatePresence>
+          </div>
         </div>
 
         {/* Navigation Arrows - Only show if multiple items */}
@@ -227,16 +257,18 @@ export default function PortfolioDisplay({ limit = 10 }) {
           <>
             <button
               onClick={handlePrevious}
-              className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-12 sm:-translate-x-16 lg:-translate-x-20 bg-primary text-white p-2 rounded-full hover:bg-primary/90 transition-all duration-300 z-10 hover:scale-110"
+              className="absolute left-3 top-1/2 z-10 -translate-y-1/2 rounded-full border border-white/60 bg-primary/95 p-2 text-white shadow-[0_12px_28px_rgba(45,27,105,0.28)] transition-all duration-300 hover:scale-110 hover:bg-primary"
               aria-label="Previous"
+              type="button"
             >
               <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6" />
             </button>
 
             <button
               onClick={handleNext}
-              className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-12 sm:translate-x-16 lg:translate-x-20 bg-primary text-white p-2 rounded-full hover:bg-primary/90 transition-all duration-300 z-10 hover:scale-110"
+              className="absolute right-3 top-1/2 z-10 -translate-y-1/2 rounded-full border border-white/60 bg-primary/95 p-2 text-white shadow-[0_12px_28px_rgba(45,27,105,0.28)] transition-all duration-300 hover:scale-110 hover:bg-primary"
               aria-label="Next"
+              type="button"
             >
               <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6" />
             </button>

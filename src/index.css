@@ -417,6 +417,22 @@ html.dark {
     display: none;
   }
 
+  .carousel-scroll-stable {
+    overflow-anchor: none;
+    contain: layout paint;
+  }
+
+  .carousel-motion-track {
+    backface-visibility: hidden;
+    transform-style: preserve-3d;
+    will-change: transform;
+  }
+
+  .carousel-motion-card {
+    backface-visibility: hidden;
+    transform: translateZ(0);
+  }
+
   .skeleton-surface,
   .skeleton-card,
   .skeleton-line {
