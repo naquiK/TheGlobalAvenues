@@ -1,8 +1,20 @@
 import { useEffect, useRef } from 'react';
 
-const GLOBE_CDN = 'https://unpkg.com/globe.gl@2.45.3/dist/globe.gl.min.js';
-const GEOJSON_URL =
+const isLocalBrowser =
+  typeof window !== 'undefined' &&
+  ['localhost', '127.0.0.1', '::1'].includes(window.location.hostname);
+
+const LOCAL_GLOBE_SCRIPT_URL = '/vendor/globe.gl.min.js';
+const REMOTE_GLOBE_SCRIPT_URL = 'https://unpkg.com/globe.gl@2.45.3/dist/globe.gl.min.js';
+const LOCAL_COUNTRY_DATA_URL = '/vendor/globe-countries.geojson';
+const REMOTE_COUNTRY_DATA_URL =
   'https://raw.githubusercontent.com/vasturiano/globe.gl/master/example/datasets/ne_110m_admin_0_countries.geojson';
+const GLOBE_SCRIPT_URLS = isLocalBrowser
+  ? [REMOTE_GLOBE_SCRIPT_URL, LOCAL_GLOBE_SCRIPT_URL]
+  : [LOCAL_GLOBE_SCRIPT_URL, REMOTE_GLOBE_SCRIPT_URL];
+const COUNTRY_DATA_URLS = isLocalBrowser
+  ? [REMOTE_COUNTRY_DATA_URL, LOCAL_COUNTRY_DATA_URL]
+  : [LOCAL_COUNTRY_DATA_URL, REMOTE_COUNTRY_DATA_URL];
 
 const LOCATIONS = [
   { lat: 20.5937, lng: 78.9629, radius: 5.5, colorRgb: '255, 255, 255' },
@@ -18,6 +30,13 @@ const LOCATIONS = [
 ];
 
 let countryFeaturesPromise = null;
+const shouldLogDebug = import.meta.env.DEV;
+
+const logDebugWarn = (...args) => {
+  if (shouldLogDebug) {
+    console.warn(...args);
+  }
+};
 
 function loadExternalScript(src) {
   return new Promise((resolve, reject) => {
@@ -28,10 +47,17 @@ function loadExternalScript(src) {
         resolve();
         return;
       }
-
-      existing.addEventListener('load', resolve, { once: true });
-      existing.addEventListener('error', reject, { once: true });
-      return;
+      if (existing.dataset.failed === 'true') {
+        existing.remove();
+      } else {
+        existing.addEventListener('load', resolve, { once: true });
+        existing.addEventListener(
+          'error',
+          () => reject(new Error(`Script load failed: ${src}`)),
+          { once: true }
+        );
+        return;
+      }
     }
 
     const script = document.createElement('script');
@@ -47,21 +73,55 @@ function loadExternalScript(src) {
       },
       { once: true }
     );
-    script.addEventListener('error', reject, { once: true });
+    script.addEventListener(
+      'error',
+      () => {
+        script.dataset.failed = 'true';
+        reject(new Error(`Script load failed: ${src}`));
+      },
+      { once: true }
+    );
 
     document.head.appendChild(script);
   });
 }
 
+async function loadFirstAvailableScript(sources) {
+  const failures = [];
+
+  for (const src of sources) {
+    try {
+      await loadExternalScript(src);
+      return src;
+    } catch (error) {
+      failures.push(error.message || String(error));
+    }
+  }
+
+  throw new Error(failures.join(' | '));
+}
+
+async function fetchFirstAvailableJson(sources) {
+  const failures = [];
+
+  for (const src of sources) {
+    try {
+      const response = await fetch(src);
+      if (!response.ok) {
+        throw new Error(`Country data failed with ${response.status} from ${src}`);
+      }
+      return await response.json();
+    } catch (error) {
+      failures.push(error.message || String(error));
+    }
+  }
+
+  throw new Error(failures.join(' | '));
+}
+
 function loadCountryFeatures() {
   if (!countryFeaturesPromise) {
-    countryFeaturesPromise = fetch(GEOJSON_URL)
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`Country data failed with ${response.status}`);
-        }
-        return response.json();
-      })
+    countryFeaturesPromise = fetchFirstAvailableJson(COUNTRY_DATA_URLS)
       .then((countries) => countries.features || [])
       .catch((error) => {
         countryFeaturesPromise = null;
@@ -101,7 +161,7 @@ export function InteractiveGlobe() {
     let lastWidth = 0;
     let lastHeight = 0;
     const container = containerRef.current;
-    let viewportSettings = { altitude: 1.55, autoRotateSpeed: 3.0 };
+    let viewportSettings = { altitude: 1.55, autoRotateSpeed: 3.35 };
     const isCoarsePointer =
       typeof window.matchMedia === 'function' &&
       (window.matchMedia('(pointer: coarse)').matches || window.matchMedia('(hover: none)').matches);
@@ -141,15 +201,15 @@ export function InteractiveGlobe() {
       const width = container?.clientWidth || window.innerWidth;
 
       if (width < 430) {
-        return { altitude: 2.28, autoRotateSpeed: 2.2 };
+        return { altitude: 2.28, autoRotateSpeed: 2.58 };
       }
       if (width < 768) {
-        return { altitude: 2.0, autoRotateSpeed: 2.45 };
+        return { altitude: 2.0, autoRotateSpeed: 2.86 };
       }
       if (width < 1024) {
-        return { altitude: 1.74, autoRotateSpeed: 2.7 };
+        return { altitude: 1.74, autoRotateSpeed: 3.18 };
       }
-      return { altitude: 1.55, autoRotateSpeed: 3.0 };
+      return { altitude: 1.55, autoRotateSpeed: 3.52 };
     };
 
     const setAutoRotate = (enabled) => {
@@ -417,7 +477,7 @@ export function InteractiveGlobe() {
 
     const initializeGlobe = async () => {
       try {
-        await loadExternalScript(GLOBE_CDN);
+        await loadFirstAvailableScript(GLOBE_SCRIPT_URLS);
 
         if (cancelled) return;
 
@@ -428,7 +488,7 @@ export function InteractiveGlobe() {
         const testCanvas = document.createElement('canvas');
         const gl = testCanvas.getContext('webgl') || testCanvas.getContext('experimental-webgl');
         if (!gl) {
-          console.warn('Globe skipped: WebGL not available.');
+          logDebugWarn('Globe skipped: WebGL not available.');
           return;
         }
 
@@ -525,7 +585,7 @@ export function InteractiveGlobe() {
         }, 2200);
       } catch (error) {
         if (error.name !== 'AbortError') {
-          console.warn('Globe visual skipped:', error.message || error);
+          logDebugWarn('Globe visual skipped:', error.message || error);
         }
       }
     };

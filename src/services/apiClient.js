@@ -1,15 +1,18 @@
-const DEFAULT_API_BASE_URL = 'https://admin.theglobalavenues.com/public/api?route=';
-const DEFAULT_MEDIA_BASE_URL = 'https://admin.theglobalavenues.com/public/';
-const DEFAULT_REQUEST_TIMEOUT_MS = 12000;
-
-export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || DEFAULT_API_BASE_URL;
-export const MEDIA_BASE_URL = import.meta.env.VITE_API_MEDIA_BASE_URL || DEFAULT_MEDIA_BASE_URL;
-
 const isLocalBrowser =
   typeof window !== 'undefined' &&
   ['localhost', '127.0.0.1', '::1'].includes(window.location.hostname);
 
-const isUsingDefaultRemoteApi = API_BASE_URL === DEFAULT_API_BASE_URL;
+const REMOTE_API_BASE_URL = 'https://admin.theglobalavenues.com/public/api?route=';
+const PROXY_API_BASE_URL = '/public/api?route=';
+const DEFAULT_MEDIA_BASE_URL = 'https://admin.theglobalavenues.com/public/';
+const DEFAULT_REQUEST_TIMEOUT_MS = 12000;
+
+const DEFAULT_API_BASE_URL = isLocalBrowser ? REMOTE_API_BASE_URL : PROXY_API_BASE_URL;
+
+export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || DEFAULT_API_BASE_URL;
+export const MEDIA_BASE_URL = import.meta.env.VITE_API_MEDIA_BASE_URL || DEFAULT_MEDIA_BASE_URL;
+
+const isUsingDefaultRemoteApi = API_BASE_URL === REMOTE_API_BASE_URL;
 
 export const CONTENT_API_ENABLED =
   import.meta.env.VITE_ENABLE_REMOTE_CONTENT === 'true' ||

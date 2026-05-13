@@ -314,7 +314,8 @@ export function Header() {
                       ? Array.from({ length: 6 }).map((_, index) => (
                           <div
                             key={`portfolio-loader-${index + 1}`}
-                            className="h-14 rounded-2xl bg-brand-purple-light/70 animate-pulse dark:bg-white/10"
+                            className="skeleton-card h-14 rounded-2xl"
+                            aria-hidden="true"
                           />
                         ))
                       : null}
@@ -487,7 +488,7 @@ export function Header() {
             tabIndex={0}
             aria-label="Close navigation menu"
           />
-          <nav className="animate-fade-in-right fixed right-0 top-0 z-50 flex h-screen w-full max-w-[320px] flex-col border-l border-brand-purple/10 bg-background/95 px-5 pb-6 pt-5 shadow-[0_28px_80px_rgba(26,16,51,0.22)] backdrop-blur-xl transition-all duration-200 ease-out dark:border-white/12 dark:bg-[#0F0C1E]/96 lg:hidden">
+          <nav className="animate-fade-in-right fixed right-0 top-0 z-50 flex h-screen h-[100dvh] w-full max-w-[320px] flex-col border-l border-brand-purple/10 bg-background/95 px-5 pb-6 pt-5 shadow-[0_28px_80px_rgba(26,16,51,0.22)] backdrop-blur-xl transition-all duration-200 ease-out dark:border-white/12 dark:bg-[#0F0C1E]/96 lg:hidden">
             <div className="mb-5 flex items-center justify-between">
               <Link
                 to="/"
@@ -569,7 +570,8 @@ export function Header() {
                       ? Array.from({ length: 5 }).map((_, index) => (
                           <div
                             key={`portfolio-mobile-loader-${index + 1}`}
-                            className="h-14 rounded-2xl bg-brand-purple-light/80 animate-pulse dark:bg-white/10"
+                            className="skeleton-card h-14 rounded-2xl"
+                            aria-hidden="true"
                           />
                         ))
                       : null}

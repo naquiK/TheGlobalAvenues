@@ -1,11 +1,14 @@
 import { useMemo, useState } from 'react';
 import {
   ArrowRight,
+  Building2,
   CheckCircle2,
   Clock3,
+  Globe2,
   Handshake,
   Mail,
   MapPin,
+  MessageCircle,
   Phone,
   Send,
   ShieldCheck,
@@ -18,6 +21,7 @@ import useLazySection from '../hooks/useLazySection';
 import { ProcessSkeleton } from '../components/ui/SkeletonLayouts';
 import { submitContactForm } from '../services/contactFormService';
 import Seo from '../components/seo/Seo';
+import WorldMap from '../components/contact/WorldMap';
 
 const inputClassName =
   'w-full rounded-xl border border-[#D8D2EE] bg-white/85 px-4 py-3 text-sm text-foreground shadow-[inset_0_1px_0_rgba(255,255,255,0.75)] outline-none transition-all duration-200 ease-out placeholder:text-muted-foreground/70 focus:border-primary/40 focus:ring-2 focus:ring-primary/20 dark:border-[#3B2C73] dark:bg-[#181231]/80 dark:shadow-none dark:placeholder:text-white/45';
@@ -28,6 +32,67 @@ const contactToneClasses = [
   'border-[#E4D5EB] bg-[linear-gradient(160deg,#FFFFFF_0%,#FFF3F8_100%)] dark:border-[#543464] dark:bg-[linear-gradient(160deg,#21112A_0%,#1A1021_100%)]',
 ];
 
+const officeCardToneClasses = [
+  'border-[#D8D1EE] bg-[linear-gradient(160deg,rgba(255,255,255,0.96)_0%,rgba(247,244,255,0.92)_100%)] dark:border-[#3A2D74] dark:bg-[linear-gradient(160deg,rgba(23,18,46,0.96)_0%,rgba(18,13,37,0.92)_100%)]',
+  'border-[#D6DDF2] bg-[linear-gradient(160deg,rgba(255,255,255,0.96)_0%,rgba(243,248,255,0.92)_100%)] dark:border-[#2E4269] dark:bg-[linear-gradient(160deg,rgba(18,26,46,0.96)_0%,rgba(15,20,39,0.92)_100%)]',
+  'border-[#E4D5EB] bg-[linear-gradient(160deg,rgba(255,255,255,0.96)_0%,rgba(255,243,248,0.92)_100%)] dark:border-[#543464] dark:bg-[linear-gradient(160deg,rgba(33,17,42,0.96)_0%,rgba(26,16,33,0.92)_100%)]',
+];
+
+const OFFICE_LOCATIONS = [
+  {
+    id: 'india',
+    type: 'Head Quarter (HDQ)',
+    country: 'India',
+    title: 'New Delhi',
+    x: '71.5%',
+    y: '42%',
+    cardX: '61%',
+    cardY: '64%',
+    accentClass: 'from-[#2D1B69] via-[#5B45C6] to-[#7C6AE6]',
+    phones: ['+91 9319831133', '+91 9971801133', '+91 9717801133'],
+    address: 'The Global Avenues, A6, South Extension II, New Delhi 110049',
+  },
+  {
+    id: 'uae',
+    type: 'Branch Office',
+    country: 'United Arab Emirates',
+    title: 'Sharjah',
+    x: '64.8%',
+    y: '42.8%',
+    cardX: '55%',
+    cardY: '64%',
+    accentClass: 'from-[#153B7A] via-[#2A68C8] to-[#63A4FF]',
+    phones: ['+971 50 518 2209', '+91 9319831133'],
+    address:
+      'The Global Avenues, Business Centre, Sharjah Publishing City, Al Zahia Area, Sheikh Mohammed Bin Zayed Rd, Sharjah, United Arab Emirates',
+  },
+  {
+    id: 'nepal',
+    type: 'Branch Office',
+    country: 'Nepal',
+    title: 'Pokhara',
+    x: '73.5%',
+    y: '41.6%',
+    cardX: '63%',
+    cardY: '64%',
+    accentClass: 'from-[#B53D72] via-[#E8521A] to-[#FF9B63]',
+    phones: ['+91 9851009092', '+91 9319831133'],
+    address: 'The Global Avenues, 3rd floor, Chipledhunga, Opposite to Marwadi Bhojanalaye, Pokhara',
+  },
+];
+
+const EMAIL_CONTACTS = [
+  { label: 'In-Country Representation', email: 'neetu@theglobalavenues.com' },
+  { label: 'UNI Collaboration', email: 'connect@theglobalavenues.com' },
+  { label: 'B2B Agent partnership', email: 'apply@theglobalavenues.com' },
+  { label: 'Admissions', email: 'admissions@theglobalavenues.com' },
+  { label: 'Job Opportunities', email: 'career@theglobalavenues.com' },
+];
+
+function formatPhoneHref(phone) {
+  return phone.replace(/[^\d+]/g, '');
+}
+
 export default function CollaboratePage() {
   const { siteConfig } = useSettings();
   const [formData, setFormData] = useState({
@@ -37,12 +102,15 @@ export default function CollaboratePage() {
     subject: '',
     message: '',
   });
+  const [activeOfficeId, setActiveOfficeId] = useState(OFFICE_LOCATIONS[0].id);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState('idle');
   const [submitMessage, setSubmitMessage] = useState('');
 
   const heroRef = useScrollAnimation({ y: 20, duration: 650 });
   const heroMetaRef = useScrollAnimation({ y: 20, duration: 650, delay: 120 });
+  const officeMapRef = useScrollAnimation({ y: 24, duration: 700 });
+  const officeRailRef = useScrollAnimation({ y: 24, duration: 700, delay: 120 });
   const formRef = useScrollAnimation({ x: -20, duration: 700 });
   const asideRef = useScrollAnimation({ x: 20, duration: 700, delay: 120 });
   const ctaRef = useScrollAnimation({ y: 22, duration: 650 });
@@ -55,6 +123,7 @@ export default function CollaboratePage() {
   const generalEmail = siteConfig.contact?.email?.general || 'connect@theglobalavenues.com';
   const whatsappLink = siteConfig.social?.whatsapp || '#';
   const fullAddress = formatAddress(siteConfig.contact?.address);
+  const brandLogo = siteConfig.company.logo.lightSrc || '/logo-light.png';
 
   const highlightChips = useMemo(
     () => [
@@ -63,6 +132,12 @@ export default function CollaboratePage() {
       `${siteConfig.stats.visaSuccessRate} Conversion Performance`,
     ],
     [siteConfig.stats]
+  );
+
+  const officeLocations = useMemo(() => OFFICE_LOCATIONS, []);
+  const activeOffice = useMemo(
+    () => officeLocations.find((office) => office.id === activeOfficeId) || officeLocations[0],
+    [activeOfficeId, officeLocations]
   );
 
   const collaborationFlow = useMemo(
@@ -170,13 +245,13 @@ export default function CollaboratePage() {
       <section className="collaborate-section-shell px-4 py-20 sm:px-6 lg:px-8">
         <div ref={heroRef} className="mx-auto max-w-5xl text-center">
           <div className="section-kicker-classic mb-5 inline-flex">Collaborate With Us</div>
-          <h1 className="text-4xl font-bold leading-tight sm:text-5xl lg:text-5xl">
+          <h1 className="text-2xl font-bold leading-tight sm:text-5xl lg:text-5xl">
             {/* Build Global Education */}
             <span className="block bg-[linear-gradient(96deg,#2D1B69_0%,#5B45C6_45%,#E8521A_100%)] bg-clip-text text-transparent">
               Scale Your International Student Enrolment
             </span>
           </h1>
-          <p className="mx-auto mt-6 max-w-3xl text-base leading-relaxed text-muted-foreground sm:text-lg">
+          <p className="mx-auto mt-6 max-w-3xl text-sm leading-relaxed text-muted-foreground sm:text-lg">
             Collaborate with us to build effective recruitment pathways, strengthen admissions support, and grow your enrolment footprint across South Asia.
           </p>
         </div>
@@ -190,6 +265,325 @@ export default function CollaboratePage() {
               {chip}
             </span>
           ))}
+        </div>
+      </section>
+
+      {/* ── World Presence Section (QE-Group inspired) ── */}
+      <section className="collaborate-section-shell px-4 pb-10 pt-2 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-7xl">
+          <div className="mb-10 text-center">
+            <div className="section-kicker-classic mb-4 inline-flex">
+              <Globe2 className="mr-2 h-3.5 w-3.5" />
+              Our Global Presence
+            </div>
+            <h2 className="text-xl font-bold leading-tight text-foreground sm:text-4xl">
+              Where in the world are we?
+            </h2>
+            <p className="mx-auto mt-3 max-w-2xl text-sm leading-relaxed text-muted-foreground sm:text-base">
+              Connect with our headquarters and regional desks for university representation, admissions, partnerships, and careers.
+            </p>
+          </div>
+
+          {/* Map + Office Network */}
+          <div className="grid grid-cols-1 items-stretch gap-6 lg:grid-cols-[minmax(0,1fr)_390px]">
+
+            {/* Left: World Map */}
+            <div ref={officeMapRef} className="flex flex-col gap-6">
+              <WorldMap
+                activeOfficeId={activeOfficeId}
+                onOfficeChange={setActiveOfficeId}
+              />
+
+              <div className="hidden rounded-[28px] border border-[#D6DDF2] bg-white/84 p-4 shadow-[0_20px_60px_rgba(20,14,45,0.07)] backdrop-blur dark:border-white/10 dark:bg-[#120D25]/86 sm:p-5 lg:block">
+                <div className="grid grid-cols-1 gap-5 xl:grid-cols-[280px_minmax(0,1fr)] xl:items-center">
+                  <div className="flex items-center gap-4">
+                    <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-2xl bg-[linear-gradient(135deg,#2D1B69_0%,#5B45C6_58%,#E8521A_100%)] shadow-sm">
+                      <Mail className="h-5 w-5 text-white" />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-bold text-foreground">Direct Email Desks</h3>
+                      <p className="text-xs text-muted-foreground">Route your inquiry to the right team</p>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                    {EMAIL_CONTACTS.map((item) => (
+                      <a
+                        key={item.email}
+                        href={`mailto:${item.email}`}
+                        className="group flex min-w-0 items-center justify-between gap-3 rounded-2xl border border-[#E2E8F0] bg-[#F8FAFC] p-4 transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/30 hover:bg-primary/5 hover:shadow-sm dark:border-white/5 dark:bg-white/5 dark:hover:border-primary/30 dark:hover:bg-primary/10"
+                      >
+                        <span className="min-w-0 flex-1">
+                          <span className="block text-[10px] font-bold uppercase tracking-wider text-muted-foreground transition-colors group-hover:text-primary/80">
+                            {item.label}
+                          </span>
+                          <span className="mt-0.5 block truncate text-sm font-semibold text-foreground transition-colors group-hover:text-primary">
+                            {item.email}
+                          </span>
+                        </span>
+                        <span className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-white text-muted-foreground shadow-sm transition-all group-hover:bg-primary group-hover:text-white dark:bg-[#1A1533] dark:text-white/70">
+                          <ArrowRight className="h-4 w-4 transition-transform group-hover:-rotate-45" />
+                        </span>
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Right: Quick-contact panel */}
+            <div ref={officeRailRef} className="flex flex-col gap-5">
+              <div className={`relative overflow-hidden rounded-[28px] border p-4 shadow-[0_24px_64px_rgba(16,12,40,0.1)] sm:p-5 ${officeCardToneClasses[officeLocations.findIndex((office) => office.id === activeOffice.id) % officeCardToneClasses.length]}`}>
+                <div className="pointer-events-none absolute -right-14 -top-20 h-44 w-44 rounded-full bg-[radial-gradient(circle,rgba(91,69,198,0.16),transparent_68%)]" />
+                <div className="pointer-events-none absolute -bottom-20 left-8 h-40 w-40 rounded-full bg-[radial-gradient(circle,rgba(232,82,26,0.11),transparent_70%)]" />
+
+                <div className="relative flex items-start justify-between gap-4">
+                  <div>
+                    <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">Office Network</p>
+                    <h3 className="mt-1 text-2xl font-bold text-foreground">Choose a regional desk</h3>
+                  </div>
+                  <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-2xl border border-primary/15 bg-white/78 text-primary shadow-sm dark:border-white/10 dark:bg-white/8">
+                    <Building2 className="h-5 w-5" />
+                  </div>
+                </div>
+
+                <div className="relative mt-5 grid grid-cols-1 gap-2 sm:grid-cols-3 lg:grid-cols-1">
+                  {officeLocations.map((office) => {
+                    const isActive = office.id === activeOfficeId;
+                    return (
+                      <button
+                        key={office.id}
+                        type="button"
+                        onMouseEnter={() => setActiveOfficeId(office.id)}
+                        onFocus={() => setActiveOfficeId(office.id)}
+                        onClick={() => setActiveOfficeId(office.id)}
+                        aria-pressed={isActive}
+                        className={`group rounded-2xl border px-4 py-3 text-left transition-all duration-300 ${
+                          isActive
+                            ? 'border-primary/30 bg-white shadow-[0_14px_28px_rgba(45,27,105,0.11)] dark:bg-white/12'
+                            : 'border-white/60 bg-white/48 hover:border-primary/18 hover:bg-white/80 dark:border-white/8 dark:bg-white/5 dark:hover:bg-white/9'
+                        }`}
+                      >
+                        <div className="flex items-start justify-between gap-3">
+                          <span>
+                            <span className="block text-[9px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+                              {office.type}
+                            </span>
+                            <span className="mt-1 block text-sm font-semibold leading-tight text-foreground sm:text-base lg:text-sm">{office.country}</span>
+                            <span className="block text-xs text-muted-foreground">{office.title}</span>
+                          </span>
+                          <span className={`mt-1 h-2.5 w-2.5 rounded-full bg-gradient-to-r ${office.accentClass} ${isActive ? 'opacity-100' : 'opacity-45 group-hover:opacity-80'}`} />
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+
+                <div className="relative mt-5 rounded-[22px] border border-white/70 bg-white/62 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.75)] dark:border-white/10 dark:bg-white/7">
+                  <div className="flex items-start gap-3">
+                    <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center overflow-hidden rounded-2xl border border-primary/15 bg-white shadow-sm dark:bg-white/90">
+                      <img src={brandLogo} alt={siteConfig.company.logo.alt} className="h-8 w-8 object-contain" />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-start justify-between gap-3">
+                        <div>
+                          <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">{activeOffice.type}</p>
+                          <h4 className="mt-1 text-xl font-bold leading-tight text-foreground">{activeOffice.country}</h4>
+                          <p className="text-sm text-muted-foreground">{activeOffice.title}</p>
+                        </div>
+                        <span className={`mt-1 h-3 w-3 rounded-full bg-gradient-to-r ${activeOffice.accentClass} shadow-[0_0_0_4px_rgba(255,255,255,0.7)] dark:shadow-[0_0_0_4px_rgba(255,255,255,0.08)]`} />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="mt-4 space-y-3">
+                    <div className="flex items-start gap-3 rounded-2xl border border-white/70 bg-white/62 p-3 dark:border-white/10 dark:bg-white/7">
+                      <MapPin className="mt-0.5 h-4 w-4 flex-shrink-0 text-primary" />
+                      <p className="text-sm leading-relaxed text-muted-foreground">{activeOffice.address}</p>
+                    </div>
+                    <div className="flex items-start gap-3 rounded-2xl border border-white/70 bg-white/62 p-3 dark:border-white/10 dark:bg-white/7">
+                      <Phone className="mt-0.5 h-4 w-4 flex-shrink-0 text-primary" />
+                      <div className="flex flex-wrap gap-2">
+                        {activeOffice.phones.map((phone) => (
+                          <a
+                            key={phone}
+                            href={`tel:${formatPhoneHref(phone)}`}
+                            className="rounded-full border border-primary/10 bg-primary/5 px-3 py-1 text-xs font-semibold text-foreground transition-colors hover:border-primary/30 hover:text-primary dark:border-white/10 dark:bg-white/5"
+                          >
+                            {phone}
+                          </a>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Direct Email Desks card - Redesigned and Elevated */}
+              <div className="hidden">
+                {/* Subtle gradient glow */}
+                <div className="absolute -right-20 -top-20 h-40 w-40 rounded-full bg-[radial-gradient(circle,rgba(91,69,198,0.12),transparent_70%)]" />
+                
+                <div className="relative mb-6 flex items-center gap-4">
+                  <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-2xl bg-[linear-gradient(135deg,#2D1B69_0%,#5B45C6_100%)] shadow-sm">
+                    <Mail className="h-5 w-5 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-bold text-foreground">Direct Email Desks</h3>
+                    <p className="text-xs text-muted-foreground">Route your inquiry to the right team</p>
+                  </div>
+                </div>
+
+                <div className="relative flex flex-col gap-3">
+                  {EMAIL_CONTACTS.map((item) => (
+                    <a
+                      key={item.email}
+                      href={`mailto:${item.email}`}
+                      className="group flex items-center justify-between gap-3 rounded-2xl border border-[#E2E8F0] bg-[#F8FAFC] p-4 transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/30 hover:bg-primary/5 hover:shadow-sm dark:border-white/5 dark:bg-white/5 dark:hover:border-primary/30 dark:hover:bg-primary/10"
+                    >
+                      <div className="min-w-0 flex-1">
+                        <span className="block text-[10px] font-bold uppercase tracking-wider text-muted-foreground transition-colors group-hover:text-primary/80">
+                          {item.label}
+                        </span>
+                        <span className="mt-0.5 block truncate text-sm font-semibold text-foreground transition-colors group-hover:text-primary">
+                          {item.email}
+                        </span>
+                      </div>
+                      <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-white text-muted-foreground shadow-sm transition-all group-hover:bg-primary group-hover:text-white dark:bg-[#1A1533] dark:text-white/70">
+                        <ArrowRight className="h-4 w-4 transition-transform group-hover:-rotate-45" />
+                      </div>
+                    </a>
+                  ))}
+                </div>
+              </div>
+
+              {/* Improved Response time / Support badge */}
+              <div className="hidden group items-center gap-4 rounded-[24px] border border-[#D8D1EF] bg-[linear-gradient(160deg,#FFFFFF_0%,#F8F5FF_56%,#FFF6F0_100%)] p-5 shadow-sm transition-all hover:shadow-md dark:border-[#3A2D74] dark:bg-[linear-gradient(160deg,#17122E_0%,#100B22_56%,#24120B_100%)]">
+                <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-2xl bg-white shadow-[0_4px_12px_rgba(0,0,0,0.05)] ring-1 ring-black/5 transition-transform duration-300 group-hover:scale-105 dark:bg-white/5 dark:ring-white/10">
+                  <Clock3 className="h-5 w-5 text-primary" />
+                </div>
+                <div>
+                  <p className="text-base font-bold text-foreground">Global Support Desk</p>
+                  <p className="mt-0.5 text-xs font-medium text-muted-foreground">Monday to Saturday • 24hr response</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Office detail cards + network selector — below the map */}
+          <div className="hidden">
+
+            {/* Active office detail */}
+            <div className={`rounded-[24px] border p-5 shadow-[0_20px_54px_rgba(16,12,40,0.1)] ${officeCardToneClasses[officeLocations.findIndex((office) => office.id === activeOffice.id) % officeCardToneClasses.length]}`}>
+              <div className="flex items-start gap-4">
+                <div className="flex h-14 w-14 flex-shrink-0 items-center justify-center overflow-hidden rounded-2xl border border-primary/15 bg-white shadow-[inset_0_1px_0_rgba(255,255,255,0.75)]">
+                  <img src={brandLogo} alt={siteConfig.company.logo.alt} className="h-9 w-9 object-contain" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center justify-between gap-2">
+                    <div>
+                      <p className="text-xs font-semibold uppercase tracking-[0.22em] text-muted-foreground">{activeOffice.type}</p>
+                      <h3 className="mt-0.5 text-xl font-bold leading-tight text-foreground">{activeOffice.country}</h3>
+                      <p className="text-sm text-muted-foreground">{activeOffice.title}</p>
+                    </div>
+                    <span className={`h-3 w-3 rounded-full bg-gradient-to-r ${activeOffice.accentClass} shadow-sm`} />
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2">
+                <div className="flex items-start gap-3 rounded-2xl border border-white/65 bg-white/58 p-3 dark:border-white/10 dark:bg-white/6">
+                  <MapPin className="mt-0.5 h-4 w-4 flex-shrink-0 text-primary" />
+                  <p className="text-sm leading-relaxed text-muted-foreground">{activeOffice.address}</p>
+                </div>
+                <div className="flex items-start gap-3 rounded-2xl border border-white/65 bg-white/58 p-3 dark:border-white/10 dark:bg-white/6">
+                  <Phone className="mt-0.5 h-4 w-4 flex-shrink-0 text-primary" />
+                  <div className="flex flex-wrap gap-2">
+                    {activeOffice.phones.map((phone) => (
+                      <a
+                        key={phone}
+                        href={`tel:${formatPhoneHref(phone)}`}
+                        className="block text-sm font-medium text-foreground transition-colors hover:text-primary"
+                      >
+                        {phone}
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Office network selector */}
+            <div className="rounded-[24px] border border-[#DCD6F0] bg-white/72 p-3 shadow-[0_16px_44px_rgba(16,12,40,0.07)] backdrop-blur dark:border-white/10 dark:bg-white/6">
+              <p className="px-2 pb-2 pt-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">Office Network</p>
+              <div className="grid grid-cols-1 gap-2 sm:grid-cols-3 lg:grid-cols-1">
+                {officeLocations.map((office) => {
+                  const isActive = office.id === activeOfficeId;
+                  return (
+                    <button
+                      key={office.id}
+                      type="button"
+                      onMouseEnter={() => setActiveOfficeId(office.id)}
+                      onFocus={() => setActiveOfficeId(office.id)}
+                      onClick={() => setActiveOfficeId(office.id)}
+                      className={`group rounded-2xl border px-4 py-3 text-left transition-all duration-300 ${
+                        isActive
+                          ? 'border-primary/25 bg-white shadow-[0_14px_28px_rgba(45,27,105,0.1)] dark:bg-white/10'
+                          : 'border-transparent bg-white/50 hover:border-primary/18 hover:bg-white/80 dark:bg-white/5 dark:hover:bg-white/8'
+                      }`}
+                    >
+                      <div className="flex items-start justify-between gap-3">
+                        <span>
+                          <span className="block text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+                            {office.type}
+                          </span>
+                          <span className="mt-1 block text-base font-semibold text-foreground">{office.country}</span>
+                          <span className="block text-xs text-muted-foreground">{office.title}</span>
+                        </span>
+                        <span className={`mt-1 h-2.5 w-2.5 rounded-full bg-gradient-to-r ${office.accentClass} ${isActive ? 'opacity-100' : 'opacity-45 group-hover:opacity-80'}`} />
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-6 rounded-[28px] border border-[#D6DDF2] bg-white/84 p-4 shadow-[0_20px_60px_rgba(20,14,45,0.07)] backdrop-blur dark:border-white/10 dark:bg-[#120D25]/86 sm:p-5 lg:hidden">
+            <div className="grid grid-cols-1 gap-5 lg:grid-cols-[300px_minmax(0,1fr)] lg:items-center">
+              <div className="flex items-center gap-4">
+                <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-2xl bg-[linear-gradient(135deg,#2D1B69_0%,#5B45C6_58%,#E8521A_100%)] shadow-sm">
+                  <Mail className="h-5 w-5 text-white" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-foreground">Direct Email Desks</h3>
+                  <p className="text-xs text-muted-foreground">Route your inquiry to the right team</p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
+                {EMAIL_CONTACTS.map((item) => (
+                  <a
+                    key={item.email}
+                    href={`mailto:${item.email}`}
+                    className="group flex min-w-0 items-center justify-between gap-3 rounded-2xl border border-[#E2E8F0] bg-[#F8FAFC] p-4 transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/30 hover:bg-primary/5 hover:shadow-sm dark:border-white/5 dark:bg-white/5 dark:hover:border-primary/30 dark:hover:bg-primary/10"
+                  >
+                    <span className="min-w-0 flex-1">
+                      <span className="block text-[10px] font-bold uppercase tracking-wider text-muted-foreground transition-colors group-hover:text-primary/80">
+                        {item.label}
+                      </span>
+                      <span className="mt-0.5 block truncate text-sm font-semibold text-foreground transition-colors group-hover:text-primary">
+                        {item.email}
+                      </span>
+                    </span>
+                    <span className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-white text-muted-foreground shadow-sm transition-all group-hover:bg-primary group-hover:text-white dark:bg-[#1A1533] dark:text-white/70">
+                      <ArrowRight className="h-4 w-4 transition-transform group-hover:-rotate-45" />
+                    </span>
+                  </a>
+                ))}
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -327,33 +721,20 @@ export default function CollaboratePage() {
             </div>
           </div>
 
-          <div ref={asideRef} className="space-y-5 lg:col-span-5">
-            <div className="rounded-3xl border border-[#D8D1EF] bg-[linear-gradient(160deg,#FFFFFF_0%,#F8F5FF_55%,#FFF4EC_100%)] p-6 shadow-[0_20px_60px_rgba(16,12,40,0.1)] dark:border-[#3A2D74] dark:bg-[linear-gradient(160deg,#17122E_0%,#100B22_55%,#24120B_100%)]">
-              <p className="text-xs font-semibold uppercase tracking-[0.22em] text-muted-foreground">Response Window</p>
-              <div className="mt-3 flex items-center gap-3">
-                <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-primary/20 bg-primary/10 text-primary">
-                  <Clock3 className="h-5 w-5" />
-                </div>
-                <div>
-                  <p className="text-xl font-semibold text-foreground">Within 24 Hours</p>
-                  <p className="text-sm text-muted-foreground">Monday to Saturday support desk</p>
-                </div>
-              </div>
-            </div>
-
+          <div ref={asideRef} className="space-y-4 lg:col-span-5">
             {contactCards.map((card, index) => {
               const Icon = card.icon;
               return (
                 <div
                   key={card.title}
-                  className={`rounded-2xl border p-5 shadow-[0_14px_34px_rgba(16,12,40,0.08)] ${contactToneClasses[index]}`}
+                  className={`group rounded-2xl border p-5 shadow-[0_14px_34px_rgba(16,12,40,0.08)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_20px_44px_rgba(16,12,40,0.12)] ${contactToneClasses[index]}`}
                 >
-                  <div className="flex items-start gap-3">
-                    <div className="mt-0.5 flex h-10 w-10 items-center justify-center rounded-xl border border-primary/20 bg-primary/10 text-primary">
+                  <div className="flex items-start gap-4">
+                    <div className="mt-0.5 flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl border border-primary/20 bg-primary/10 text-primary shadow-sm transition-transform duration-300 group-hover:scale-105">
                       <Icon className="h-5 w-5" />
                     </div>
-                    <div>
-                      <p className="text-xs font-semibold uppercase tracking-[0.22em] text-muted-foreground">{card.title}</p>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">{card.title}</p>
                       {card.href ? (
                         <a
                           href={card.href}
@@ -369,6 +750,7 @@ export default function CollaboratePage() {
                 </div>
               );
             })}
+
           </div>
         </div>
       </section>

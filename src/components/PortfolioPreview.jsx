@@ -98,9 +98,11 @@ export function PortfolioPreview() {
 
         {/* Portfolio Grid */}
         {isLoading ? (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8" aria-hidden="true">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="bg-muted rounded-xl h-96 animate-pulse" />
+              <div key={i} className="skeleton-card h-96 rounded-2xl border border-border/50 p-5">
+                <div className="skeleton-media h-full rounded-xl" />
+              </div>
             ))}
           </div>
         ) : (

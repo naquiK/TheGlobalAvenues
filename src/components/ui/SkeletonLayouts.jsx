@@ -383,6 +383,55 @@ export function DetailSkeleton({ className = '' }) {
   );
 }
 
+export function ArticleDetailSkeleton({ className = '' }) {
+  return (
+    <div className={`min-h-screen bg-background pt-16 ${className}`} aria-hidden="true">
+      <div className="border-b border-border/70 bg-background/70 px-4 py-2 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-4xl">
+          <Line className="h-10 w-44 rounded-full" />
+        </div>
+      </div>
+      <div className="mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
+        <div className="space-y-8">
+          <div className="space-y-4">
+            <div className="flex flex-wrap gap-2">
+              <Line className="h-7 w-24 rounded-full" />
+              <Line className="h-7 w-28 rounded-full" />
+            </div>
+            <Line className="h-12 w-full rounded-2xl" />
+            <Line className="h-10 w-4/5 rounded-2xl" />
+            <div className="flex flex-wrap gap-4 border-t border-border pt-4">
+              <Line className="h-5 w-32 rounded-full" />
+              <Line className="h-5 w-40 rounded-full" />
+              <Line className="h-5 w-28 rounded-full" />
+            </div>
+          </div>
+          <div className="skeleton-card h-72 rounded-xl sm:h-96" />
+          <div className="space-y-4">
+            <Line className="h-6 w-full rounded-xl" />
+            <Line className="h-6 w-11/12 rounded-xl" />
+            {Array.from({ length: 6 }).map((_, index) => (
+              <Line
+                key={`article-detail-line-${index + 1}`}
+                className={`h-3 rounded-full ${index % 3 === 2 ? 'w-4/5' : 'w-full'}`}
+              />
+            ))}
+          </div>
+          <Card className="p-6">
+            <Line className="h-6 w-48 rounded-xl" />
+            <Line className="mt-3 h-3 w-3/4 rounded-full" />
+            <div className="mt-5 flex flex-wrap gap-3">
+              <Line className="h-9 w-32 rounded-full" />
+              <Line className="h-9 w-36 rounded-full" />
+              <Line className="h-9 w-28 rounded-full" />
+            </div>
+          </Card>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function CtaSkeleton({ className = '' }) {
   return (
     <section className={`px-4 py-10 sm:px-6 lg:px-8 ${className}`} aria-hidden="true">

@@ -490,7 +490,9 @@ export default function PortfolioDetailPage() {
         }
       } catch (error) {
         if (isActive) {
-          console.warn('Portfolio detail load used local fallback only.');
+          if (import.meta.env.DEV) {
+            console.warn('Portfolio detail load used local fallback only.');
+          }
           setLoadError('');
         }
       } finally {
