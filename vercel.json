@@ -14,6 +14,22 @@
   ],
   "rewrites": [
     {
+      "source": "/vendor/globe.gl.min.js",
+      "destination": "https://unpkg.com/globe.gl@2.45.3/dist/globe.gl.min.js"
+    },
+    {
+      "source": "/vendor/globe-countries.geojson",
+      "destination": "https://raw.githubusercontent.com/vasturiano/globe.gl/master/example/datasets/ne_110m_admin_0_countries.geojson"
+    },
+    {
+      "source": "/public/api",
+      "destination": "https://admin.theglobalavenues.com/public/api"
+    },
+    {
+      "source": "/api/:path*",
+      "destination": "https://admin.theglobalavenues.com/api/:path*"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }

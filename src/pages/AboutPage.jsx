@@ -479,9 +479,10 @@ export default function AboutPage() {
                         <div className="mt-6 flex min-h-[160px] items-center justify-center rounded-2xl border border-[#DAD3F0] bg-[#F6F4FD] p-4 dark:border-[#3A2E72] dark:bg-[#17122D] sm:min-h-[180px] sm:p-6">
                           <div className="relative flex h-[112px] w-full max-w-[300px] items-center justify-center overflow-hidden rounded-xl border border-[#D3CBEA] bg-white p-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.85)] dark:border-[#43337C] dark:bg-[#1A1435] sm:h-[120px] sm:max-w-[320px]">
                             {!isBadgeReady && !showBadgeFallback ? (
-                              <p className="text-center text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-                                Loading ICEF badge...
-                              </p>
+                              <div className="w-full max-w-[220px] space-y-3" aria-hidden="true">
+                                <div className="skeleton-line mx-auto h-4 w-36 rounded-full" />
+                                <div className="skeleton-line mx-auto h-9 w-44 rounded-xl" />
+                              </div>
                             ) : null}
                             {showBadgeFallback ? (
                               <div className="absolute inset-2 z-20 flex flex-col items-center justify-center gap-3 rounded-xl border border-[#D3CBEA] bg-white/96 px-3 py-3 dark:border-[#43337C] dark:bg-[#1A1435]/96 sm:px-4">

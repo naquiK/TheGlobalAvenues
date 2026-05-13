@@ -144,7 +144,26 @@ export default function PortfolioDisplay({ limit = 10 }) {
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
         {[...Array(itemsPerRow)].map((_, i) => (
-          <div key={i} className="bg-muted rounded-2xl h-[460px] animate-pulse" />
+          <div
+            key={`portfolio-display-skeleton-${i + 1}`}
+            className="skeleton-card h-[460px] rounded-2xl border border-border/50 p-4"
+            aria-hidden="true"
+          >
+            <div className="skeleton-media h-48 rounded-xl" />
+            <div className="mt-5 space-y-3">
+              <div className="skeleton-line h-4 w-32 rounded-full" />
+              <div className="skeleton-line h-6 w-4/5 rounded-xl" />
+              <div className="skeleton-line h-4 w-2/3 rounded-full" />
+            </div>
+            <div className="mt-5 space-y-2">
+              <div className="skeleton-line h-10 rounded-lg" />
+              <div className="skeleton-line h-10 rounded-lg" />
+            </div>
+            <div className="mt-6 flex items-center justify-between border-t border-border/50 pt-4">
+              <div className="skeleton-line h-5 w-28 rounded-full" />
+              <div className="skeleton-card h-8 w-8 rounded-full" />
+            </div>
+          </div>
         ))}
       </div>
     );

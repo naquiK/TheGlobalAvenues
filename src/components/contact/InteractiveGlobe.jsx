@@ -1,8 +1,15 @@
 import { useEffect, useRef } from 'react';
 
-const GLOBE_CDN = 'https://unpkg.com/globe.gl@2.45.3/dist/globe.gl.min.js';
-const GEOJSON_URL =
-  'https://raw.githubusercontent.com/vasturiano/globe.gl/master/example/datasets/ne_110m_admin_0_countries.geojson';
+const isLocalBrowser =
+  typeof window !== 'undefined' &&
+  ['localhost', '127.0.0.1', '::1'].includes(window.location.hostname);
+
+const GLOBE_CDN = isLocalBrowser
+  ? 'https://unpkg.com/globe.gl@2.45.3/dist/globe.gl.min.js'
+  : '/vendor/globe.gl.min.js';
+const GEOJSON_URL = isLocalBrowser
+  ? 'https://raw.githubusercontent.com/vasturiano/globe.gl/master/example/datasets/ne_110m_admin_0_countries.geojson'
+  : '/vendor/globe-countries.geojson';
 
 const LOCATIONS = [
   { lat: 20.5937, lng: 78.9629, radius: 5.5, colorRgb: '255, 255, 255' },
@@ -18,6 +25,13 @@ const LOCATIONS = [
 ];
 
 let countryFeaturesPromise = null;
+const shouldLogDebug = import.meta.env.DEV;
+
+const logDebugWarn = (...args) => {
+  if (shouldLogDebug) {
+    console.warn(...args);
+  }
+};
 
 function loadExternalScript(src) {
   return new Promise((resolve, reject) => {
@@ -101,7 +115,7 @@ export function InteractiveGlobe() {
     let lastWidth = 0;
     let lastHeight = 0;
     const container = containerRef.current;
-    let viewportSettings = { altitude: 1.55, autoRotateSpeed: 3.0 };
+    let viewportSettings = { altitude: 1.55, autoRotateSpeed: 3.35 };
     const isCoarsePointer =
       typeof window.matchMedia === 'function' &&
       (window.matchMedia('(pointer: coarse)').matches || window.matchMedia('(hover: none)').matches);
@@ -141,15 +155,15 @@ export function InteractiveGlobe() {
       const width = container?.clientWidth || window.innerWidth;
 
       if (width < 430) {
-        return { altitude: 2.28, autoRotateSpeed: 2.2 };
+        return { altitude: 2.28, autoRotateSpeed: 2.58 };
       }
       if (width < 768) {
-        return { altitude: 2.0, autoRotateSpeed: 2.45 };
+        return { altitude: 2.0, autoRotateSpeed: 2.86 };
       }
       if (width < 1024) {
-        return { altitude: 1.74, autoRotateSpeed: 2.7 };
+        return { altitude: 1.74, autoRotateSpeed: 3.18 };
       }
-      return { altitude: 1.55, autoRotateSpeed: 3.0 };
+      return { altitude: 1.55, autoRotateSpeed: 3.52 };
     };
 
     const setAutoRotate = (enabled) => {
@@ -428,7 +442,7 @@ export function InteractiveGlobe() {
         const testCanvas = document.createElement('canvas');
         const gl = testCanvas.getContext('webgl') || testCanvas.getContext('experimental-webgl');
         if (!gl) {
-          console.warn('Globe skipped: WebGL not available.');
+          logDebugWarn('Globe skipped: WebGL not available.');
           return;
         }
 
@@ -519,13 +533,13 @@ export function InteractiveGlobe() {
             }
           } catch (error) {
             if (!cancelled) {
-              console.warn('Globe country dots skipped:', error.message || error);
+              logDebugWarn('Globe country dots skipped:', error.message || error);
             }
           }
         }, 2200);
       } catch (error) {
         if (error.name !== 'AbortError') {
-          console.warn('Globe visual skipped:', error.message || error);
+          logDebugWarn('Globe visual skipped:', error.message || error);
         }
       }
     };

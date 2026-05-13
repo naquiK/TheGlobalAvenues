@@ -1389,7 +1389,15 @@ html.dark {
     rgba(83, 64, 176, 0.1) 100%
   );
   transform-origin: left center;
-  animation: routeLoaderSweep 420ms ease-out forwards;
+  box-shadow: 0 0 18px rgba(232, 82, 26, 0.28);
+  animation:
+    routeLoaderStart 380ms cubic-bezier(0.22, 1, 0.36, 1) forwards,
+    routeLoaderHold 1.2s ease-in-out 380ms infinite;
+  will-change: transform, opacity;
+}
+
+.route-loader-bar--complete {
+  animation: routeLoaderComplete 180ms ease-out forwards;
 }
 
 @keyframes color-shift {
@@ -1404,14 +1412,41 @@ html.dark {
   }
 }
 
-@keyframes routeLoaderSweep {
+@keyframes routeLoaderStart {
   from {
-    transform: scaleX(0);
-    opacity: 0.8;
+    opacity: 0.88;
+    transform: scaleX(0.08);
   }
   to {
-    transform: scaleX(1);
     opacity: 1;
+    transform: scaleX(0.76);
+  }
+}
+
+@keyframes routeLoaderHold {
+  0% {
+    transform: scaleX(0.76);
+  }
+  50% {
+    transform: scaleX(0.9);
+  }
+  100% {
+    transform: scaleX(0.84);
+  }
+}
+
+@keyframes routeLoaderComplete {
+  0% {
+    opacity: 1;
+    transform: scaleX(0.9);
+  }
+  70% {
+    opacity: 1;
+    transform: scaleX(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scaleX(1);
   }
 }
 
