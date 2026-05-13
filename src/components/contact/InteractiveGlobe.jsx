@@ -4,12 +4,17 @@ const isLocalBrowser =
   typeof window !== 'undefined' &&
   ['localhost', '127.0.0.1', '::1'].includes(window.location.hostname);
 
-const GLOBE_CDN = isLocalBrowser
-  ? 'https://unpkg.com/globe.gl@2.45.3/dist/globe.gl.min.js'
-  : '/vendor/globe.gl.min.js';
-const GEOJSON_URL = isLocalBrowser
-  ? 'https://raw.githubusercontent.com/vasturiano/globe.gl/master/example/datasets/ne_110m_admin_0_countries.geojson'
-  : '/vendor/globe-countries.geojson';
+const LOCAL_GLOBE_SCRIPT_URL = '/vendor/globe.gl.min.js';
+const REMOTE_GLOBE_SCRIPT_URL = 'https://unpkg.com/globe.gl@2.45.3/dist/globe.gl.min.js';
+const LOCAL_COUNTRY_DATA_URL = '/vendor/globe-countries.geojson';
+const REMOTE_COUNTRY_DATA_URL =
+  'https://raw.githubusercontent.com/vasturiano/globe.gl/master/example/datasets/ne_110m_admin_0_countries.geojson';
+const GLOBE_SCRIPT_URLS = isLocalBrowser
+  ? [REMOTE_GLOBE_SCRIPT_URL, LOCAL_GLOBE_SCRIPT_URL]
+  : [LOCAL_GLOBE_SCRIPT_URL, REMOTE_GLOBE_SCRIPT_URL];
+const COUNTRY_DATA_URLS = isLocalBrowser
+  ? [REMOTE_COUNTRY_DATA_URL, LOCAL_COUNTRY_DATA_URL]
+  : [LOCAL_COUNTRY_DATA_URL, REMOTE_COUNTRY_DATA_URL];
 
 const LOCATIONS = [
   { lat: 20.5937, lng: 78.9629, radius: 5.5, colorRgb: '255, 255, 255' },
@@ -42,10 +47,17 @@ function loadExternalScript(src) {
         resolve();
         return;
       }
-
-      existing.addEventListener('load', resolve, { once: true });
-      existing.addEventListener('error', reject, { once: true });
-      return;
+      if (existing.dataset.failed === 'true') {
+        existing.remove();
+      } else {
+        existing.addEventListener('load', resolve, { once: true });
+        existing.addEventListener(
+          'error',
+          () => reject(new Error(`Script load failed: ${src}`)),
+          { once: true }
+        );
+        return;
+      }
     }
 
     const script = document.createElement('script');
@@ -61,21 +73,55 @@ function loadExternalScript(src) {
       },
       { once: true }
     );
-    script.addEventListener('error', reject, { once: true });
+    script.addEventListener(
+      'error',
+      () => {
+        script.dataset.failed = 'true';
+        reject(new Error(`Script load failed: ${src}`));
+      },
+      { once: true }
+    );
 
     document.head.appendChild(script);
   });
 }
 
+async function loadFirstAvailableScript(sources) {
+  const failures = [];
+
+  for (const src of sources) {
+    try {
+      await loadExternalScript(src);
+      return src;
+    } catch (error) {
+      failures.push(error.message || String(error));
+    }
+  }
+
+  throw new Error(failures.join(' | '));
+}
+
+async function fetchFirstAvailableJson(sources) {
+  const failures = [];
+
+  for (const src of sources) {
+    try {
+      const response = await fetch(src);
+      if (!response.ok) {
+        throw new Error(`Country data failed with ${response.status} from ${src}`);
+      }
+      return await response.json();
+    } catch (error) {
+      failures.push(error.message || String(error));
+    }
+  }
+
+  throw new Error(failures.join(' | '));
+}
+
 function loadCountryFeatures() {
   if (!countryFeaturesPromise) {
-    countryFeaturesPromise = fetch(GEOJSON_URL)
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`Country data failed with ${response.status}`);
-        }
-        return response.json();
-      })
+    countryFeaturesPromise = fetchFirstAvailableJson(COUNTRY_DATA_URLS)
       .then((countries) => countries.features || [])
       .catch((error) => {
         countryFeaturesPromise = null;
@@ -431,7 +477,7 @@ export function InteractiveGlobe() {
 
     const initializeGlobe = async () => {
       try {
-        await loadExternalScript(GLOBE_CDN);
+        await loadFirstAvailableScript(GLOBE_SCRIPT_URLS);
 
         if (cancelled) return;
 

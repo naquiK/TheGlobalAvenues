@@ -49,7 +49,7 @@ export default function HomePage() {
     <>
       <Seo
         title="Global Education Partnerships & Student Recruitment | The Global Avenues"
-        description="The Global Avenues — Asia's trusted education partner. We help universities build market presence in India, manage recruitment channels, and grow international enrolment with ICEF-certified quality."
+        description="The Global Avenues - Asia's trusted education partner. We help universities build market presence in India, manage recruitment channels, and grow international enrolment with ICEF-certified quality."
         path="/"
         image="/videos/hero-poster.jpg"
         keywords={[
