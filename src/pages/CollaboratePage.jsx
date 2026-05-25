@@ -8,7 +8,6 @@ import {
   Handshake,
   Mail,
   MapPin,
-  MessageCircle,
   Phone,
   Send,
   ShieldCheck,
@@ -22,6 +21,7 @@ import { ProcessSkeleton } from '../components/ui/SkeletonLayouts';
 import { submitContactForm } from '../services/contactFormService';
 import Seo from '../components/seo/Seo';
 import WorldMap from '../components/contact/WorldMap';
+import { DEFAULT_OFFICE_ID, OFFICE_LOCATIONS } from '../data/officeLocations';
 
 const inputClassName =
   'w-full rounded-xl border border-[#D8D2EE] bg-white/85 px-4 py-3 text-sm text-foreground shadow-[inset_0_1px_0_rgba(255,255,255,0.75)] outline-none transition-all duration-200 ease-out placeholder:text-muted-foreground/70 focus:border-primary/40 focus:ring-2 focus:ring-primary/20 dark:border-[#3B2C73] dark:bg-[#181231]/80 dark:shadow-none dark:placeholder:text-white/45';
@@ -36,49 +36,6 @@ const officeCardToneClasses = [
   'border-[#D8D1EE] bg-[linear-gradient(160deg,rgba(255,255,255,0.96)_0%,rgba(247,244,255,0.92)_100%)] dark:border-[#3A2D74] dark:bg-[linear-gradient(160deg,rgba(23,18,46,0.96)_0%,rgba(18,13,37,0.92)_100%)]',
   'border-[#D6DDF2] bg-[linear-gradient(160deg,rgba(255,255,255,0.96)_0%,rgba(243,248,255,0.92)_100%)] dark:border-[#2E4269] dark:bg-[linear-gradient(160deg,rgba(18,26,46,0.96)_0%,rgba(15,20,39,0.92)_100%)]',
   'border-[#E4D5EB] bg-[linear-gradient(160deg,rgba(255,255,255,0.96)_0%,rgba(255,243,248,0.92)_100%)] dark:border-[#543464] dark:bg-[linear-gradient(160deg,rgba(33,17,42,0.96)_0%,rgba(26,16,33,0.92)_100%)]',
-];
-
-const OFFICE_LOCATIONS = [
-  {
-    id: 'india',
-    type: 'Head Quarter (HDQ)',
-    country: 'India',
-    title: 'New Delhi',
-    x: '71.5%',
-    y: '42%',
-    cardX: '61%',
-    cardY: '64%',
-    accentClass: 'from-[#2D1B69] via-[#5B45C6] to-[#7C6AE6]',
-    phones: ['+91 9319831133', '+91 9971801133', '+91 9717801133'],
-    address: 'The Global Avenues, A6, South Extension II, New Delhi 110049',
-  },
-  {
-    id: 'uae',
-    type: 'Branch Office',
-    country: 'United Arab Emirates',
-    title: 'Sharjah',
-    x: '64.8%',
-    y: '42.8%',
-    cardX: '55%',
-    cardY: '64%',
-    accentClass: 'from-[#153B7A] via-[#2A68C8] to-[#63A4FF]',
-    phones: ['+971 50 518 2209', '+91 9319831133'],
-    address:
-      'The Global Avenues, Business Centre, Sharjah Publishing City, Al Zahia Area, Sheikh Mohammed Bin Zayed Rd, Sharjah, United Arab Emirates',
-  },
-  {
-    id: 'nepal',
-    type: 'Branch Office',
-    country: 'Nepal',
-    title: 'Pokhara',
-    x: '73.5%',
-    y: '41.6%',
-    cardX: '63%',
-    cardY: '64%',
-    accentClass: 'from-[#B53D72] via-[#E8521A] to-[#FF9B63]',
-    phones: ['+91 9851009092', '+91 9319831133'],
-    address: 'The Global Avenues, 3rd floor, Chipledhunga, Opposite to Marwadi Bhojanalaye, Pokhara',
-  },
 ];
 
 const EMAIL_CONTACTS = [
@@ -102,7 +59,7 @@ export default function CollaboratePage() {
     subject: '',
     message: '',
   });
-  const [activeOfficeId, setActiveOfficeId] = useState(OFFICE_LOCATIONS[0].id);
+  const [activeOfficeId, setActiveOfficeId] = useState(DEFAULT_OFFICE_ID);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState('idle');
   const [submitMessage, setSubmitMessage] = useState('');
@@ -134,7 +91,7 @@ export default function CollaboratePage() {
     [siteConfig.stats]
   );
 
-  const officeLocations = useMemo(() => OFFICE_LOCATIONS, []);
+  const officeLocations = OFFICE_LOCATIONS;
   const activeOffice = useMemo(
     () => officeLocations.find((office) => office.id === activeOfficeId) || officeLocations[0],
     [activeOfficeId, officeLocations]
@@ -285,10 +242,10 @@ export default function CollaboratePage() {
           </div>
 
           {/* Map + Office Network */}
-          <div className="grid grid-cols-1 items-stretch gap-6 lg:grid-cols-[minmax(0,1fr)_390px]">
+          <div className="grid grid-cols-1 items-stretch gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(310px,360px)] xl:grid-cols-[minmax(0,1fr)_390px]">
 
             {/* Left: World Map */}
-            <div ref={officeMapRef} className="flex flex-col gap-6">
+            <div ref={officeMapRef} className="flex min-w-0 flex-col gap-6">
               <WorldMap
                 activeOfficeId={activeOfficeId}
                 onOfficeChange={setActiveOfficeId}
@@ -332,7 +289,7 @@ export default function CollaboratePage() {
             </div>
 
             {/* Right: Quick-contact panel */}
-            <div ref={officeRailRef} className="flex flex-col gap-5">
+            <div ref={officeRailRef} className="flex min-w-0 flex-col gap-5">
               <div className={`relative overflow-hidden rounded-[28px] border p-4 shadow-[0_24px_64px_rgba(16,12,40,0.1)] sm:p-5 ${officeCardToneClasses[officeLocations.findIndex((office) => office.id === activeOffice.id) % officeCardToneClasses.length]}`}>
                 <div className="pointer-events-none absolute -right-14 -top-20 h-44 w-44 rounded-full bg-[radial-gradient(circle,rgba(91,69,198,0.16),transparent_68%)]" />
                 <div className="pointer-events-none absolute -bottom-20 left-8 h-40 w-40 rounded-full bg-[radial-gradient(circle,rgba(232,82,26,0.11),transparent_70%)]" />
@@ -347,7 +304,7 @@ export default function CollaboratePage() {
                   </div>
                 </div>
 
-                <div className="relative mt-5 grid grid-cols-1 gap-2 sm:grid-cols-3 lg:grid-cols-1">
+                <div className="relative mt-5 grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-1">
                   {officeLocations.map((office) => {
                     const isActive = office.id === activeOfficeId;
                     return (
@@ -358,21 +315,25 @@ export default function CollaboratePage() {
                         onFocus={() => setActiveOfficeId(office.id)}
                         onClick={() => setActiveOfficeId(office.id)}
                         aria-pressed={isActive}
-                        className={`group rounded-2xl border px-4 py-3 text-left transition-all duration-300 ${
+                        className={`group min-w-0 rounded-2xl border px-4 py-3 text-left transition-all duration-300 ${
                           isActive
-                            ? 'border-primary/30 bg-white shadow-[0_14px_28px_rgba(45,27,105,0.11)] dark:bg-white/12'
+                            ? 'border-primary/30 bg-white shadow-[0_14px_28px_rgba(45,27,105,0.11)] dark:border-brand-orange-light/35 dark:bg-[linear-gradient(135deg,rgba(91,69,198,0.28)_0%,rgba(232,82,26,0.16)_100%)] dark:shadow-[0_14px_30px_rgba(0,0,0,0.28)]'
                             : 'border-white/60 bg-white/48 hover:border-primary/18 hover:bg-white/80 dark:border-white/8 dark:bg-white/5 dark:hover:bg-white/9'
                         }`}
                       >
                         <div className="flex items-start justify-between gap-3">
-                          <span>
+                          <span className="min-w-0 flex-1 pr-2">
                             <span className="block text-[9px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
                               {office.type}
                             </span>
-                            <span className="mt-1 block text-sm font-semibold leading-tight text-foreground sm:text-base lg:text-sm">{office.country}</span>
-                            <span className="block text-xs text-muted-foreground">{office.title}</span>
+                            <span className="mt-1 block whitespace-normal break-words text-sm font-semibold leading-tight text-foreground sm:text-base lg:text-sm">
+                              {office.country}
+                            </span>
+                            <span className="mt-0.5 block whitespace-normal break-words text-xs leading-relaxed text-muted-foreground">
+                              {office.title}
+                            </span>
                           </span>
-                          <span className={`mt-1 h-2.5 w-2.5 rounded-full bg-gradient-to-r ${office.accentClass} ${isActive ? 'opacity-100' : 'opacity-45 group-hover:opacity-80'}`} />
+                          <span className={`mt-1 h-2.5 w-2.5 flex-shrink-0 rounded-full bg-gradient-to-r ${office.accentClass} ${isActive ? 'opacity-100' : 'opacity-45 group-hover:opacity-80'}`} />
                         </div>
                       </button>
                     );
@@ -386,12 +347,16 @@ export default function CollaboratePage() {
                     </div>
                     <div className="min-w-0 flex-1">
                       <div className="flex items-start justify-between gap-3">
-                        <div>
+                        <div className="min-w-0 flex-1">
                           <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">{activeOffice.type}</p>
-                          <h4 className="mt-1 text-xl font-bold leading-tight text-foreground">{activeOffice.country}</h4>
-                          <p className="text-sm text-muted-foreground">{activeOffice.title}</p>
+                          <h4 className="mt-1 whitespace-normal break-words text-lg font-bold leading-tight text-foreground sm:text-xl">
+                            {activeOffice.country}
+                          </h4>
+                          <p className="mt-1 whitespace-normal break-words text-sm leading-relaxed text-muted-foreground">
+                            {activeOffice.title}
+                          </p>
                         </div>
-                        <span className={`mt-1 h-3 w-3 rounded-full bg-gradient-to-r ${activeOffice.accentClass} shadow-[0_0_0_4px_rgba(255,255,255,0.7)] dark:shadow-[0_0_0_4px_rgba(255,255,255,0.08)]`} />
+                        <span className={`mt-1 h-3 w-3 flex-shrink-0 rounded-full bg-gradient-to-r ${activeOffice.accentClass} shadow-[0_0_0_4px_rgba(255,255,255,0.7)] dark:shadow-[0_0_0_4px_rgba(255,255,255,0.08)]`} />
                       </div>
                     </div>
                   </div>
@@ -401,20 +366,22 @@ export default function CollaboratePage() {
                       <MapPin className="mt-0.5 h-4 w-4 flex-shrink-0 text-primary" />
                       <p className="text-sm leading-relaxed text-muted-foreground">{activeOffice.address}</p>
                     </div>
-                    <div className="flex items-start gap-3 rounded-2xl border border-white/70 bg-white/62 p-3 dark:border-white/10 dark:bg-white/7">
-                      <Phone className="mt-0.5 h-4 w-4 flex-shrink-0 text-primary" />
-                      <div className="flex flex-wrap gap-2">
-                        {activeOffice.phones.map((phone) => (
-                          <a
-                            key={phone}
-                            href={`tel:${formatPhoneHref(phone)}`}
-                            className="rounded-full border border-primary/10 bg-primary/5 px-3 py-1 text-xs font-semibold text-foreground transition-colors hover:border-primary/30 hover:text-primary dark:border-white/10 dark:bg-white/5"
-                          >
-                            {phone}
-                          </a>
-                        ))}
+                    {activeOffice.phones?.length ? (
+                      <div className="flex items-start gap-3 rounded-2xl border border-white/70 bg-white/62 p-3 dark:border-white/10 dark:bg-white/7">
+                        <Phone className="mt-0.5 h-4 w-4 flex-shrink-0 text-primary" />
+                        <div className="flex flex-wrap gap-2">
+                          {activeOffice.phones.map((phone) => (
+                            <a
+                              key={phone}
+                              href={`tel:${formatPhoneHref(phone)}`}
+                              className="rounded-full border border-primary/10 bg-primary/5 px-3 py-1 text-xs font-semibold text-foreground transition-colors hover:border-primary/30 hover:text-primary dark:border-white/10 dark:bg-white/5"
+                            >
+                              {phone}
+                            </a>
+                          ))}
+                        </div>
                       </div>
-                    </div>
+                    ) : null}
                   </div>
                 </div>
               </div>
@@ -528,7 +495,7 @@ export default function CollaboratePage() {
                       onClick={() => setActiveOfficeId(office.id)}
                       className={`group rounded-2xl border px-4 py-3 text-left transition-all duration-300 ${
                         isActive
-                          ? 'border-primary/25 bg-white shadow-[0_14px_28px_rgba(45,27,105,0.1)] dark:bg-white/10'
+                          ? 'border-primary/25 bg-white shadow-[0_14px_28px_rgba(45,27,105,0.1)] dark:border-brand-orange-light/35 dark:bg-[linear-gradient(135deg,rgba(91,69,198,0.28)_0%,rgba(232,82,26,0.16)_100%)] dark:shadow-[0_14px_30px_rgba(0,0,0,0.28)]'
                           : 'border-transparent bg-white/50 hover:border-primary/18 hover:bg-white/80 dark:bg-white/5 dark:hover:bg-white/8'
                       }`}
                     >

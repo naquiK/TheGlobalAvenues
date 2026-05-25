@@ -42,7 +42,7 @@ export default function HomePage() {
   const { ref: testimonialsRef, isVisible: testimonialsVisible } = useLazySection();
   const { ref: contactRef, isVisible: contactVisible } = useLazySection({
     rootMargin: '350px',
-    preloadOnIdle: false,
+    preloadOnIdle: true,
   });
 
   return (

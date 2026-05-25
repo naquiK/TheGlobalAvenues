@@ -226,7 +226,7 @@ export const portfolioData = [
           title: 'School of Medicine Catalog - January 5, 2026',
           eyebrow: 'School of Medicine',
           theme: 'sguMedicine',
-          coverLabel: 'MD Program PDF',
+          coverLabel: 'MD Program Brochure',
           coverTitle: 'Medicine Catalog',
           description:
             'Official SGU School of Medicine catalog covering MD tracks, curriculum, policies, and student support.',
@@ -237,7 +237,7 @@ export const portfolioData = [
           title: 'School of Veterinary Medicine Catalog - January 5, 2026',
           eyebrow: 'School of Veterinary Medicine',
           theme: 'sguVeterinary',
-          coverLabel: 'DVM Program PDF',
+          coverLabel: 'DVM Program Brochure',
           coverTitle: 'Veterinary Catalog',
           description:
             'Official SGU School of Veterinary Medicine catalog detailing DVM pathways, accreditation context, and academic policies.',

@@ -25,6 +25,14 @@
   --color-bg-surface-rgb: 245 243 255;
   --color-border-color: #E0DCF5;
   --color-border-color-rgb: 224 220 245;
+  --color-scrollbar-track: rgba(224, 220, 245, 0.58);
+  --color-scrollbar-track-edge: rgba(255, 255, 255, 0.88);
+  --color-scrollbar-thumb-start: #2d1b69;
+  --color-scrollbar-thumb-mid: #5340b0;
+  --color-scrollbar-thumb-end: #e8521a;
+  --color-scrollbar-thumb-border: rgba(255, 255, 255, 0.74);
+  --color-scrollbar-thumb-hover-start: #241456;
+  --color-scrollbar-thumb-hover-end: #f57c46;
 }
 
 html.dark {
@@ -50,11 +58,27 @@ html.dark {
   --color-bg-surface-rgb: 26 16 51;
   --color-border-color: #2E2657;
   --color-border-color-rgb: 46 38 87;
+  --color-scrollbar-track: rgba(38, 27, 72, 0.74);
+  --color-scrollbar-track-edge: rgba(255, 255, 255, 0.08);
+  --color-scrollbar-thumb-start: #6f5ccc;
+  --color-scrollbar-thumb-mid: #9a87ea;
+  --color-scrollbar-thumb-end: #f57c46;
+  --color-scrollbar-thumb-border: rgba(13, 10, 26, 0.7);
+  --color-scrollbar-thumb-hover-start: #7f69db;
+  --color-scrollbar-thumb-hover-end: #ff9a62;
 }
 
 @layer base {
   html {
     scroll-behavior: smooth;
+    scrollbar-gutter: stable;
+    scrollbar-width: auto;
+    scrollbar-color: var(--color-scrollbar-thumb-mid) var(--color-scrollbar-track);
+  }
+
+  body {
+    scrollbar-width: auto;
+    scrollbar-color: var(--color-scrollbar-thumb-mid) var(--color-scrollbar-track);
   }
 
   * {
@@ -754,32 +778,29 @@ html.dark {
   }
 
   .summer-hot-blink-btn {
-    border-color: rgb(245 124 70 / 0.58);
+    border-color: rgb(245 124 70 / 0.42);
     background: linear-gradient(
-      96deg,
-      rgb(var(--color-brand-orange-rgb) / 0.2) 0%,
-      rgb(255 202 40 / 0.2) 52%,
-      rgb(var(--color-brand-orange-rgb) / 0.2) 100%
+      135deg,
+      rgb(255 255 255 / 0.92) 0%,
+      rgb(var(--color-brand-orange-rgb) / 0.08) 100%
     );
-    color: #b84516;
+    color: #c24f1d;
     box-shadow:
-      0 10px 24px rgb(232 82 26 / 0.2),
-      inset 0 1px 0 rgb(255 255 255 / 0.5);
-    animation: summerHotBlink 1.15s steps(1, end) infinite;
+      inset 0 1px 0 rgb(255 255 255 / 0.7),
+      0 1px 2px rgb(232 82 26 / 0.08);
   }
 
   .dark .summer-hot-blink-btn {
-    border-color: rgb(245 124 70 / 0.42);
+    border-color: rgb(245 124 70 / 0.26);
     background: linear-gradient(
-      96deg,
-      rgb(69 31 18 / 0.84) 0%,
-      rgb(88 63 18 / 0.72) 52%,
-      rgb(69 31 18 / 0.84) 100%
+      135deg,
+      rgb(255 255 255 / 0.08) 0%,
+      rgb(245 124 70 / 0.08) 100%
     );
-    color: #ffc39e;
+    color: #ffbf9c;
     box-shadow:
-      0 10px 24px rgb(15 10 27 / 0.45),
-      inset 0 1px 0 rgb(255 255 255 / 0.1);
+      inset 0 1px 0 rgb(255 255 255 / 0.08),
+      0 1px 2px rgb(0 0 0 / 0.18);
   }
 
   .summer-highlight-shell::after {

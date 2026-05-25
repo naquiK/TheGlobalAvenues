@@ -1,20 +1,7 @@
 import { useEffect, useRef } from 'react';
 
-const isLocalBrowser =
-  typeof window !== 'undefined' &&
-  ['localhost', '127.0.0.1', '::1'].includes(window.location.hostname);
-
-const LOCAL_GLOBE_SCRIPT_URL = '/vendor/globe.gl.min.js';
-const REMOTE_GLOBE_SCRIPT_URL = 'https://unpkg.com/globe.gl@2.45.3/dist/globe.gl.min.js';
 const LOCAL_COUNTRY_DATA_URL = '/vendor/globe-countries.geojson';
-const REMOTE_COUNTRY_DATA_URL =
-  'https://raw.githubusercontent.com/vasturiano/globe.gl/master/example/datasets/ne_110m_admin_0_countries.geojson';
-const GLOBE_SCRIPT_URLS = isLocalBrowser
-  ? [REMOTE_GLOBE_SCRIPT_URL, LOCAL_GLOBE_SCRIPT_URL]
-  : [LOCAL_GLOBE_SCRIPT_URL, REMOTE_GLOBE_SCRIPT_URL];
-const COUNTRY_DATA_URLS = isLocalBrowser
-  ? [REMOTE_COUNTRY_DATA_URL, LOCAL_COUNTRY_DATA_URL]
-  : [LOCAL_COUNTRY_DATA_URL, REMOTE_COUNTRY_DATA_URL];
+const INITIAL_POINT_OF_VIEW = { lat: 30, lng: 40 };
 
 const LOCATIONS = [
   { lat: 20.5937, lng: 78.9629, radius: 5.5, colorRgb: '255, 255, 255' },
@@ -29,7 +16,9 @@ const LOCATIONS = [
   { lat: 15.87, lng: 100.9925, radius: 2.0, colorRgb: '255, 0, 85' },
 ];
 
+let globeModulePromise = null;
 let countryFeaturesPromise = null;
+
 const shouldLogDebug = import.meta.env.DEV;
 
 const logDebugWarn = (...args) => {
@@ -38,90 +27,29 @@ const logDebugWarn = (...args) => {
   }
 };
 
-function loadExternalScript(src) {
-  return new Promise((resolve, reject) => {
-    const existing = document.querySelector(`script[data-external-script="${src}"]`);
-
-    if (existing) {
-      if (existing.dataset.loaded === 'true') {
-        resolve();
-        return;
-      }
-      if (existing.dataset.failed === 'true') {
-        existing.remove();
-      } else {
-        existing.addEventListener('load', resolve, { once: true });
-        existing.addEventListener(
-          'error',
-          () => reject(new Error(`Script load failed: ${src}`)),
-          { once: true }
-        );
-        return;
-      }
-    }
-
-    const script = document.createElement('script');
-    script.src = src;
-    script.async = true;
-    script.dataset.externalScript = src;
-
-    script.addEventListener(
-      'load',
-      () => {
-        script.dataset.loaded = 'true';
-        resolve();
-      },
-      { once: true }
-    );
-    script.addEventListener(
-      'error',
-      () => {
-        script.dataset.failed = 'true';
-        reject(new Error(`Script load failed: ${src}`));
-      },
-      { once: true }
-    );
-
-    document.head.appendChild(script);
-  });
-}
-
-async function loadFirstAvailableScript(sources) {
-  const failures = [];
-
-  for (const src of sources) {
-    try {
-      await loadExternalScript(src);
-      return src;
-    } catch (error) {
-      failures.push(error.message || String(error));
-    }
+function loadGlobeFactory() {
+  if (!globeModulePromise) {
+    globeModulePromise = import('globe.gl')
+      .then((module) => module.default || module)
+      .catch((error) => {
+        globeModulePromise = null;
+        throw error;
+      });
   }
 
-  throw new Error(failures.join(' | '));
-}
-
-async function fetchFirstAvailableJson(sources) {
-  const failures = [];
-
-  for (const src of sources) {
-    try {
-      const response = await fetch(src);
-      if (!response.ok) {
-        throw new Error(`Country data failed with ${response.status} from ${src}`);
-      }
-      return await response.json();
-    } catch (error) {
-      failures.push(error.message || String(error));
-    }
-  }
-
-  throw new Error(failures.join(' | '));
+  return globeModulePromise;
 }
 
 function loadCountryFeatures() {
   if (!countryFeaturesPromise) {
-    countryFeaturesPromise = fetchFirstAvailableJson(COUNTRY_DATA_URLS)
+    countryFeaturesPromise = fetch(LOCAL_COUNTRY_DATA_URL)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`Country data failed with ${response.status} from ${LOCAL_COUNTRY_DATA_URL}`);
+        }
+
+        return response.json();
+      })
       .then((countries) => countries.features || [])
       .catch((error) => {
         countryFeaturesPromise = null;
@@ -149,8 +77,7 @@ export function InteractiveGlobe() {
     let countriesLoaded = false;
     let isDarkMode = document.documentElement.classList.contains('dark');
     let controls = null;
-    let initTask = null;
-    let countryLoadTask = null;
+    let initFrame = 0;
     let resizeFrame = 0;
     let resizeObserver = null;
     let visibilityObserver = null;
@@ -160,8 +87,8 @@ export function InteractiveGlobe() {
     let isGlobeVisible = true;
     let lastWidth = 0;
     let lastHeight = 0;
-    const container = containerRef.current;
     let viewportSettings = { altitude: 1.55, autoRotateSpeed: 3.35 };
+    const container = containerRef.current;
     const isCoarsePointer =
       typeof window.matchMedia === 'function' &&
       (window.matchMedia('(pointer: coarse)').matches || window.matchMedia('(hover: none)').matches);
@@ -172,33 +99,8 @@ export function InteractiveGlobe() {
     container.style.touchAction = 'auto';
     container.style.pointerEvents = 'auto';
 
-    const requestDeferredTask = (callback, timeout = 1500) => {
-      if ('requestIdleCallback' in window) {
-        return {
-          type: 'idle',
-          id: window.requestIdleCallback(() => callback(), { timeout }),
-        };
-      }
-
-      return {
-        type: 'raf',
-        id: window.requestAnimationFrame(() => callback()),
-      };
-    };
-
-    const cancelDeferredTask = (task) => {
-      if (!task) return;
-      if (task.type === 'idle' && 'cancelIdleCallback' in window) {
-        window.cancelIdleCallback(task.id);
-        return;
-      }
-      if (task.type === 'raf') {
-        window.cancelAnimationFrame(task.id);
-      }
-    };
-
     const getResponsiveSettings = () => {
-      const width = container?.clientWidth || window.innerWidth;
+      const width = container.clientWidth || window.innerWidth;
 
       if (width < 430) {
         return { altitude: 2.28, autoRotateSpeed: 2.58 };
@@ -209,11 +111,13 @@ export function InteractiveGlobe() {
       if (width < 1024) {
         return { altitude: 1.74, autoRotateSpeed: 3.18 };
       }
+
       return { altitude: 1.55, autoRotateSpeed: 3.52 };
     };
 
     const setAutoRotate = (enabled) => {
       if (!controls || prefersReducedMotion) return;
+
       controls.autoRotate = enabled && isGlobeVisible;
       if (controls.autoRotate) {
         globe?.resumeAnimation?.();
@@ -237,26 +141,34 @@ export function InteractiveGlobe() {
 
     const activateGlobeInteraction = () => {
       if (!controls || pointerOverGlobe) return;
+
       pointerOverGlobe = true;
       globe?.resumeAnimation?.();
       setAutoRotate(false);
       controls.enableRotate = true;
+
       const cursor = pointerDown ? 'grabbing' : 'grab';
       container.style.cursor = cursor;
-      if (globeCanvas) globeCanvas.style.cursor = cursor;
+      if (globeCanvas) {
+        globeCanvas.style.cursor = cursor;
+      }
     };
 
     const deactivateGlobeInteraction = () => {
       if (!controls || pointerDown) return;
+
       pointerOverGlobe = false;
       controls.enableRotate = false;
       container.style.cursor = 'default';
-      if (globeCanvas) globeCanvas.style.cursor = 'default';
+      if (globeCanvas) {
+        globeCanvas.style.cursor = 'default';
+      }
       setAutoRotate(true);
     };
 
     const handlePointerMove = (event) => {
       if (!controls || isCoarsePointer) return;
+
       if (isPointerOnGlobe(event)) {
         activateGlobeInteraction();
       } else {
@@ -286,28 +198,36 @@ export function InteractiveGlobe() {
         controls.enableRotate = true;
       }
       container.style.cursor = 'grabbing';
-      if (globeCanvas) globeCanvas.style.cursor = 'grabbing';
+      if (globeCanvas) {
+        globeCanvas.style.cursor = 'grabbing';
+      }
     };
 
     const handlePointerUp = (event) => {
       pointerDown = false;
+
       if (isCoarsePointer) {
         pointerOverGlobe = false;
         if (controls) {
           controls.enableRotate = false;
         }
         container.style.cursor = 'default';
-        if (globeCanvas) globeCanvas.style.cursor = 'default';
+        if (globeCanvas) {
+          globeCanvas.style.cursor = 'default';
+        }
         setAutoRotate(true);
+        return;
       }
 
-      if (!isCoarsePointer && event && isPointerOnGlobe(event)) {
+      if (event && isPointerOnGlobe(event)) {
         pointerOverGlobe = true;
         if (controls) {
           controls.enableRotate = true;
         }
         container.style.cursor = 'grab';
-        if (globeCanvas) globeCanvas.style.cursor = 'grab';
+        if (globeCanvas) {
+          globeCanvas.style.cursor = 'grab';
+        }
         return;
       }
 
@@ -316,12 +236,14 @@ export function InteractiveGlobe() {
         controls.enableRotate = false;
       }
       container.style.cursor = 'default';
-      if (globeCanvas) globeCanvas.style.cursor = 'default';
+      if (globeCanvas) {
+        globeCanvas.style.cursor = 'default';
+      }
       setAutoRotate(true);
     };
 
     const syncGlobeSize = () => {
-      if (!globe || !container) return;
+      if (!globe) return;
 
       const width = container.clientWidth;
       const height = container.clientHeight;
@@ -344,13 +266,21 @@ export function InteractiveGlobe() {
 
       if (controls && altitudeChanged) {
         globe.resumeAnimation?.();
-        globe.pointOfView({ lat: 30, lng: 40, altitude: viewportSettings.altitude }, 0);
+        globe.pointOfView(
+          {
+            lat: INITIAL_POINT_OF_VIEW.lat,
+            lng: INITIAL_POINT_OF_VIEW.lng,
+            altitude: viewportSettings.altitude,
+          },
+          0
+        );
         setAutoRotate(true);
       }
     };
 
     const scheduleResize = () => {
       if (resizeFrame || cancelled) return;
+
       resizeFrame = window.requestAnimationFrame(() => {
         resizeFrame = 0;
         syncGlobeSize();
@@ -449,6 +379,7 @@ export function InteractiveGlobe() {
         const fade = Math.max(0, 1 - time * 0.55);
         return `rgba(${rgb}, ${Math.min(1, theme.ringAlpha * fade)})`;
       });
+
       globe
         .ringMaxRadius((location) => {
           const scale =
@@ -475,22 +406,13 @@ export function InteractiveGlobe() {
       }
     };
 
+    const countryFeaturesTask = loadCountryFeatures();
+    const globeFactoryTask = loadGlobeFactory();
+
     const initializeGlobe = async () => {
       try {
-        await loadFirstAvailableScript(GLOBE_SCRIPT_URLS);
-
+        const GlobeFactory = await globeFactoryTask;
         if (cancelled) return;
-
-        const GlobeFactory = window.Globe;
-
-        if (!GlobeFactory) return;
-
-        const testCanvas = document.createElement('canvas');
-        const gl = testCanvas.getContext('webgl') || testCanvas.getContext('experimental-webgl');
-        if (!gl) {
-          logDebugWarn('Globe skipped: WebGL not available.');
-          return;
-        }
 
         viewportSettings = getResponsiveSettings();
         globe = GlobeFactory()(container)
@@ -510,79 +432,90 @@ export function InteractiveGlobe() {
             globeCanvas.style.pointerEvents = 'auto';
             globeCanvas.style.cursor = 'default';
           }
+        } else {
+          throw new Error('Globe renderer failed to initialize.');
         }
 
-        scheduleResize();
-
-        scene = globe.scene();
-        ambientLight = scene.children.find((child) => child.type === 'AmbientLight') || null;
-        const directionalLights = scene.children.filter((child) => child.type === 'DirectionalLight');
+        scene = globe.scene?.() || null;
+        ambientLight = scene?.children.find((child) => child.type === 'AmbientLight') || null;
+        const directionalLights =
+          scene?.children.filter((child) => child.type === 'DirectionalLight') || [];
         keyLight = directionalLights[0] || null;
         rimLight = directionalLights[1] || null;
 
-        controls = globe.controls();
-        controls.enableDamping = true;
-        controls.dampingFactor = 0.05;
-        controls.enablePan = false;
-        controls.enableZoom = false;
-        controls.enableRotate = false;
-        controls.autoRotate = !prefersReducedMotion;
-        controls.autoRotateSpeed = viewportSettings.autoRotateSpeed;
+        controls = globe.controls?.() || null;
+        if (controls) {
+          controls.enableDamping = true;
+          controls.dampingFactor = 0.05;
+          controls.enablePan = false;
+          controls.enableZoom = false;
+          controls.enableRotate = false;
+          controls.autoRotate = !prefersReducedMotion;
+          controls.autoRotateSpeed = viewportSettings.autoRotateSpeed;
+        }
 
         if (globeCanvas) {
           globeCanvas.addEventListener('pointermove', handlePointerMove);
           globeCanvas.addEventListener('pointerleave', handlePointerLeave);
           globeCanvas.addEventListener('pointerdown', handlePointerDown, true);
-          window.addEventListener('pointerup', handlePointerUp);
-          window.addEventListener('pointercancel', handlePointerUp);
         }
+        window.addEventListener('pointerup', handlePointerUp);
+        window.addEventListener('pointercancel', handlePointerUp);
+
         if (typeof ResizeObserver !== 'undefined') {
           resizeObserver = new ResizeObserver(scheduleResize);
           resizeObserver.observe(container);
         } else {
           window.addEventListener('resize', scheduleResize);
         }
+
         if (typeof IntersectionObserver !== 'undefined') {
           visibilityObserver = new IntersectionObserver(
             ([entry]) => {
               isGlobeVisible = entry.isIntersecting;
               if (isGlobeVisible) {
                 setAutoRotate(true);
-                globe.resumeAnimation?.();
+                globe?.resumeAnimation?.();
                 return;
               }
+
               setAutoRotate(false);
-              globe.pauseAnimation?.();
+              globe?.pauseAnimation?.();
             },
             { rootMargin: '160px 0px', threshold: 0.01 }
           );
           visibilityObserver.observe(container);
         }
 
-        globe.pointOfView({ lat: 30, lng: 40, altitude: viewportSettings.altitude }, 0);
+        globe.pointOfView(
+          {
+            lat: INITIAL_POINT_OF_VIEW.lat,
+            lng: INITIAL_POINT_OF_VIEW.lng,
+            altitude: viewportSettings.altitude,
+          },
+          0
+        );
         applyTheme(isDarkMode);
         scheduleResize();
         setAutoRotate(true);
 
-        countryLoadTask = requestDeferredTask(async () => {
-          try {
-            const countryFeatures = await loadCountryFeatures();
+        void countryFeaturesTask
+          .then((countryFeatures) => {
+            if (cancelled || !globe) return;
 
-            if (!cancelled && globe) {
-              globe
-                .hexPolygonsData(countryFeatures)
-                .hexPolygonResolution(3)
-                .hexPolygonMargin(isDarkMode ? 0.52 : 0.25);
-              countriesLoaded = true;
-              applyTheme(isDarkMode);
-              setAutoRotate(true);
-            }
-          } catch (error) {
+            globe
+              .hexPolygonsData(countryFeatures)
+              .hexPolygonResolution(3)
+              .hexPolygonMargin(isDarkMode ? 0.52 : 0.25);
+            countriesLoaded = true;
+            applyTheme(isDarkMode);
+            setAutoRotate(true);
+          })
+          .catch((error) => {
             if (!cancelled) {
-              console.warn('Globe country dots skipped:', error.message || error);
+              logDebugWarn('Globe country dots skipped:', error.message || error);
             }
-          }
-        }, 2200);
+          });
       } catch (error) {
         if (error.name !== 'AbortError') {
           logDebugWarn('Globe visual skipped:', error.message || error);
@@ -590,7 +523,10 @@ export function InteractiveGlobe() {
       }
     };
 
-    initTask = requestDeferredTask(initializeGlobe, 1000);
+    initFrame = window.requestAnimationFrame(() => {
+      initFrame = 0;
+      void initializeGlobe();
+    });
 
     const themeObserver = new MutationObserver(() => {
       const nextDark = document.documentElement.classList.contains('dark');
@@ -604,11 +540,14 @@ export function InteractiveGlobe() {
     return () => {
       cancelled = true;
       themeObserver.disconnect();
-      cancelDeferredTask(initTask);
-      cancelDeferredTask(countryLoadTask);
+
       if (resizeFrame) {
         window.cancelAnimationFrame(resizeFrame);
       }
+      if (initFrame) {
+        window.cancelAnimationFrame(initFrame);
+      }
+
       resizeObserver?.disconnect();
       visibilityObserver?.disconnect();
       window.removeEventListener('resize', scheduleResize);
@@ -621,28 +560,22 @@ export function InteractiveGlobe() {
       if (globe) {
         try {
           globe.pauseAnimation?.();
-          const renderer = globe.renderer();
-          if (renderer) {
-            renderer.dispose();
-          }
+          controls?.dispose?.();
         } catch {
-          // Renderer may already be disposed.
+          // Controls may already be disposed.
         }
 
         if (scene) {
           scene.traverse((object) => {
-            if (object.geometry) object.geometry.dispose();
-            if (object.material) {
-              if (Array.isArray(object.material)) {
-                object.material.forEach((mat) => mat.dispose());
-              } else {
-                object.material.dispose();
-              }
+            object.geometry?.dispose?.();
+
+            if (Array.isArray(object.material)) {
+              object.material.forEach((material) => material?.dispose?.());
+            } else {
+              object.material?.dispose?.();
             }
           });
         }
-
-        globe._destructor?.();
       }
 
       ambientLight = null;
@@ -658,8 +591,9 @@ export function InteractiveGlobe() {
   }, []);
 
   return (
-    <div className="relative h-full w-full overflow-visible bg-transparent">
-      <div ref={containerRef} className="h-full w-full cursor-default" />
-    </div>
+    <div
+      ref={containerRef}
+      className="h-full w-full cursor-default overflow-hidden rounded-[inherit] bg-transparent"
+    />
   );
 }

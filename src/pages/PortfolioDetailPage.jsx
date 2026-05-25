@@ -146,6 +146,41 @@ function BrochureDownloadMenu({
   menuPlacementClass = 'top-[calc(100%+0.5rem)]',
   wrapperClassName = 'min-w-0 flex-1 sm:flex-[1_1_8.25rem]',
 }) {
+  const [isOpen, setIsOpen] = useState(false);
+  const wrapperRef = useRef(null);
+
+  useEffect(() => {
+    if (!isOpen) return undefined;
+
+    const handlePointerDown = (event) => {
+      if (!wrapperRef.current?.contains(event.target)) {
+        setIsOpen(false);
+      }
+    };
+
+    const handleFocusIn = (event) => {
+      if (!wrapperRef.current?.contains(event.target)) {
+        setIsOpen(false);
+      }
+    };
+
+    const handleKeyDown = (event) => {
+      if (event.key === 'Escape') {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener('pointerdown', handlePointerDown);
+    document.addEventListener('focusin', handleFocusIn);
+    document.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      document.removeEventListener('pointerdown', handlePointerDown);
+      document.removeEventListener('focusin', handleFocusIn);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isOpen]);
+
   if (!file) return null;
 
   if (!lowQualityFile) {
@@ -153,7 +188,7 @@ function BrochureDownloadMenu({
       <a
         href={file}
         download={downloadName || true}
-        aria-label={`Download ${title} PDF`}
+        aria-label={`Download ${title} brochure`}
         className={buttonClassName}
       >
         <Download className="h-4 w-4" />
@@ -163,45 +198,56 @@ function BrochureDownloadMenu({
   }
 
   return (
-    <details className={`group/download relative ${wrapperClassName}`}>
-      <summary
+    <div
+      ref={wrapperRef}
+      className={`group/download relative ${wrapperClassName}`}
+      onMouseLeave={() => setIsOpen(false)}
+    >
+      <button
+        type="button"
         aria-label={`Choose download quality for ${title}`}
-        className={`${buttonClassName} cursor-pointer list-none [&::-webkit-details-marker]:hidden`}
+        aria-expanded={isOpen}
+        className={buttonClassName}
+        onClick={() => setIsOpen((previous) => !previous)}
       >
         <Download className="h-4 w-4" />
         Download
-        <ChevronDown className="h-3.5 w-3.5 transition-transform duration-200 group-open/download:rotate-180" />
-      </summary>
-      <div
-        className={`absolute left-0 right-0 ${menuPlacementClass} z-30 overflow-hidden rounded-xl border border-border/70 bg-background/95 p-1.5 shadow-[0_18px_38px_rgba(15,23,42,0.16)] backdrop-blur dark:border-white/15 dark:bg-[#0F172A]/96 ${menuClassName}`}
-      >
-        <p className="px-3 pb-1.5 pt-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
-          Select Download Quality
-        </p>
-        <a
-          href={file}
-          download={downloadName || true}
-          className="flex items-start gap-2 rounded-lg px-3 py-2 text-left transition-colors hover:bg-muted/70 focus:bg-muted/70 focus:outline-none"
+        <ChevronDown className={`h-3.5 w-3.5 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
+      </button>
+      {isOpen ? (
+        <div
+          className={`absolute left-0 right-0 ${menuPlacementClass} z-30 overflow-hidden rounded-xl border border-border/70 bg-background/95 p-1.5 shadow-[0_18px_38px_rgba(15,23,42,0.16)] backdrop-blur dark:border-white/15 dark:bg-[#0F172A]/96 ${menuClassName}`}
         >
-          <FileText className="mt-0.5 h-4 w-4 flex-shrink-0 text-primary" />
-          <span className="min-w-0">
-            <span className="block text-sm font-semibold text-foreground">Original Quality</span>
-            <span className="block text-xs leading-snug text-muted-foreground">Full-resolution brochure PDF</span>
-          </span>
-        </a>
-        <a
-          href={lowQualityFile}
-          download={getCompressedDownloadName(downloadName)}
-          className="flex items-start gap-2 rounded-lg px-3 py-2 text-left transition-colors hover:bg-muted/70 focus:bg-muted/70 focus:outline-none"
-        >
-          <Download className="mt-0.5 h-4 w-4 flex-shrink-0 text-primary" />
-          <span className="min-w-0">
-            <span className="block text-sm font-semibold text-foreground">Compressed Version</span>
-            <span className="block text-xs leading-snug text-muted-foreground">Smaller file for faster download</span>
-          </span>
-        </a>
-      </div>
-    </details>
+          <p className="px-3 pb-1.5 pt-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+            Select Download Quality
+          </p>
+          <a
+            href={file}
+            download={downloadName || true}
+            onClick={() => setIsOpen(false)}
+            className="flex items-start gap-2 rounded-lg px-3 py-2 text-left transition-colors hover:bg-muted/70 focus:bg-muted/70 focus:outline-none"
+          >
+            <FileText className="mt-0.5 h-4 w-4 flex-shrink-0 text-primary" />
+            <span className="min-w-0">
+              <span className="block text-sm font-semibold text-foreground">Original Quality</span>
+              <span className="block text-xs leading-snug text-muted-foreground">Full-resolution brochure</span>
+            </span>
+          </a>
+          <a
+            href={lowQualityFile}
+            download={getCompressedDownloadName(downloadName)}
+            onClick={() => setIsOpen(false)}
+            className="flex items-start gap-2 rounded-lg px-3 py-2 text-left transition-colors hover:bg-muted/70 focus:bg-muted/70 focus:outline-none"
+          >
+            <Download className="mt-0.5 h-4 w-4 flex-shrink-0 text-primary" />
+            <span className="min-w-0">
+              <span className="block text-sm font-semibold text-foreground">Compressed Version</span>
+              <span className="block text-xs leading-snug text-muted-foreground">Smaller file for faster download</span>
+            </span>
+          </a>
+        </div>
+      ) : null}
+    </div>
   );
 }
 
@@ -1487,7 +1533,7 @@ export default function PortfolioDetailPage() {
                       rel="noopener noreferrer"
                       className="group inline-flex items-center gap-2 rounded-lg bg-[linear-gradient(92deg,#2D1B69_0%,#0F766E_54%,#E8521A_100%)] px-4 py-2 text-sm font-semibold text-white transition-all duration-300 hover:-translate-y-0.5 hover:brightness-110 hover:shadow-[0_14px_32px_rgba(45,27,105,0.26)]"
                     >
-                      Open PDF
+                      View Brochure
                       <ExternalLink className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                     </a>
 
@@ -1534,7 +1580,7 @@ export default function PortfolioDetailPage() {
             <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
               <div>
                 <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-                  Official PDF Brochures
+                  Official Brochures
                 </p>
                 <h3 className="mt-1 flex items-center gap-2 text-2xl font-bold text-foreground">
                   <FileText className="h-5 w-5 text-primary" />
@@ -1606,7 +1652,7 @@ export default function PortfolioDetailPage() {
                         </span>
                         <div className="relative mt-5 min-w-0">
                           <p className="text-[10px] font-semibold uppercase tracking-[0.16em] opacity-75">
-                            {catalog.coverLabel || 'Official PDF'}
+                            {catalog.coverLabel || 'Official Brochure'}
                           </p>
                           <p className="mt-1 max-w-[10rem] break-words text-sm font-bold leading-snug text-foreground/90 dark:text-white/90">
                             {catalog.coverTitle || catalog.eyebrow || 'Program Catalog'}
@@ -1654,11 +1700,11 @@ export default function PortfolioDetailPage() {
                           href={catalog.file}
                           target="_blank"
                           rel="noopener noreferrer"
-                          aria-label={`View ${catalog.title} PDF`}
+                          aria-label={`View ${catalog.title} brochure`}
                           className={`inline-flex min-w-0 flex-1 items-center justify-center gap-2 rounded-xl border bg-background/75 px-3 py-2 text-sm font-semibold transition-colors sm:flex-[1_1_8.25rem] ${catalogTheme.button}`}
                         >
                           <Eye className="h-4 w-4" />
-                          View PDF
+                          View Brochure
                           <ExternalLink className="h-3.5 w-3.5" />
                         </a>
                         <BrochureDownloadMenu

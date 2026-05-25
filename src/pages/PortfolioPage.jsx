@@ -90,7 +90,7 @@ export default function PortfolioPage() {
     <div className="pt-16 min-h-screen">
       <Seo
         title="Partner Universities & Institution Portfolio | The Global Avenues"
-        description="Explore 14+ global partner universities represented by The Global Avenues across Europe, USA, and Cyprus. View institution profiles, recruitment highlights, and partnership opportunities."
+        description="Explore 15+ global partner universities represented by The Global Avenues across Europe, USA, and Cyprus. View institution profiles, recruitment highlights, and partnership opportunities."
         path="/portfolio"
         image="/universities/icn-business-school-hero.png"
         keywords={[
