@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import useTheme from '../../hooks/useTheme';
 import { useHomeContent } from '../../context/HomeContentContext';
+import { useSettings } from '../../context/SettingsContext';
 
 const HERO_VIDEO_DEBUG_KEY = 'tga-hero-video-debug';
 
@@ -75,6 +76,7 @@ const countUp = (el, target, duration = 1500) => {
 export default function HeroSection() {
   const { isDark } = useTheme();
   const { homeContent } = useHomeContent();
+  const { siteConfig } = useSettings();
   const sectionRef = useRef(null);
   const mediaRef = useRef(null);
   const videoRef = useRef(null);
@@ -315,7 +317,7 @@ export default function HeroSection() {
   const heroOpacity = prefersReducedMotion ? 1 : 0;
   const heroSlide = homeContent.hero[0];
   const statCards = [
-    { value: '14+', label: 'Exclusive Universities' },
+    { value: siteConfig.stats.partnerUniversities, label: 'Exclusive Universities' },
     { value: '300+', label: 'Active Channel Partners in SAMEA' },
     { value: '4K+', label: 'Students Recruited' },
   ];

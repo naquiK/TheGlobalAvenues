@@ -70,10 +70,10 @@ export function Contact() {
         <div className="grid grid-cols-1 gap-3 lg:grid-cols-[minmax(0,1fr)_24.5rem] lg:items-center lg:gap-6 xl:gap-8">
           <div
             ref={globeRef}
-            className="order-2 overflow-visible rounded-[24px] lg:order-1 lg:overflow-hidden lg:rounded-[28px] lg:pt-20"
+            className="order-2 min-w-0 overflow-hidden rounded-[24px] lg:order-1 lg:rounded-[28px] lg:pt-14 xl:pt-16"
             style={{ overflowAnchor: 'none' }}
           >
-            <div className="mx-auto h-[320px] w-full max-w-[34rem] sm:h-[430px] sm:max-w-[42rem] lg:h-[620px] lg:max-w-[52rem]">
+            <div className="mx-auto h-[300px] w-full max-w-[34rem] sm:h-[380px] sm:max-w-[42rem] md:h-[460px] lg:h-[620px] lg:max-w-[52rem]">
               <InteractiveGlobe />
             </div>
           </div>
