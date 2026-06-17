@@ -1,5 +1,5 @@
 import { useDeferredValue, useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import {
   ArrowRight,
   BadgeCheck,
@@ -17,8 +17,19 @@ import LazySection from '../components/ui/LazySection';
 import { CardGridSkeleton } from '../components/ui/SkeletonLayouts';
 
 export default function UniversitiesPage() {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCountry, setSelectedCountry] = useState('all');
+  const selectedCountry = searchParams.get('country') || 'all';
+  const setSelectedCountry = (val) => {
+    setSearchParams((prev) => {
+      if (val === 'all') {
+        prev.delete('country');
+      } else {
+        prev.set('country', val);
+      }
+      return prev;
+    });
+  };
   const [selectedType, setSelectedType] = useState('all');
   const { siteConfig } = useSettings();
 
