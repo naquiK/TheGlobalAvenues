@@ -7,8 +7,16 @@ export default function LazySection({
   fallback = null,
   height = 'h-[520px]',
   rootMargin = '900px',
+  preloadOnIdle = true,
+  idleDelay = 150,
+  idleTimeout = 2000,
 }) {
-  const { ref, isVisible } = useLazySection(rootMargin);
+  const { ref, isVisible } = useLazySection({
+    rootMargin,
+    preloadOnIdle,
+    idleDelay,
+    idleTimeout,
+  });
 
   return (
     <div ref={ref} className={className}>
