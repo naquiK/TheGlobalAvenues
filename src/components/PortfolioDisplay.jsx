@@ -1,12 +1,15 @@
 import { Link } from 'react-router-dom';
 import { ArrowRight, ChevronLeft, ChevronRight, Landmark, MapPin } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { getFeaturedPortfolios } from '../services/portfolioService';
+import { getFeaturedPortfolios, sortPortfoliosForDisplay } from '../services/portfolioService';
 import { portfolioData } from '../data/portfolioData';
 
-const getLocalFeaturedPortfolios = (limit) => portfolioData.slice(0, limit);
+const getLocalFeaturedPortfolios = (limit) =>
+  Number.isFinite(limit) && limit > 0
+    ? sortPortfoliosForDisplay(portfolioData).slice(0, limit)
+    : sortPortfoliosForDisplay(portfolioData);
 
-export default function PortfolioDisplay({ limit = 10 }) {
+export default function PortfolioDisplay({ limit = null }) {
   const [portfolios, setPortfolios] = useState(() => getLocalFeaturedPortfolios(limit));
   const [isLoading, setIsLoading] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -16,13 +19,14 @@ export default function PortfolioDisplay({ limit = 10 }) {
 
   useEffect(() => {
     let isMounted = true;
+    const resolvedLimit = Number.isFinite(limit) && limit > 0 ? limit : null;
 
     const loadFeatured = async () => {
-      const localPortfolios = getLocalFeaturedPortfolios(limit);
+      const localPortfolios = getLocalFeaturedPortfolios(resolvedLimit);
       setPortfolios(localPortfolios);
       setIsLoading(localPortfolios.length === 0);
       try {
-        const data = await getFeaturedPortfolios(limit);
+        const data = await getFeaturedPortfolios(resolvedLimit);
         if (isMounted) {
           setPortfolios(Array.isArray(data) && data.length > 0 ? data : localPortfolios);
         }

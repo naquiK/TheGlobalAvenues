@@ -32,7 +32,7 @@ export default function PortfolioSection() {
           ref={gridRef}
           className="overflow-hidden"
         >
-          <PortfolioDisplay limit={12} />
+          <PortfolioDisplay />
         </div>
 
         {/* CTA Section */}
