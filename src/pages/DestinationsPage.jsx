@@ -83,14 +83,97 @@ const getImg = n => COUNTRY_IMG[n.toLowerCase()] || null;
 const buildUnsplashSrcSet = (source, widths = [480, 640, 800, 960]) =>
   widths.map((width) => `${source}?w=${width}&q=80 ${width}w`).join(', ');
 
+const buildHeroFeaturedSrcSet = (source) =>
+  [640, 960, 1280, 1600, 1920].map((width) => `${source}?w=${width}&q=85 ${width}w`).join(', ');
+
+const buildClockMonumentSrc = (source) =>
+  `${source.split('?')[0]}?auto=format&fit=crop&w=720&h=720&q=90`;
+
+const buildDisplayRegions = (regions) => {
+  const europeOrder = ['europe-schengen', 'europe-non-schengen'];
+  const europeRegions = europeOrder
+    .map((key) => regions.find((region) => region.key === key))
+    .filter(Boolean);
+
+  if (europeRegions.length === 0) return regions;
+
+  const northAmerica = regions.find((region) => region.key === 'north-america');
+  const dubaiSource = regions.find((region) => region.key === 'middle-east');
+  const africaSource = regions.find((region) => region.key === 'africa');
+  const asiaSource = regions.find((region) => region.key === 'asia-pacific');
+
+  const countryGroups = europeRegions
+    .map((region) => ({
+      key: region.key,
+      label: region.key === 'europe-schengen' ? 'Schengen' : 'Non-Schengen',
+      countries: region.countries,
+    }))
+    .filter((group) => group.countries.length > 0);
+
+  const orderedCountries = countryGroups
+    .flatMap((group) => group.countries)
+    .sort((a, b) => {
+      if (a.name === 'Cyprus') return -1;
+      if (b.name === 'Cyprus') return 1;
+      return 0;
+    });
+
+  const europeRegion = {
+    ...europeRegions[0],
+    key: 'europe',
+    label: 'Europe',
+    description: 'Explore Schengen and non-Schengen European study pathways with flexible visa routes, strong academic options, and clear country choices.',
+    keyBenefits: ['Schengen mobility', 'Non-Schengen pathways', 'Affordable European options'],
+    countries: orderedCountries,
+    countryGroups,
+  };
+
+  const dubaiRegion = {
+    ...(dubaiSource || {}),
+    key: 'dubai',
+    label: 'Dubai',
+    description: 'High-demand Gulf pathways with strong career visibility and fast-growing international study options.',
+    keyBenefits: ['Regional hub access', 'Fast-growing campuses', 'Professional networks'],
+    countries: [
+      { name: 'Dubai' },
+      { name: 'Abu Dhabi' },
+      { name: 'To Be Confirmed' },
+      { name: 'To Be Confirmed' },
+    ],
+  };
+
+  const africaSouthEastAsiaRegion = {
+    key: 'africa-south-east-asia',
+    label: 'Africa & South East Asia',
+    description: 'A combined view of emerging African and South East Asian study destinations with practical international options.',
+    accent: 'from-[#0E7C86] via-[#2CA6A4] to-[#7AD1C9]',
+    marker: 'AS',
+    workRights: 'Varies by country',
+    averageTuition: 'Country dependent',
+    popularIntakes: 'Multiple intakes',
+    keyBenefits: ['Emerging markets', 'Affordable study paths', 'Growing global exposure'],
+    countries: [...(africaSource?.countries || []), ...(asiaSource?.countries || [])],
+  };
+
+  return [europeRegion, dubaiRegion, northAmerica, africaSouthEastAsiaRegion].filter(Boolean);
+};
+
 /* Per-region config */
-const REGION_CFG = {
+const LEGACY_REGION_CFG = {
+  europe: { img:'/dest-europe.jpg', emoji:'EU', tagline:'Schengen and Non-Schengen pathways', accent:'#3B82F6' },
   'north-america': { img:'/dest-northamerica.jpg', emoji:'🌎', tagline:'World-class universities, limitless ambition', accent:'#6D57D8' },
   'europe-schengen': { img:'/dest-europe.jpg', emoji:'🌍', tagline:'One visa — 29 countries, endless discovery', accent:'#3B82F6' },
   'europe-non-schengen': { img:'/dest-europe.jpg', emoji:'🇬🇧', tagline:'Premier English pathways to global careers', accent:'#8B5CF6' },
   'asia-pacific': { img:'/dest-asia.jpg', emoji:'🌏', tagline:'Innovation capitals of the modern world', accent:'#10B981' },
   'middle-east': { img:'/dest-middleeast.jpg', emoji:'✨', tagline:'Tax-free, ultra-modern, globally connected', accent:'#F59E0B' },
   'africa': { img:'/dest-middleeast.jpg', emoji:'🌴', tagline:'Emerging, vibrant, rising in the east', accent:'#EF4444' },
+};
+
+const REGION_CFG = {
+  europe: { img:'/dest-europe.jpg', emoji:'EU', tagline:'Schengen and Non-Schengen pathways', accent:'#3B82F6' },
+  dubai: { img:'/dest-middleeast.jpg', emoji:'UAE', tagline:'Dubai study pathways', accent:'#F59E0B' },
+  'north-america': { img:'/dest-northamerica.jpg', emoji:'NA', tagline:'World-class universities, limitless ambition', accent:'#6D57D8' },
+  'africa-south-east-asia': { img:'/dest-asia.jpg', emoji:'AS', tagline:'Africa and South East Asia pathways', accent:'#10B981' },
 };
 
 /* ══════════════════════════════════
@@ -118,7 +201,7 @@ function DotGrid({ id = 'default' }) {
 /* ══════════════════════════════════
    LIVE WORLD CLOCKS STRIP
 ══════════════════════════════════ */
-function AnalogClock({ hh, mm, ss, bgImage, isCenter }) {
+function AnalogClock({ hh, mm, ss, bgImage, isCenter, size = 'md', className = '' }) {
   const h = parseInt(hh, 10);
   const m = parseInt(mm, 10);
   const s = parseInt(ss, 10);
@@ -127,79 +210,139 @@ function AnalogClock({ hh, mm, ss, bgImage, isCenter }) {
   const minuteAngle = m * 6 + s * 0.1;
   const secondAngle = s * 6;
 
-  const sizeClass = isCenter ? "h-12 w-12 md:h-14 md:w-14" : "h-8 w-8 md:h-10 w-10";
+  const sizeClass = {
+    xxs: 'h-8 w-8',
+    xs: 'h-9 w-9',
+    sm: 'h-11 w-11',
+    md: 'h-12 w-12',
+    lg: 'h-14 w-14',
+    xl: 'h-[4.25rem] w-[4.25rem]',
+  }[size] || (isCenter ? 'h-12 w-12 md:h-14 md:w-14' : 'h-10 w-10 md:h-12 md:w-12');
+
+  const hasPhoto = Boolean(bgImage);
 
   return (
-    <svg viewBox="0 0 100 100" className={`${sizeClass} shrink-0 drop-shadow-sm transition-transform duration-500 hover:rotate-3`}>
-      {/* Clock Face Background */}
-      {bgImage ? (
-        <g>
-          <clipPath id="clock-clip">
-            <circle cx="50" cy="50" r="48" />
-          </clipPath>
-          <image href={bgImage} x="0" y="0" height="100" width="100" preserveAspectRatio="xMidYMid slice" clipPath="url(#clock-clip)" opacity="0.45" />
-          <circle cx="50" cy="50" r="48" className="fill-none stroke-brand-orange/60" strokeWidth="3" />
-        </g>
+    <div className={`relative ${sizeClass} shrink-0 transition-all duration-300 ease-out ${className}`}>
+      {hasPhoto ? (
+        <img
+          src={bgImage}
+          alt=""
+          aria-hidden="true"
+          className={`absolute inset-0 h-full w-full rounded-full object-cover ${isCenter ? 'opacity-100' : 'opacity-90'}`}
+          loading="lazy"
+          decoding="async"
+        />
       ) : (
-        <circle cx="50" cy="50" r="48" className="fill-background stroke-border/60" strokeWidth="2" />
+        <div className="absolute inset-0 rounded-full bg-background ring-1 ring-border/60" />
       )}
-      
-      {/* Tick Marks */}
-      {[...Array(12)].map((_, i) => (
+
+      <svg viewBox="0 0 100 100" className="relative z-10 h-full w-full drop-shadow-sm">
+        {hasPhoto ? (
+          <circle
+            cx="50"
+            cy="50"
+            r="48"
+            className={`fill-none ${isCenter ? 'stroke-brand-orange/80' : 'stroke-brand-orange/55'}`}
+            strokeWidth={isCenter ? '3' : '2'}
+          />
+        ) : (
+          <circle cx="50" cy="50" r="48" className="fill-background stroke-border/60" strokeWidth="2" />
+        )}
+
+        {/* Tick Marks */}
+        {[...Array(12)].map((_, i) => {
+          const isMajor = i % 3 === 0;
+
+          return (
+            <line
+              key={i}
+              x1="50"
+              y1="6"
+              x2="50"
+              y2={isMajor ? '14' : '11'}
+              transform={`rotate(${i * 30} 50 50)`}
+              className={`transition-all duration-300 ${
+                isMajor
+                  ? `${hasPhoto ? 'stroke-white/90' : 'stroke-muted-foreground/30'} group-hover:stroke-foreground group-hover:[stroke-width:3]`
+                  : `${hasPhoto ? 'stroke-white/70' : 'stroke-muted-foreground/30'} group-hover:stroke-muted-foreground/15`
+              }`}
+              strokeWidth={isMajor ? '2.5' : '1.5'}
+              strokeLinecap="round"
+              style={hasPhoto ? { filter: 'drop-shadow(0 0 1px rgba(0,0,0,0.45))' } : undefined}
+            />
+          );
+        })}
+
+        {/* Hour Hand */}
         <line
-          key={i}
           x1="50"
-          y1="6"
+          y1="50"
           x2="50"
-          y2={i % 3 === 0 ? "14" : "11"}
-          transform={`rotate(${i * 30} 50 50)`}
-          className={bgImage ? "stroke-foreground/60" : "stroke-muted-foreground/30"}
-          strokeWidth={i % 3 === 0 ? "2.5" : "1.5"}
+          y2="28"
+          transform={`rotate(${hourAngle} 50 50)`}
+          className="stroke-foreground"
+          strokeWidth="3.5"
+          strokeLinecap="round"
+          style={hasPhoto ? { filter: 'drop-shadow(0 0 1.5px rgba(255,255,255,0.95))' } : undefined}
+        />
+
+        {/* Minute Hand */}
+        <line
+          x1="50"
+          y1="50"
+          x2="50"
+          y2="16"
+          transform={`rotate(${minuteAngle} 50 50)`}
+          className="stroke-foreground/80"
+          strokeWidth="2.5"
+          strokeLinecap="round"
+          style={hasPhoto ? { filter: 'drop-shadow(0 0 1.5px rgba(255,255,255,0.95))' } : undefined}
+        />
+
+        {/* Second Hand */}
+        <line
+          x1="50"
+          y1="58"
+          x2="50"
+          y2="12"
+          transform={`rotate(${secondAngle} 50 50)`}
+          className="stroke-brand-orange"
+          strokeWidth="1.5"
           strokeLinecap="round"
         />
-      ))}
 
-      {/* Hour Hand */}
-      <line
-        x1="50"
-        y1="50"
-        x2="50"
-        y2="28"
-        transform={`rotate(${hourAngle} 50 50)`}
-        className="stroke-foreground"
-        strokeWidth="3.5"
-        strokeLinecap="round"
-      />
-
-      {/* Minute Hand */}
-      <line
-        x1="50"
-        y1="50"
-        x2="50"
-        y2="16"
-        transform={`rotate(${minuteAngle} 50 50)`}
-        className="stroke-foreground/80"
-        strokeWidth="2.5"
-        strokeLinecap="round"
-      />
-
-      {/* Second Hand */}
-      <line
-        x1="50"
-        y1="58"
-        x2="50"
-        y2="12"
-        transform={`rotate(${secondAngle} 50 50)`}
-        className="stroke-brand-orange"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-      />
-
-      {/* Center Dots */}
-      <circle cx="50" cy="50" r="3" className="fill-brand-orange" />
-      <circle cx="50" cy="50" r="1.5" className="fill-background" />
-    </svg>
+        {/* Center Dots */}
+        <circle cx="50" cy="50" r="3" className="fill-brand-orange" />
+        <circle cx="50" cy="50" r="1.5" className="fill-background" />
+      </svg>
+    </div>
   );
+}
+
+const TZ_LOCALE = {
+  'America/New_York': 'en-US',
+  'Europe/London': 'en-GB',
+  'Asia/Kolkata': 'en-IN',
+  'Asia/Singapore': 'en-SG',
+  'Australia/Sydney': 'en-AU',
+};
+
+const TZ_ABBR_OVERRIDES = {
+  'Asia/Kolkata': 'IST',
+  'Asia/Singapore': 'SGT',
+};
+
+function getTimezoneAbbr(tz, date) {
+  if (TZ_ABBR_OVERRIDES[tz]) return TZ_ABBR_OVERRIDES[tz];
+
+  const part = new Intl.DateTimeFormat(TZ_LOCALE[tz] || 'en-US', {
+    timeZone: tz,
+    timeZoneName: 'short',
+  })
+    .formatToParts(date)
+    .find((p) => p.type === 'timeZoneName')?.value;
+
+  return part || '';
 }
 
 function WorldClockStrip() {
@@ -211,51 +354,203 @@ function WorldClockStrip() {
   }, []);
 
   const cities = [
-    { name: 'NEW YORK', tz: 'America/New_York' },
-    { name: 'LONDON', tz: 'Europe/London' },
-    { name: 'NEW DELHI', tz: 'Asia/Kolkata', isCenter: true, bgImage: 'https://images.unsplash.com/photo-1524492412937-b28074a5d7da?w=200&q=80' },
-    { name: 'SINGAPORE', tz: 'Asia/Singapore' },
-    { name: 'SYDNEY', tz: 'Australia/Sydney' },
+    {
+      name: 'NEW YORK',
+      tz: 'America/New_York',
+      bgImage: buildClockMonumentSrc('https://images.unsplash.com/photo-1485738422979-f5c462d49f74'),
+    },
+    {
+      name: 'LONDON',
+      tz: 'Europe/London',
+      bgImage: buildClockMonumentSrc('https://images.unsplash.com/photo-1513635269975-59663e0ac1ad'),
+    },
+    {
+      name: 'NEW DELHI',
+      tz: 'Asia/Kolkata',
+      isCenter: true,
+      bgImage: buildClockMonumentSrc('https://images.unsplash.com/photo-1564507592333-c60657eea523'),
+    },
+    {
+      name: 'SINGAPORE',
+      tz: 'Asia/Singapore',
+      bgImage: buildClockMonumentSrc('https://images.unsplash.com/photo-1525625293386-3f8f99389edd'),
+    },
+    {
+      name: 'SYDNEY',
+      tz: 'Australia/Sydney',
+      bgImage: buildClockMonumentSrc('https://images.unsplash.com/photo-1524820197278-540916411e20'),
+    },
   ];
+
+  const mobileLayout = {
+    'NEW YORK': {
+      position: 'left-[4%] top-[16%]',
+      size: 'lg',
+      scale: 'scale-100',
+      rotate: '-rotate-[14deg]',
+      labelClass: 'text-[9px] tracking-[0.22em]',
+      timeClass: 'text-xs',
+    },
+    LONDON: {
+      position: 'right-[4%] top-[9%]',
+      size: 'md',
+      scale: 'scale-[0.95]',
+      rotate: 'rotate-[17deg]',
+      labelClass: 'text-[8px] tracking-[0.18em]',
+      timeClass: 'text-[10px]',
+    },
+    'NEW DELHI': {
+      position: 'left-1/2 top-[50%] -translate-x-1/2 -translate-y-1/2',
+      size: 'xl',
+      scale: 'scale-100',
+      rotate: '',
+      labelClass: 'text-[10px] tracking-[0.28em] text-brand-orange',
+      timeClass: 'text-sm',
+    },
+    SINGAPORE: {
+      position: 'left-[6%] bottom-[8%]',
+      size: 'lg',
+      scale: 'scale-[0.96]',
+      rotate: '-rotate-[9deg]',
+      labelClass: 'text-[8px] tracking-[0.2em]',
+      timeClass: 'text-[10px]',
+    },
+    SYDNEY: {
+      position: 'right-[6%] bottom-[12%]',
+      size: 'lg',
+      scale: 'scale-[0.98]',
+      rotate: 'rotate-[11deg]',
+      labelClass: 'text-[9px] tracking-[0.24em]',
+      timeClass: 'text-xs',
+    },
+  };
+
+  const clockHoverClass =
+    'group-hover:-translate-y-1 group-hover:scale-110 group-hover:rotate-6 group-hover:drop-shadow-[0_10px_24px_rgba(232,82,26,0.22)]';
+  const labelHoverClass = 'transition-colors duration-300 group-hover:text-brand-orange';
+  const timeHoverClass =
+    'rounded-lg px-2 py-0.5 transition-all duration-300 group-hover:scale-105 group-hover:bg-brand-orange/12 group-hover:text-brand-orange group-hover:shadow-[0_4px_14px_rgba(232,82,26,0.16)]';
+
+  const getCityTime = (tz) => {
+    const formatter = new Intl.DateTimeFormat('en-US', {
+      timeZone: tz,
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: false,
+    });
+    return formatter.format(time).split(':');
+  };
 
   return (
     <div className="border-t border-border/25 bg-transparent py-5">
       <div className="mx-auto max-w-screen-xl px-6 sm:px-10 lg:px-16">
-        <div className="grid grid-cols-3 gap-3 md:flex md:items-center md:justify-between md:gap-4">
-        {cities.map((city) => {
-          const formatter = new Intl.DateTimeFormat('en-US', {
-            timeZone: city.tz,
-            hour: '2-digit',
-            minute: '2-digit',
-            second: '2-digit',
-            hour12: false,
-          });
-          const timeString = formatter.format(time);
-          const [hh, mm, ss] = timeString.split(':');
+        {/* Mobile only — India center, others scattered, no boxes */}
+        <div className="relative mx-auto h-[24rem] w-full max-w-[25rem] md:hidden">
+          {cities.map((city) => {
+            const [hh, mm, ss] = getCityTime(city.tz);
+            const layout = mobileLayout[city.name];
+            const isCenter = city.isCenter;
+            const tzAbbr = getTimezoneAbbr(city.tz, time);
 
-          return (
-            <div
-              key={city.name}
-              className={`${city.name === 'NEW YORK' ? 'col-start-1 row-start-1' : ''} ${city.name === 'LONDON' ? 'col-start-3 row-start-1' : ''} ${city.isCenter ? 'col-start-2 row-start-2 border-brand-orange/20 bg-white/40 dark:bg-white/[0.06] scale-[1.02]' : ''} ${city.name === 'SINGAPORE' ? 'col-start-1 row-start-3' : ''} ${city.name === 'SYDNEY' ? 'col-start-3 row-start-3' : ''} rounded-xl border border-border/30 bg-white/30 p-3 backdrop-blur-[2px] dark:border-white/8 dark:bg-white/[0.03] md:min-w-[148px] md:flex-1`}
-            >
-              <div className="flex flex-col items-center gap-2.5 text-center md:flex-row md:items-center md:justify-center md:text-left">
-                <AnalogClock hh={hh} mm={mm} ss={ss} bgImage={city.bgImage} isCenter={city.isCenter} />
-                <div className="flex flex-col">
-                  <span className={`font-black uppercase tracking-[0.3em] ${city.isCenter ? 'text-[10px] md:text-[11px] text-brand-orange drop-shadow-sm' : 'text-[8px] md:text-[9px] text-muted-foreground'}`}>
-                    {city.name}
-                  </span>
-                  <div className={`flex items-center font-mono font-bold tracking-widest text-foreground ${city.isCenter ? 'text-sm md:text-base' : 'text-xs md:text-sm'}`}>
-                    <span>{hh}</span>
-                    <span className="mx-0.5 text-brand-orange/60 dark:text-brand-orange/40">:</span>
-                    <span>{mm}</span>
-                    <span className="mx-0.5 text-brand-orange/60 dark:text-brand-orange/40">:</span>
-                    <span className="text-brand-orange tabular-nums">{ss}</span>
+            return (
+              <div
+                key={`mobile-${city.name}`}
+                className={`absolute ${layout.position} ${layout.scale} ${layout.rotate} ${isCenter ? 'z-20' : 'z-10'}`}
+              >
+                <div className="group flex cursor-default flex-col items-center gap-2 text-center">
+                  <AnalogClock
+                    hh={hh}
+                    mm={mm}
+                    ss={ss}
+                    bgImage={city.bgImage}
+                    isCenter={isCenter}
+                    size={layout.size}
+                    className={clockHoverClass}
+                  />
+                  <div className="flex flex-col items-center">
+                    <span
+                      className={`font-black uppercase ${labelHoverClass} ${
+                        isCenter
+                          ? layout.labelClass
+                          : `text-muted-foreground ${layout.labelClass}`
+                      }`}
+                    >
+                      {city.name}
+                      <span className={`ml-1 tracking-[0.16em] ${isCenter ? 'text-brand-orange/80' : 'text-brand-orange/65'} group-hover:text-brand-orange`}>
+                        · {tzAbbr}
+                      </span>
+                    </span>
+                    <div
+                      className={`flex items-center font-mono font-bold tracking-widest text-foreground ${layout.timeClass} ${timeHoverClass}`}
+                    >
+                      <span>{hh}</span>
+                      <span className="mx-0.5 text-brand-orange/60 transition-colors duration-300 group-hover:text-brand-orange">:</span>
+                      <span>{mm}</span>
+                      <span className="mx-0.5 text-brand-orange/60 transition-colors duration-300 group-hover:text-brand-orange">:</span>
+                      <span className="text-brand-orange tabular-nums transition-colors duration-300 group-hover:text-[#ff6d31]">{ss}</span>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          );
-        })}
+            );
+          })}
+        </div>
+
+        {/* Desktop / tablet — original boxed row */}
+        <div className="hidden md:flex md:items-center md:justify-between md:gap-4">
+          {cities.map((city) => {
+            const [hh, mm, ss] = getCityTime(city.tz);
+            const tzAbbr = getTimezoneAbbr(city.tz, time);
+
+            return (
+              <div
+                key={`desktop-${city.name}`}
+                className={`group min-w-[148px] flex-1 cursor-default rounded-xl border p-3 backdrop-blur-[2px] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_16px_34px_rgba(20,14,45,0.1)] ${
+                  city.isCenter
+                    ? 'border-brand-orange/20 bg-white/40 dark:bg-white/[0.06] scale-[1.02]'
+                    : 'border-border/30 bg-white/30 dark:border-white/8 dark:bg-white/[0.03]'
+                }`}
+              >
+                <div className="flex flex-col items-center gap-2.5 text-center md:flex-row md:items-center md:justify-center md:text-left">
+                  <AnalogClock
+                    hh={hh}
+                    mm={mm}
+                    ss={ss}
+                    bgImage={city.bgImage}
+                    isCenter={city.isCenter}
+                    size={city.isCenter ? 'lg' : 'md'}
+                    className={clockHoverClass}
+                  />
+                  <div className="flex flex-col">
+                    <span
+                      className={`font-black uppercase tracking-[0.3em] ${labelHoverClass} ${
+                        city.isCenter
+                          ? 'text-[10px] md:text-[11px] text-brand-orange drop-shadow-sm'
+                          : 'text-[8px] md:text-[9px] text-muted-foreground'
+                      }`}
+                    >
+                      {city.name}
+                      <span className={`ml-1 tracking-[0.16em] ${city.isCenter ? 'text-brand-orange/80' : 'text-brand-orange/65'} group-hover:text-brand-orange`}>
+                        · {tzAbbr}
+                      </span>
+                    </span>
+                    <div
+                      className={`flex items-center font-mono font-bold tracking-widest text-foreground ${
+                        city.isCenter ? 'text-sm md:text-base' : 'text-xs md:text-sm'
+                      } ${timeHoverClass}`}
+                    >
+                      <span>{hh}</span>
+                      <span className="mx-0.5 text-brand-orange/60 transition-colors duration-300 group-hover:text-brand-orange dark:text-brand-orange/40">:</span>
+                      <span>{mm}</span>
+                      <span className="mx-0.5 text-brand-orange/60 transition-colors duration-300 group-hover:text-brand-orange dark:text-brand-orange/40">:</span>
+                      <span className="text-brand-orange tabular-nums transition-colors duration-300 group-hover:text-[#ff6d31]">{ss}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
         </div>
       </div>
     </div>
@@ -273,9 +568,9 @@ function HeroSection() {
 
   const heroPhotos = [
     {
-      src: 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=800&q=80',
-      srcSet: buildUnsplashSrcSet('https://images.unsplash.com/photo-1502602898657-3e91760cbb34'),
-      sizes: '(max-width: 1024px) 50vw, 24vw',
+      src: 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=1600&q=85',
+      srcSet: buildHeroFeaturedSrcSet('https://images.unsplash.com/photo-1502602898657-3e91760cbb34'),
+      sizes: '(max-width: 1024px) 92vw, (max-width: 1280px) 34vw, 420px',
       label: 'Paris',
     },
     {
@@ -312,13 +607,13 @@ function HeroSection() {
       <div className="relative mx-auto grid max-w-screen-xl items-start gap-10 px-4 pt-6 pb-10 sm:gap-12 sm:px-10 sm:pt-8 sm:pb-14 lg:min-h-[88vh] lg:grid-cols-[0.95fr_1.05fr] lg:items-center lg:gap-10 lg:px-16 lg:pt-10 lg:pb-16">
 
         {/* ── LEFT: Text content ── */}
-        <div className="order-1 flex flex-col items-start gap-5 text-left sm:gap-6">
+        <div className="order-1 flex w-full flex-col items-center gap-5 text-center sm:gap-6 lg:items-start lg:text-left">
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.08, duration: 0.6 }}
           >
-            <span className="inline-flex items-center gap-2 rounded-full border border-brand-purple/15 bg-white/80 px-4 py-2 text-[10px] font-black uppercase tracking-[0.35em] text-brand-purple shadow-[0_10px_24px_rgba(20,14,45,0.06)] backdrop-blur-md dark:border-brand-purple/30 dark:bg-[#140f24]/70 dark:text-brand-purple-mid">
+            <span className="section-kicker-classic inline-flex items-center gap-2">
               <Globe2 className="h-3.5 w-3.5" />
               Global Destinations
             </span>
@@ -329,19 +624,14 @@ function HeroSection() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.16, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
           >
-            <h1
-              className="max-w-[11ch] text-balance font-black leading-[0.9] tracking-[-0.05em] text-[#1a1130] dark:text-white text-[clamp(3rem,7vw,6.4rem)]"
-              style={{
-                fontFamily:
-                  "'Iowan Old Style', 'Palatino Linotype', 'Book Antiqua', Georgia, serif",
-              }}
-            >
-              <span className="block">Where the world</span>
-              <span className="block italic text-brand-orange">becomes your campus.</span>
+            <h1 className="mx-auto max-w-[11ch] text-balance text-4xl font-bold leading-tight text-foreground sm:text-5xl lg:mx-0 lg:text-6xl">
+              <span className="block bg-[linear-gradient(92deg,#2D1B69_0%,#3D56CC_45%,#E8521A_100%)] bg-clip-text text-transparent">
+                Destinations We Cater
+              </span>
             </h1>
           </motion.div>
 
-          <p className="max-w-xl text-[15px] leading-relaxed text-black/72 dark:text-white/68 sm:text-[16px]">
+          <p className="mx-auto max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg lg:mx-0">
             Explore top study destinations handpicked for their quality of education, global recognition, and opportunities for international students.
           </p>
 
@@ -349,7 +639,7 @@ function HeroSection() {
             initial={{ opacity: 0, y: 18 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3, duration: 0.65 }}
-            className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row"
+            className="flex w-full max-w-md flex-col gap-3 sm:w-auto sm:max-w-none sm:flex-row lg:max-w-none"
           >
             <Link
               to="/collaborate"
@@ -387,7 +677,7 @@ function HeroSection() {
               <img
                 src={heroPhotos[0].src}
                 srcSet={heroPhotos[0].srcSet}
-                sizes="(max-width: 1024px) 100vw, 30vw"
+                sizes={heroPhotos[0].sizes}
                 alt={heroPhotos[0].label}
                 className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
                 loading="eager"
@@ -606,20 +896,18 @@ function RegionSection({ region, cfg, index, isLast }) {
             <div>
               <div className="mb-4 flex items-center justify-center gap-3 lg:justify-start">
                 <div className="h-[3px] w-10 rounded-full" style={{ background: cfg.accent }} />
-                <span
-                  className="text-[9px] font-black uppercase tracking-[0.45em]"
-                  style={{ color: cfg.accent }}
-                >
+                <span className="text-[9px] font-black uppercase tracking-[0.45em] text-muted-foreground">
                   {cfg.tagline}
                 </span>
               </div>
               <h2
-                className="font-black leading-[1.05] tracking-[-0.02em] text-foreground"
-                style={{ fontFamily:"'Poppins',sans-serif", fontSize:'clamp(2.25rem, 6vw, 4.5rem)' }}
+                className="text-3xl font-bold leading-tight sm:text-4xl lg:text-5xl"
               >
-                {region.label}
+                <span className="bg-[linear-gradient(92deg,#2D1B69_0%,#3D56CC_45%,#E8521A_100%)] bg-clip-text text-transparent">
+                  {region.label}
+                </span>
               </h2>
-              <p className="mx-auto mt-6 max-w-[52ch] text-[15px] leading-relaxed text-muted-foreground lg:mx-0">
+              <p className="mx-auto mt-5 max-w-[52ch] text-base leading-relaxed text-muted-foreground lg:mx-0">
                 {region.description}
               </p>
             </div>
@@ -646,17 +934,43 @@ function RegionSection({ region, cfg, index, isLast }) {
             </span>
           </div>
 
-          <div
-            className={`grid gap-2.5 sm:gap-4 ${
-              region.countries.length <= 4 ? 'grid-cols-2 lg:grid-cols-4' :
-              region.countries.length <= 8 ? 'grid-cols-2 md:grid-cols-3 lg:grid-cols-4' :
-              'grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6'
-            }`}
-          >
-            {region.countries.map((c) => (
-              <CountryCard key={c.name} country={c} />
-            ))}
-          </div>
+          {region.countryGroups?.length > 0 ? (
+            <div className="space-y-6">
+              <div className="flex flex-wrap items-center gap-2">
+                {region.countryGroups.map((group) => (
+                  <span
+                    key={group.key}
+                    className="inline-flex items-center rounded-full border border-border/70 bg-background px-3 py-1 text-[10px] font-bold uppercase tracking-[0.24em] text-foreground"
+                  >
+                    {group.label}
+                  </span>
+                ))}
+              </div>
+              <div
+                className={`grid gap-2.5 sm:gap-4 ${
+                  region.countries.length <= 4 ? 'grid-cols-2 lg:grid-cols-4' :
+                  region.countries.length <= 8 ? 'grid-cols-2 md:grid-cols-3 lg:grid-cols-4' :
+                  'grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6'
+                }`}
+              >
+                {region.countries.map((c) => (
+                  <CountryCard key={c.name} country={c} />
+                ))}
+              </div>
+            </div>
+          ) : (
+            <div
+              className={`grid gap-2.5 sm:gap-4 ${
+                region.countries.length <= 4 ? 'grid-cols-2 lg:grid-cols-4' :
+                region.countries.length <= 8 ? 'grid-cols-2 md:grid-cols-3 lg:grid-cols-4' :
+                'grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6'
+              }`}
+            >
+              {region.countries.map((c) => (
+                <CountryCard key={c.name} country={c} />
+              ))}
+            </div>
+          )}
         </div>
       </div>
 
@@ -710,28 +1024,25 @@ function SchengenSection() {
       </div>
 
       <div className="relative mx-auto max-w-screen-xl px-4 py-16 sm:px-6 sm:py-20 lg:px-16 lg:py-24">
-        <div className="mb-6 flex items-center justify-between border-y border-black/10 py-3 dark:border-white/10">
-          <p className="text-[10px] font-bold uppercase tracking-[0.45em] text-brand-orange">
+        <div className="mb-6 flex items-center justify-between border-y border-border/50 py-3">
+          <p className="text-[10px] font-bold uppercase tracking-[0.45em] text-primary">
             Study Abroad Desk
           </p>
-          <p className="text-[10px] uppercase tracking-[0.3em] text-black/45 dark:text-white/45">
+          <p className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground">
             Short guide
           </p>
         </div>
 
         <div className="max-w-4xl">
-          <p className="mb-4 text-[10px] font-bold uppercase tracking-[0.45em] text-black/40 dark:text-white/40">
+          <p className="section-kicker-classic mb-4 inline-flex">
             Visa guide
           </p>
-          <h2
-            className="font-serif text-[clamp(2.7rem,7vw,5.5rem)] leading-[0.92] tracking-[-0.04em] text-[#17111f] dark:text-white"
-            style={{ fontFamily: 'Georgia, Times New Roman, serif' }}
-          >
-            Schengen
-            <span className="mx-3 text-black/28 dark:text-white/22">vs.</span>
-            <span className="block italic text-black/42 dark:text-white/30">Non-Schengen</span>
+          <h2 className="text-3xl font-bold leading-tight sm:text-4xl lg:text-5xl">
+            <span className="bg-[linear-gradient(92deg,#2D1B69_0%,#3D56CC_45%,#E8521A_100%)] bg-clip-text text-transparent">
+              Schengen vs. Non-Schengen
+            </span>
           </h2>
-          <p className="mt-5 max-w-2xl text-[15px] leading-relaxed text-black/68 dark:text-white/66 sm:text-[16px]">
+          <p className="mt-5 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg">
             Pick the visa model first. It shapes mobility, study rhythm, and the amount of travel flexibility a student gets.
           </p>
         </div>
@@ -762,31 +1073,32 @@ function SchengenSection() {
               className="relative overflow-hidden border border-black/10 bg-[#fff8ee] p-6 shadow-[0_16px_42px_rgba(18,12,34,0.08)] dark:border-white/10 dark:bg-white/[0.04]"
             >
               <div className="absolute left-0 top-0 h-[3px] w-28" style={{ background: section.accent }} />
-              <div className="absolute right-4 top-4 text-[10px] uppercase tracking-[0.35em] text-black/25 dark:text-white/25">
+              <div className="absolute right-4 top-4 text-[10px] uppercase tracking-[0.35em] text-muted-foreground/50">
                 {String(index + 1).padStart(2, '0')}
               </div>
 
-              <p className="text-[9px] font-black uppercase tracking-[0.45em] text-black/40 dark:text-white/40">
+              <p className="text-[9px] font-black uppercase tracking-[0.45em] text-muted-foreground/60">
                 {section.kicker}
               </p>
               <h3
-                className="mt-2 font-serif text-4xl leading-[0.95] tracking-[-0.04em] text-[#17111f] dark:text-white"
-                style={{ fontFamily: 'Georgia, Times New Roman, serif' }}
+                className="mt-2 text-2xl font-bold leading-tight sm:text-3xl"
               >
-                {section.title}
+                <span className="bg-[linear-gradient(92deg,#2D1B69_0%,#3D56CC_45%,#E8521A_100%)] bg-clip-text text-transparent">
+                  {section.title}
+                </span>
               </h3>
-              <p className="mt-4 max-w-xl text-[14px] leading-relaxed text-black/68 dark:text-white/68">
+              <p className="mt-4 max-w-xl text-sm leading-relaxed text-muted-foreground sm:text-base">
                 {section.deck}
               </p>
 
-              <div className="mt-5 space-y-3 border-t border-black/10 pt-4 dark:border-white/10">
+              <div className="mt-5 space-y-3 border-t border-border/50 pt-4">
                 {section.bullets.map((bullet) => (
                   <div key={bullet} className="flex items-start gap-3">
                     <span
                       className="mt-2 inline-block h-2 w-2 shrink-0 rounded-full"
                       style={{ background: section.accent }}
                     />
-                    <p className="text-[13px] leading-snug text-black/70 dark:text-white/70">
+                    <p className="text-sm leading-snug text-foreground/75">
                       {bullet}
                     </p>
                   </div>
@@ -796,8 +1108,8 @@ function SchengenSection() {
           ))}
         </div>
 
-        <div className="mt-8 border-t border-black/10 pt-4 text-center dark:border-white/10">
-          <p className="text-[12px] leading-relaxed text-black/55 dark:text-white/55">
+        <div className="mt-8 border-t border-border/50 pt-4 text-center">
+          <p className="text-sm leading-relaxed text-muted-foreground">
             Short version: Schengen favors movement. Non-Schengen favors focus.
           </p>
         </div>
@@ -874,8 +1186,8 @@ export default function DestinationsPage() {
 
   useEffect(() => { window.scrollTo({ top:0, behavior:'instant' }); }, []);
 
-  const filteredRegions = useMemo(() =>
-    destinationRegions
+  const filteredRegions = useMemo(() => {
+    const regions = destinationRegions
       .map(r => ({
         ...r,
         countries: r.countries.filter(c =>
@@ -890,13 +1202,15 @@ export default function DestinationsPage() {
         if (selectedTab === 'asia-pacific') return r.key === 'asia-pacific';
         if (selectedTab === 'middle-east-africa') return r.key === 'middle-east' || r.key === 'africa';
         return true;
-      }),
-  [selectedTab, deferredSearchQuery]);
+      });
+
+    return buildDisplayRegions(regions);
+  }, [selectedTab, deferredSearchQuery]);
 
   return (
     <div className="destinations-page-gradient min-h-screen text-foreground pt-16">
       <Seo
-        title="Study Abroad Destinations | The Global Avenues"
+        title="Destinations We Cater | The Global Avenues"
         description="Explore study abroad destinations across North America, Europe, Asia Pacific, and Middle East & Africa with The Global Avenues."
         path="/destinations"
         keywords={['study abroad','destinations','schengen','study in europe','study in usa','study in canada','overseas education']}
