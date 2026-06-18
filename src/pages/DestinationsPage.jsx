@@ -96,19 +96,21 @@ const REGION_CFG = {
 /* ══════════════════════════════════
    SVG DOT-GRID BACKGROUND TEXTURE
 ══════════════════════════════════ */
-function DotGrid() {
+function DotGrid({ id = 'default' }) {
+  const patternId = `dest-dot-pattern-${id}`;
+
   return (
     <svg
-      className="absolute inset-0 h-full w-full opacity-[0.035] dark:opacity-[0.04]"
+      className="absolute inset-0 h-full w-full opacity-[0.045] dark:opacity-[0.04]"
       xmlns="http://www.w3.org/2000/svg"
       aria-hidden="true"
     >
       <defs>
-        <pattern id="dot-pattern" x="0" y="0" width="24" height="24" patternUnits="userSpaceOnUse">
+        <pattern id={patternId} x="0" y="0" width="24" height="24" patternUnits="userSpaceOnUse">
           <circle cx="1.5" cy="1.5" r="1.5" fill="currentColor" />
         </pattern>
       </defs>
-      <rect width="100%" height="100%" fill="url(#dot-pattern)" />
+      <rect width="100%" height="100%" fill={`url(#${patternId})`} />
     </svg>
   );
 }
@@ -217,7 +219,7 @@ function WorldClockStrip() {
   ];
 
   return (
-    <div className="border-t border-border/50 bg-muted/20 py-5 backdrop-blur-md">
+    <div className="border-t border-border/25 bg-transparent py-5">
       <div className="mx-auto max-w-screen-xl px-6 sm:px-10 lg:px-16">
         <div className="grid grid-cols-3 gap-3 md:flex md:items-center md:justify-between md:gap-4">
         {cities.map((city) => {
@@ -234,7 +236,7 @@ function WorldClockStrip() {
           return (
             <div
               key={city.name}
-              className={`${city.name === 'NEW YORK' ? 'col-start-1 row-start-1' : ''} ${city.name === 'LONDON' ? 'col-start-3 row-start-1' : ''} ${city.isCenter ? 'col-start-2 row-start-2 border-brand-orange/30 bg-background/92 shadow-[0_16px_34px_rgba(232,82,26,0.12)] scale-[1.02]' : ''} ${city.name === 'SINGAPORE' ? 'col-start-1 row-start-3' : ''} ${city.name === 'SYDNEY' ? 'col-start-3 row-start-3' : ''} rounded-2xl border border-border/60 bg-background/75 p-3 shadow-[0_12px_28px_rgba(20,14,45,0.05)] backdrop-blur-sm md:min-w-[148px] md:flex-1`}
+              className={`${city.name === 'NEW YORK' ? 'col-start-1 row-start-1' : ''} ${city.name === 'LONDON' ? 'col-start-3 row-start-1' : ''} ${city.isCenter ? 'col-start-2 row-start-2 border-brand-orange/20 bg-white/40 dark:bg-white/[0.06] scale-[1.02]' : ''} ${city.name === 'SINGAPORE' ? 'col-start-1 row-start-3' : ''} ${city.name === 'SYDNEY' ? 'col-start-3 row-start-3' : ''} rounded-xl border border-border/30 bg-white/30 p-3 backdrop-blur-[2px] dark:border-white/8 dark:bg-white/[0.03] md:min-w-[148px] md:flex-1`}
             >
               <div className="flex flex-col items-center gap-2.5 text-center md:flex-row md:items-center md:justify-center md:text-left">
                 <AnalogClock hh={hh} mm={mm} ss={ss} bgImage={city.bgImage} isCenter={city.isCenter} />
@@ -297,15 +299,15 @@ function HeroSection() {
   ];
 
   return (
-    <section ref={ref} className="relative min-h-[88vh] overflow-hidden bg-background">
+    <section ref={ref} className="relative min-h-[88vh] overflow-hidden bg-transparent">
       {/* Dot grid texture */}
       <div className="pointer-events-none absolute inset-0 text-foreground/50 dark:text-white/70">
-        <DotGrid />
+        <DotGrid id="hero" />
       </div>
 
       {/* Big ambient gradient blob — top left */}
-      <div className="pointer-events-none absolute -left-32 -top-32 h-[560px] w-[560px] rounded-full bg-brand-purple/8 blur-[120px] dark:bg-brand-purple/16" />
-      <div className="pointer-events-none absolute -bottom-24 right-0 h-[380px] w-[480px] rounded-full bg-brand-orange/6 blur-[110px] dark:bg-brand-orange/10" />
+      <div className="pointer-events-none absolute -left-32 -top-32 h-[560px] w-[560px] rounded-full bg-brand-purple/6 blur-[120px] dark:bg-brand-purple/16" />
+      <div className="pointer-events-none absolute -bottom-24 right-0 h-[380px] w-[480px] rounded-full bg-brand-orange/4 blur-[110px] dark:bg-brand-orange/10" />
 
       <div className="relative mx-auto grid max-w-screen-xl items-start gap-10 px-4 pt-6 pb-10 sm:gap-12 sm:px-10 sm:pt-8 sm:pb-14 lg:min-h-[88vh] lg:grid-cols-[0.95fr_1.05fr] lg:items-center lg:gap-10 lg:px-16 lg:pt-10 lg:pb-16">
 
@@ -447,7 +449,7 @@ function FilterBar({ query, setQuery, tab, setTab }) {
   ];
 
   return (
-    <div className="relative z-20 border-b border-border/50 bg-background/75 backdrop-blur-xl">
+    <div className="relative z-20 border-b border-border/25 bg-transparent">
       <div className="mx-auto max-w-screen-xl px-4 py-3 sm:px-6 lg:px-16">
         <div className="rounded-[28px] border border-white/70 bg-white/88 px-3 py-3 shadow-[0_18px_48px_rgba(20,14,45,0.08)] backdrop-blur-xl dark:border-white/10 dark:bg-[#0F0B1E]/92">
           <div className="flex flex-col gap-3 lg:gap-4">
@@ -560,17 +562,12 @@ function RegionSection({ region, cfg, index, isLast }) {
 
   return (
     <section
-      className="relative overflow-hidden py-16 sm:py-24"
+      className={`destinations-region-shell relative overflow-hidden py-16 sm:py-24 ${isEven ? '' : 'destinations-region-shell--alt'}`}
       style={{
         contentVisibility: 'auto',
         containIntrinsicSize: '1px 1280px',
       }}
     >
-      {/* Alternating subtle surface background */}
-      {!isEven && (
-        <div className="absolute inset-0 bg-muted/30 dark:bg-white/[0.02]" />
-      )}
-
       <div className="relative mx-auto max-w-screen-xl px-6 sm:px-10 lg:px-16">
         
         {/* ── 1. Hero Split (Image & Text) ── */}
@@ -578,10 +575,6 @@ function RegionSection({ region, cfg, index, isLast }) {
           {/* Image Column */}
           <div className="order-2 w-full lg:order-none lg:w-1/2">
             <div className="relative aspect-[4/3] w-full overflow-hidden rounded-[2rem] shadow-2xl">
-              <div
-                className="absolute -right-4 -top-4 z-10 h-32 w-32 rounded-full opacity-60 blur-3xl pointer-events-none"
-                style={{ background: cfg.accent }}
-              />
               <img
                 src={cfg.img}
                 alt={region.label}
@@ -712,8 +705,8 @@ function SchengenSection() {
   return (
     <section className="relative overflow-hidden bg-[#f5efe4] text-[#191324] dark:bg-[#0b0f1a] dark:text-white">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(109,87,216,0.08),transparent_38%),radial-gradient(circle_at_bottom_right,rgba(232,82,26,0.07),transparent_34%)] dark:bg-[radial-gradient(circle_at_top_left,rgba(109,87,216,0.12),transparent_38%),radial-gradient(circle_at_bottom_right,rgba(232,82,26,0.1),transparent_34%)]" />
-      <div className="pointer-events-none absolute inset-0 opacity-[0.06] dark:opacity-[0.05]">
-        <DotGrid />
+      <div className="pointer-events-none absolute inset-0 opacity-[0.05] dark:opacity-[0.05]">
+        <DotGrid id="schengen" />
       </div>
 
       <div className="relative mx-auto max-w-screen-xl px-4 py-16 sm:px-6 sm:py-20 lg:px-16 lg:py-24">
@@ -819,15 +812,15 @@ function SchengenSection() {
 ══════════════════════════════════ */
 function FinalCTA() {
   return (
-    <section className="relative overflow-hidden bg-background px-6 py-28 sm:px-10 lg:px-16">
+    <section className="relative overflow-hidden bg-transparent px-6 py-28 sm:px-10 lg:px-16">
       {/* Background texture */}
       <div className="pointer-events-none absolute inset-0 text-foreground">
-        <DotGrid />
+        <DotGrid id="cta" />
       </div>
 
       {/* Ambient blobs */}
-      <div className="pointer-events-none absolute -left-20 top-10 h-72 w-72 rounded-full bg-brand-purple/8 blur-[80px]" />
-      <div className="pointer-events-none absolute -right-20 bottom-10 h-72 w-72 rounded-full bg-brand-orange/8 blur-[80px]" />
+      <div className="pointer-events-none absolute -left-20 top-10 h-72 w-72 rounded-full bg-brand-purple/5 blur-[80px] dark:bg-brand-purple/8" />
+      <div className="pointer-events-none absolute -right-20 bottom-10 h-72 w-72 rounded-full bg-brand-orange/4 blur-[80px] dark:bg-brand-orange/8" />
 
       <div className="relative mx-auto max-w-screen-xl">
         <div className="flex flex-col gap-10 lg:flex-row lg:items-end lg:justify-between">
@@ -901,7 +894,7 @@ export default function DestinationsPage() {
   [selectedTab, deferredSearchQuery]);
 
   return (
-    <div className="min-h-screen bg-background text-foreground pt-16">
+    <div className="destinations-page-gradient min-h-screen text-foreground pt-16">
       <Seo
         title="Study Abroad Destinations | The Global Avenues"
         description="Explore study abroad destinations across North America, Europe, Asia Pacific, and Middle East & Africa with The Global Avenues."

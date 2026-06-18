@@ -821,6 +821,161 @@ html.dark {
       linear-gradient(to right, transparent 0%, rgba(255, 255, 255, 0.036) 50%, transparent 100%);
   }
 
+  .destinations-page-gradient {
+    position: relative;
+    isolation: isolate;
+    min-height: 100%;
+    background-color: #faf9fc;
+    background-image:
+      radial-gradient(760px 460px at 8% 6%, rgba(83, 64, 176, 0.05), transparent 62%),
+      radial-gradient(720px 480px at 92% 10%, rgba(83, 64, 176, 0.045), transparent 64%),
+      linear-gradient(180deg, #fcfbff 0%, #f6f4fa 100%);
+  }
+
+  .destinations-page-gradient::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.55;
+    background-image:
+      radial-gradient(circle at 1px 1px, rgba(83, 64, 176, 0.09) 1px, transparent 1.2px),
+      repeating-linear-gradient(
+        90deg,
+        rgba(83, 64, 176, 0.028) 0,
+        rgba(83, 64, 176, 0.028) 1px,
+        transparent 1px,
+        transparent 52px
+      ),
+      repeating-linear-gradient(
+        0deg,
+        rgba(83, 64, 176, 0.028) 0,
+        rgba(83, 64, 176, 0.028) 1px,
+        transparent 1px,
+        transparent 52px
+      );
+    background-size:
+      26px 26px,
+      auto,
+      auto;
+  }
+
+  .destinations-page-gradient::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.38;
+    background-image:
+      radial-gradient(560px 320px at 14% 28%, rgba(255, 255, 255, 0.42), transparent 70%),
+      radial-gradient(560px 340px at 86% 74%, rgba(255, 255, 255, 0.28), transparent 72%);
+  }
+
+  .destinations-page-gradient > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  .destinations-region-shell {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .destinations-region-shell::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    background-image: linear-gradient(
+      to right,
+      transparent 0%,
+      rgba(83, 64, 176, 0.018) 50%,
+      transparent 100%
+    );
+  }
+
+  .destinations-region-shell--alt::before {
+    background-image: repeating-linear-gradient(
+      -45deg,
+      rgba(83, 64, 176, 0.012) 0,
+      rgba(83, 64, 176, 0.012) 1px,
+      transparent 1px,
+      transparent 18px
+    );
+  }
+
+  .destinations-region-shell > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  .dark .destinations-page-gradient {
+    background-color: #0d0a1a;
+    background-image:
+      radial-gradient(840px 520px at 8% 4%, rgba(232, 82, 26, 0.13), transparent 58%),
+      radial-gradient(900px 560px at 92% 10%, rgba(83, 64, 176, 0.2), transparent 62%),
+      radial-gradient(680px 440px at 50% 54%, rgba(83, 64, 176, 0.08), transparent 72%),
+      radial-gradient(580px 400px at 16% 88%, rgba(232, 82, 26, 0.1), transparent 66%),
+      linear-gradient(180deg, #0b0915 0%, #0f0b1f 52%, #0d0a1a 100%);
+  }
+
+  .dark .destinations-page-gradient::before {
+    opacity: 0.42;
+    background-image:
+      radial-gradient(circle at 1px 1px, rgba(151, 138, 220, 0.2) 1px, transparent 1.2px),
+      repeating-linear-gradient(
+        90deg,
+        rgba(123, 107, 204, 0.04) 0,
+        rgba(123, 107, 204, 0.04) 1px,
+        transparent 1px,
+        transparent 56px
+      ),
+      repeating-linear-gradient(
+        0deg,
+        rgba(123, 107, 204, 0.04) 0,
+        rgba(123, 107, 204, 0.04) 1px,
+        transparent 1px,
+        transparent 56px
+      ),
+      linear-gradient(
+        125deg,
+        rgba(255, 255, 255, 0.04) 0%,
+        rgba(123, 107, 204, 0.09) 45%,
+        rgba(232, 82, 26, 0.1) 100%
+      );
+  }
+
+  .dark .destinations-page-gradient::after {
+    opacity: 0.38;
+    background-image:
+      radial-gradient(660px 380px at 12% 28%, rgba(123, 107, 204, 0.14), transparent 70%),
+      radial-gradient(640px 400px at 88% 72%, rgba(232, 82, 26, 0.13), transparent 72%),
+      radial-gradient(540px 340px at 76% 16%, rgba(83, 64, 176, 0.12), transparent 74%);
+  }
+
+  .dark .destinations-region-shell::before {
+    background-image:
+      radial-gradient(circle at 16% 26%, rgba(255, 255, 255, 0.05), transparent 36%),
+      radial-gradient(circle at 86% 76%, rgba(232, 82, 26, 0.12), transparent 32%),
+      linear-gradient(to right, transparent 0%, rgba(255, 255, 255, 0.03) 50%, transparent 100%);
+  }
+
+  .dark .destinations-region-shell--alt::before {
+    background-image:
+      radial-gradient(circle at 84% 22%, rgba(255, 255, 255, 0.045), transparent 34%),
+      radial-gradient(circle at 12% 80%, rgba(123, 107, 204, 0.1), transparent 32%),
+      repeating-linear-gradient(
+        -45deg,
+        rgba(123, 107, 204, 0.035) 0,
+        rgba(123, 107, 204, 0.035) 1px,
+        transparent 1px,
+        transparent 16px
+      );
+  }
+
   .summer-hot-blink-btn {
     border-color: rgb(245 124 70 / 0.42);
     background: linear-gradient(
