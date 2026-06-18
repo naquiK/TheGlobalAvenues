@@ -92,6 +92,7 @@ export const SITE_CONFIG = {
     Explore: [
       { label: 'Home', path: '/' },
       { label: 'Who We Are', path: '/about' },
+      { label: 'Destinations', path: '/destinations' },
       { label: 'What We Offer', path: '/what-we-offer' },
       { label: 'Universities', path: '/universities' },
     ],

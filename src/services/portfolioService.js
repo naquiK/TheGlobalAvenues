@@ -12,6 +12,8 @@ const cmsPortfolioCache = {
   data: [],
 };
 
+const portfolioCountryOrder = ['Austria', 'Estonia', 'France', 'Cyprus', 'USA'];
+
 const numericOrDefault = (value, fallback = 0) => {
   const parsed = Number(value);
   return Number.isFinite(parsed) ? parsed : fallback;
@@ -25,6 +27,45 @@ const pickText = (item, keys, fallback = '') => {
     }
   }
   return fallback;
+};
+
+const getNormalizedText = (value = '') => String(value).trim().toLowerCase();
+
+const isInternationalAmericanUniversity = (item = {}) => {
+  const slug = getNormalizedText(item.slug);
+  const title = getNormalizedText(item.title || item.name);
+  return slug === 'international-american-university' || title === 'international american university';
+};
+
+export const sortPortfoliosForDisplay = (items = []) => {
+  const normalizedCountryOrder = new Map(
+    portfolioCountryOrder.map((country, index) => [country.toLowerCase(), index])
+  );
+
+  const getCountryRank = (item = {}) => {
+    const country = getNormalizedText(item.country);
+    return normalizedCountryOrder.has(country)
+      ? normalizedCountryOrder.get(country)
+      : portfolioCountryOrder.length + 1;
+  };
+
+  return [...items]
+    .map((item, originalIndex) => ({ item, originalIndex }))
+    .sort((a, b) => {
+      const countryDiff = getCountryRank(a.item) - getCountryRank(b.item);
+      if (countryDiff !== 0) {
+        return countryDiff;
+      }
+
+      const aPriority = isInternationalAmericanUniversity(a.item) ? 0 : 1;
+      const bPriority = isInternationalAmericanUniversity(b.item) ? 0 : 1;
+      if (aPriority !== bPriority) {
+        return aPriority - bPriority;
+      }
+
+      return a.originalIndex - b.originalIndex;
+    })
+    .map(({ item }) => item);
 };
 
 const mapCmsPortfolio = (item, index) => {
@@ -134,8 +175,13 @@ const getUnifiedPortfolios = async () => {
   return [...merged, ...remainingLocal];
 };
 
-export const getFeaturedPortfolios = async (limit = 6) => {
-  const portfolios = await getUnifiedPortfolios();
+export const getFeaturedPortfolios = async (limit = null) => {
+  const portfolios = sortPortfoliosForDisplay(await getUnifiedPortfolios());
+
+  if (!Number.isFinite(limit) || limit <= 0) {
+    return portfolios;
+  }
+
   return portfolios.slice(0, limit);
 };
 

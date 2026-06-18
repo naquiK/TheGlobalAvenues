@@ -8,6 +8,7 @@ import {
   GraduationCap,
   LayoutGrid,
   Newspaper,
+  MapPinned,
   Sparkles,
   X,
 } from 'lucide-react';
@@ -27,6 +28,8 @@ const portfolioIconMap = {
   Europe: 'EU',
   Grenada: 'GD',
 };
+
+const portfolioCountryOrder = ['Austria', 'Estonia', 'France', 'Cyprus', 'USA'];
 
 const offeringIconMap = {
   '/what-we-offer': LayoutGrid,
@@ -53,6 +56,7 @@ export function Header() {
   };
 
   const isPortfolioActive = location.pathname.startsWith('/portfolio');
+  const isDestinationsActive = location.pathname.startsWith('/destinations');
   const isOfferingActive =
     location.pathname === '/what-we-offer' || location.pathname.startsWith('/education-program');
   const primaryNavItems = useMemo(
@@ -69,42 +73,45 @@ export function Header() {
   const logoSrc = isDark ? siteConfig.company.logo.darkSrc : siteConfig.company.logo.lightSrc;
   const hasPortfolioItems = portfolioItems.length > 0;
   const prioritizedPortfolioItems = useMemo(() => {
-    const isIcnBusinessSchool = (item = {}) => {
-      const slug = String(item.slug || '').toLowerCase();
-      const title = String(item.title || item.name || '').toLowerCase();
-      return slug === 'icn-business-school' || title.includes('icn business school');
+    const normalizedCountryOrder = new Map(
+      portfolioCountryOrder.map((country, index) => [country.toLowerCase(), index])
+    );
+    const getNormalizedText = (value = '') => String(value).trim().toLowerCase();
+    const isInternationalAmericanUniversity = (item = {}) => {
+      const slug = getNormalizedText(item.slug);
+      const title = getNormalizedText(item.title || item.name);
+      return slug === 'international-american-university' || title === 'international american university';
     };
-    const shouldStayAtBottom = (item = {}) => {
-      const slug = String(item.slug || '').toLowerCase();
-      const title = String(item.title || item.name || '').toLowerCase();
-      return (
-        slug === 'benedictine-university' ||
-        slug === 'elmhurst-university' ||
-        title.includes('benedictine university') ||
-        title.includes('elmhurst university')
-      );
+    const getCountryRank = (item = {}) => {
+      const country = getNormalizedText(item.country);
+      return normalizedCountryOrder.has(country)
+        ? normalizedCountryOrder.get(country)
+        : portfolioCountryOrder.length + 1;
     };
 
-    const prioritized = [];
-    const regular = [];
-    const bottomPinned = [];
+    return portfolioItems
+      .map((item, originalIndex) => ({ item, originalIndex }))
+      .sort((a, b) => {
+        const countryDiff = getCountryRank(a.item) - getCountryRank(b.item);
+        if (countryDiff !== 0) {
+          return countryDiff;
+        }
 
-    portfolioItems.forEach((item) => {
-      if (isIcnBusinessSchool(item)) {
-        prioritized.push(item);
-      } else if (shouldStayAtBottom(item)) {
-        bottomPinned.push(item);
-      } else {
-        regular.push(item);
-      }
-    });
+        const aPriority = isInternationalAmericanUniversity(a.item) ? 0 : 1;
+        const bPriority = isInternationalAmericanUniversity(b.item) ? 0 : 1;
+        if (aPriority !== bPriority) {
+          return aPriority - bPriority;
+        }
 
-    return [...prioritized, ...regular, ...bottomPinned];
+        return a.originalIndex - b.originalIndex;
+      })
+      .map(({ item }) => item);
   }, [portfolioItems]);
 
   const getPrimaryIcon = (path) => {
     if (path === '/news-blog') return Newspaper;
     if (path === '/gallery') return Sparkles;
+    if (path === '/destinations') return MapPinned;
     return LayoutGrid;
   };
 
@@ -147,6 +154,10 @@ export function Header() {
     }
     if (path === '/gallery') {
       void import('../pages/GalleryPage');
+      return;
+    }
+    if (path === '/destinations') {
+      void import('../pages/DestinationsPage');
       return;
     }
     if (path === '/partners') {
@@ -224,16 +235,14 @@ export function Header() {
 
   return (
     <header
-      className={`fixed top-0 z-50 w-full border-b transition-all duration-200 ease-out ${
+      className={`fixed top-0 z-50 w-full border-b border-white/20 transition-all duration-200 ease-out dark:border-white/8 ${
         hasScrolled
-          ? 'border-white/20 bg-white/65 shadow-[0_18px_48px_rgba(26,16,51,0.12)] backdrop-blur-xl dark:border-white/8 dark:bg-[#0D0A1A]/70'
-          : 'border-white/20 bg-white/70 backdrop-blur-md dark:border-white/8 dark:bg-[#0D0A1A]/75'
+          ? 'bg-white/82 shadow-[0_14px_36px_rgba(26,16,51,0.12)] backdrop-blur-xl dark:bg-[#0D0A1A]/78'
+          : 'bg-white/86 shadow-[0_10px_28px_rgba(26,16,51,0.08)] backdrop-blur-xl dark:bg-[#0D0A1A]/80'
       }`}
     >
       <div
-        className={`mx-auto flex max-w-7xl items-center justify-between px-4 transition-all duration-200 ease-out sm:px-6 lg:px-8 ${
-          hasScrolled ? 'h-16' : 'h-20'
-        }`}
+        className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 transition-all duration-200 ease-out sm:px-6 lg:px-8"
       >
         <div className="flex-shrink-0">
           <Link
@@ -246,20 +255,18 @@ export function Header() {
               alt={siteConfig.company.logo.alt}
               loading="lazy"
               decoding="async"
-              className={`w-auto transition-all duration-200 ease-out ${
-                hasScrolled ? 'h-10 lg:h-12' : 'h-11 lg:h-14'
-              }`}
+              className="h-10 w-auto transition-all duration-200 ease-out lg:h-12"
             />
           </Link>
         </div>
 
-        <nav className="hidden items-center gap-1 lg:flex" ref={dropdownRef}>
+        <nav className="hidden items-center gap-0.5 lg:flex" ref={dropdownRef}>
           {primaryStartItems.map((item) => (
             <Link
               key={item.label}
               to={item.path}
               onMouseEnter={() => preloadRoute(item.path)}
-              className={`nav-link ${isActive(item.path) ? 'nav-link-active' : ''} rounded-full px-4 py-2 text-sm font-medium ${
+              className={`nav-link ${isActive(item.path) ? 'nav-link-active' : ''} rounded-full px-3 py-2 text-[13px] font-medium ${
                 isActive(item.path)
                   ? 'bg-brand-purple text-white shadow-[0_10px_24px_rgba(45,27,105,0.22)]'
                   : 'text-foreground hover:bg-brand-purple-light hover:text-primary'
@@ -268,6 +275,18 @@ export function Header() {
               {item.label}
             </Link>
           ))}
+
+          <Link
+            to="/destinations"
+            onMouseEnter={() => preloadRoute('/destinations')}
+            className={`nav-link ${isDestinationsActive ? 'nav-link-active' : ''} rounded-full px-3 py-2 text-[13px] font-medium ${
+              isDestinationsActive
+                ? 'bg-brand-purple text-white shadow-[0_10px_24px_rgba(45,27,105,0.22)]'
+                : 'text-foreground hover:bg-brand-purple-light hover:text-primary'
+            }`}
+          >
+            Destinations
+          </Link>
 
           <div
             className="relative"
@@ -284,7 +303,7 @@ export function Header() {
                 void loadPortfolioMenu();
                 setOpenDropdown('portfolio');
               }}
-              className={`nav-link nav-trigger ${isPortfolioActive ? 'nav-link-active' : ''} group flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium ${
+              className={`nav-link nav-trigger ${isPortfolioActive ? 'nav-link-active' : ''} group flex items-center gap-2 rounded-full px-3 py-2 text-sm font-medium ${
                 isPortfolioActive
                   ? 'bg-brand-purple text-white shadow-[0_10px_24px_rgba(45,27,105,0.22)]'
                   : 'text-foreground hover:bg-brand-purple-light hover:text-primary'
@@ -378,7 +397,7 @@ export function Header() {
                 preloadRoute('/what-we-offer');
                 setOpenDropdown('offer');
               }}
-              className={`nav-link nav-trigger ${isOfferingActive ? 'nav-link-active' : ''} group flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium ${
+              className={`nav-link nav-trigger ${isOfferingActive ? 'nav-link-active' : ''} group flex items-center gap-2 rounded-full px-3 py-2 text-sm font-medium ${
                 isOfferingActive
                   ? 'bg-brand-purple text-white shadow-[0_10px_24px_rgba(45,27,105,0.22)]'
                   : 'text-foreground hover:bg-brand-purple-light hover:text-primary'
@@ -434,7 +453,7 @@ export function Header() {
               key={item.label}
               to={item.path}
               onMouseEnter={() => preloadRoute(item.path)}
-              className={`nav-link ${isActive(item.path) ? 'nav-link-active' : ''} rounded-full px-4 py-2 text-sm font-medium ${
+              className={`nav-link ${isActive(item.path) ? 'nav-link-active' : ''} rounded-full px-3 py-2 text-[13px] font-medium ${
                 isActive(item.path)
                   ? 'bg-brand-purple text-white shadow-[0_10px_24px_rgba(45,27,105,0.22)]'
                   : 'text-foreground hover:bg-brand-purple-light hover:text-primary'
@@ -451,7 +470,7 @@ export function Header() {
           <Link
             to="/collaborate"
             onMouseEnter={() => preloadRoute('/collaborate')}
-            className="cta-btn hidden rounded-full bg-accent px-6 py-2.5 text-sm font-semibold text-white shadow-[0_12px_30px_rgba(232,82,26,0.24)] lg:inline-block"
+            className="cta-btn hidden rounded-full bg-accent px-5 py-2.5 text-[13px] font-semibold text-white shadow-[0_12px_30px_rgba(232,82,26,0.24)] lg:inline-block"
           >
             Connect Now
           </Link>
@@ -488,7 +507,7 @@ export function Header() {
             tabIndex={0}
             aria-label="Close navigation menu"
           />
-          <nav className="animate-fade-in-right fixed right-0 top-0 z-50 flex h-screen h-[100dvh] w-full max-w-[320px] flex-col border-l border-brand-purple/10 bg-background/95 px-5 pb-6 pt-5 shadow-[0_28px_80px_rgba(26,16,51,0.22)] backdrop-blur-xl transition-all duration-200 ease-out dark:border-white/12 dark:bg-[#0F0C1E]/96 lg:hidden">
+          <nav className="animate-fade-in-right fixed right-0 top-0 z-50 flex h-screen h-[100dvh] w-full max-w-[320px] flex-col overflow-hidden border-l border-brand-purple/10 bg-background/95 px-5 pb-4 pt-5 shadow-[0_28px_80px_rgba(26,16,51,0.22)] backdrop-blur-xl transition-all duration-200 ease-out dark:border-white/12 dark:bg-[#0F0C1E]/96 lg:hidden">
             <div className="mb-5 flex items-center justify-between">
               <Link
                 to="/"
@@ -513,7 +532,7 @@ export function Header() {
               </button>
             </div>
 
-            <div className="space-y-2 overflow-y-auto">
+            <div className="min-h-0 flex-1 space-y-2 overflow-y-auto pr-1">
               {primaryStartItems.map((item, index) => {
                 const Icon = getPrimaryIcon(item.path);
 
@@ -536,6 +555,21 @@ export function Header() {
                   </Link>
                 );
               })}
+
+              <Link
+                to="/destinations"
+                onMouseEnter={() => preloadRoute('/destinations')}
+                className={`mobile-drawer-link flex items-center gap-3 rounded-2xl border border-transparent px-4 py-3 text-sm font-medium transition-all duration-200 ease-out ${
+                  isDestinationsActive
+                    ? 'bg-brand-purple text-white shadow-[0_8px_22px_rgba(45,27,105,0.24)] dark:bg-[#4C3BA7]'
+                    : 'text-foreground hover:bg-brand-purple-light active:bg-brand-purple-light/80 dark:hover:bg-white/10 dark:active:bg-white/15'
+                }`}
+              >
+                <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-brand-purple-light text-primary dark:bg-white/10 dark:text-white">
+                  <MapPinned className="h-5 w-5" />
+                </div>
+                <span className="text-sm font-medium">Destinations</span>
+              </Link>
 
               <div className="rounded-2xl border border-brand-purple/15 bg-brand-purple-light/30 px-2 py-2 dark:border-white/12 dark:bg-white/[0.04]">
                 <button
@@ -675,7 +709,7 @@ export function Header() {
               })}
             </div>
 
-            <div className="mt-auto pt-5">
+            <div className="shrink-0 pt-4 pb-[calc(env(safe-area-inset-bottom)+0.25rem)]">
               <Link
                 to="/collaborate"
                 onMouseEnter={() => preloadRoute('/collaborate')}

@@ -1,4 +1,3 @@
-
 import { Suspense, lazy } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { SettingsProvider } from './context/SettingsContext';
@@ -15,6 +14,7 @@ const PortfolioDetailPage = lazy(() => import('./pages/PortfolioDetailPage'));
 const AboutPage = lazy(() => import('./pages/AboutPage'));
 const ServicesPage = lazy(() => import('./pages/ServicesPage'));
 const CollaboratePage = lazy(() => import('./pages/CollaboratePage'));
+const DestinationsPage = lazy(() => import('./pages/DestinationsPage'));
 const UniversitiesPage = lazy(() => import('./pages/UniversitiesPage'));
 const GalleryPage = lazy(() => import('./pages/GalleryPage'));
 const GalleryCollectionPage = lazy(() => import('./pages/GalleryCollectionPage'));
@@ -70,11 +70,7 @@ function App() {
         <ScrollRestoration />
         <Header />
         <main className="flex-grow">
-          <Suspense
-            fallback={
-              <PageLoader />
-            }
-          >
+          <Suspense fallback={<PageLoader />}>
             <Routes>
               <Route
                 path="/"
@@ -89,6 +85,7 @@ function App() {
               <Route path="/about" element={<AboutPage />} />
               <Route path="/services" element={<ServicesPage />} />
               <Route path="/collaborate" element={<CollaboratePage />} />
+              <Route path="/destinations" element={<DestinationsPage />} />
               <Route path="/universities" element={<UniversitiesPage />} />
               <Route path="/gallery" element={<GalleryPage />} />
               <Route path="/gallery/collection/:collectionSlug" element={<GalleryCollectionPage />} />
