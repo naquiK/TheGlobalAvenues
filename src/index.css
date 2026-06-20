@@ -827,8 +827,9 @@ html.dark {
     min-height: 100%;
     background-color: #faf9fc;
     background-image:
-      radial-gradient(760px 460px at 8% 6%, rgba(83, 64, 176, 0.05), transparent 62%),
-      radial-gradient(720px 480px at 92% 10%, rgba(83, 64, 176, 0.045), transparent 64%),
+      radial-gradient(760px 460px at 8% 6%, rgba(83, 64, 176, 0.035), transparent 64%),
+      radial-gradient(720px 480px at 92% 10%, rgba(83, 64, 176, 0.03), transparent 66%),
+      repeating-linear-gradient(90deg, rgba(83, 64, 176, 0.016) 0, rgba(83, 64, 176, 0.016) 1px, transparent 1px, transparent 84px),
       linear-gradient(180deg, #fcfbff 0%, #f6f4fa 100%);
   }
 
@@ -838,27 +839,10 @@ html.dark {
     inset: 0;
     pointer-events: none;
     z-index: 0;
-    opacity: 0.55;
+    opacity: 0.22;
     background-image:
-      radial-gradient(circle at 1px 1px, rgba(83, 64, 176, 0.09) 1px, transparent 1.2px),
-      repeating-linear-gradient(
-        90deg,
-        rgba(83, 64, 176, 0.028) 0,
-        rgba(83, 64, 176, 0.028) 1px,
-        transparent 1px,
-        transparent 52px
-      ),
-      repeating-linear-gradient(
-        0deg,
-        rgba(83, 64, 176, 0.028) 0,
-        rgba(83, 64, 176, 0.028) 1px,
-        transparent 1px,
-        transparent 52px
-      );
-    background-size:
-      26px 26px,
-      auto,
-      auto;
+      radial-gradient(circle at 1px 1px, rgba(83, 64, 176, 0.08) 1px, transparent 1.2px);
+    background-size: 28px 28px;
   }
 
   .destinations-page-gradient::after {
@@ -867,10 +851,10 @@ html.dark {
     inset: 0;
     pointer-events: none;
     z-index: 0;
-    opacity: 0.38;
+    opacity: 0.22;
     background-image:
-      radial-gradient(560px 320px at 14% 28%, rgba(255, 255, 255, 0.42), transparent 70%),
-      radial-gradient(560px 340px at 86% 74%, rgba(255, 255, 255, 0.28), transparent 72%);
+      radial-gradient(560px 320px at 14% 28%, rgba(255, 255, 255, 0.32), transparent 70%),
+      radial-gradient(560px 340px at 86% 74%, rgba(255, 255, 255, 0.22), transparent 72%);
   }
 
   .destinations-page-gradient > * {
@@ -892,7 +876,7 @@ html.dark {
     background-image: linear-gradient(
       to right,
       transparent 0%,
-      rgba(83, 64, 176, 0.018) 50%,
+      rgba(83, 64, 176, 0.014) 50%,
       transparent 100%
     );
   }
@@ -900,10 +884,10 @@ html.dark {
   .destinations-region-shell--alt::before {
     background-image: repeating-linear-gradient(
       -45deg,
-      rgba(83, 64, 176, 0.012) 0,
-      rgba(83, 64, 176, 0.012) 1px,
+      rgba(83, 64, 176, 0.01) 0,
+      rgba(83, 64, 176, 0.01) 1px,
       transparent 1px,
-      transparent 18px
+      transparent 20px
     );
   }
 
