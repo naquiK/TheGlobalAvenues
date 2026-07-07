@@ -125,8 +125,8 @@ const buildDisplayRegions = (regions) => {
   const dubaiRegion = {
     ...(dubaiSource || {}),
     key: 'dubai',
-    label: 'Dubai',
-    description: 'High-demand Gulf pathways with strong career visibility and fast-growing international study options.',
+    label: 'UAE',
+    description: 'United Arab Emirates pathways with strong career visibility and fast-growing international study options.',
     keyBenefits: ['Regional hub access', 'Fast-growing campuses', 'Professional networks'],
     countries: [
       { name: 'Dubai' },
@@ -400,7 +400,7 @@ function FilterBar({ query, setQuery, tab, setTab }) {
   const TABS = [
     { id:'all',                   label:'All Regions' },
     { id:'europe',                label:'Europe' },
-    { id:'dubai',                 label:'Dubai' },
+    { id:'dubai',                 label:'UAE' },
     { id:'north-america',         label:'North America' },
     { id:'africa-south-east-asia',label:'Africa & SE Asia' },
   ];
