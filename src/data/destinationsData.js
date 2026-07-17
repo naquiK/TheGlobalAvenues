@@ -73,7 +73,6 @@ export const destinationRegions = [
       { name: 'Albania', flag: '🇦🇱' },
       { name: 'Serbia', flag: '🇷🇸' },
       { name: 'Moldova', flag: '🇲🇩' },
-      { name: 'Ukraine', flag: '🇺🇦' },
       { name: 'Belarus', flag: '🇧🇾' },
       { name: 'Turkey', flag: '🇹🇷' },
     ],
