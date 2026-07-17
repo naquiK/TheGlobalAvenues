@@ -80,7 +80,7 @@ export default function CTA() {
                 <Mail className="text-secondary flex-shrink-0 mt-1 icon-bounce" size={24} />
                 <div>
                   <p className="text-sm text-primary-foreground/80 font-semibold">Email</p>
-                  <a href="mailto:connect@theglobalavenues.com" className="font-semibold text-lg hover:text-secondary transition-colors duration-300">connect@theglobalavenues.com</a>
+                  <a href="https://mail.google.com/mail/?view=cm&fs=1&to=connect%40theglobalavenues.com" target="_blank" rel="noopener noreferrer" className="font-semibold text-lg hover:text-secondary transition-colors duration-300">connect@theglobalavenues.com</a>
                 </div>
               </div>
             </div>
