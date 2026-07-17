@@ -899,62 +899,62 @@ html.dark {
   .dark .destinations-page-gradient {
     background-color: #0d0a1a;
     background-image:
-      radial-gradient(840px 520px at 8% 4%, rgba(232, 82, 26, 0.13), transparent 58%),
-      radial-gradient(900px 560px at 92% 10%, rgba(83, 64, 176, 0.2), transparent 62%),
-      radial-gradient(680px 440px at 50% 54%, rgba(83, 64, 176, 0.08), transparent 72%),
-      radial-gradient(580px 400px at 16% 88%, rgba(232, 82, 26, 0.1), transparent 66%),
+      radial-gradient(840px 520px at 8% 4%, rgba(232, 82, 26, 0.08), transparent 58%),
+      radial-gradient(900px 560px at 92% 10%, rgba(83, 64, 176, 0.13), transparent 62%),
+      radial-gradient(680px 440px at 50% 54%, rgba(83, 64, 176, 0.045), transparent 72%),
+      radial-gradient(580px 400px at 16% 88%, rgba(232, 82, 26, 0.055), transparent 66%),
       linear-gradient(180deg, #0b0915 0%, #0f0b1f 52%, #0d0a1a 100%);
   }
 
   .dark .destinations-page-gradient::before {
-    opacity: 0.42;
+    opacity: 0.2;
     background-image:
-      radial-gradient(circle at 1px 1px, rgba(151, 138, 220, 0.2) 1px, transparent 1.2px),
+      radial-gradient(circle at 1px 1px, rgba(151, 138, 220, 0.11) 1px, transparent 1.2px),
       repeating-linear-gradient(
         90deg,
-        rgba(123, 107, 204, 0.04) 0,
-        rgba(123, 107, 204, 0.04) 1px,
+        rgba(123, 107, 204, 0.018) 0,
+        rgba(123, 107, 204, 0.018) 1px,
         transparent 1px,
         transparent 56px
       ),
       repeating-linear-gradient(
         0deg,
-        rgba(123, 107, 204, 0.04) 0,
-        rgba(123, 107, 204, 0.04) 1px,
+        rgba(123, 107, 204, 0.018) 0,
+        rgba(123, 107, 204, 0.018) 1px,
         transparent 1px,
         transparent 56px
       ),
       linear-gradient(
         125deg,
-        rgba(255, 255, 255, 0.04) 0%,
-        rgba(123, 107, 204, 0.09) 45%,
-        rgba(232, 82, 26, 0.1) 100%
+        rgba(255, 255, 255, 0.018) 0%,
+        rgba(123, 107, 204, 0.018) 45%,
+        rgba(232, 82, 26, 0.045) 100%
       );
   }
 
   .dark .destinations-page-gradient::after {
-    opacity: 0.38;
+    opacity: 0.22;
     background-image:
-      radial-gradient(660px 380px at 12% 28%, rgba(123, 107, 204, 0.14), transparent 70%),
-      radial-gradient(640px 400px at 88% 72%, rgba(232, 82, 26, 0.13), transparent 72%),
-      radial-gradient(540px 340px at 76% 16%, rgba(83, 64, 176, 0.12), transparent 74%);
+      radial-gradient(660px 380px at 12% 28%, rgba(123, 107, 204, 0.08), transparent 70%),
+      radial-gradient(640px 400px at 88% 72%, rgba(232, 82, 26, 0.075), transparent 72%),
+      radial-gradient(540px 340px at 76% 16%, rgba(83, 64, 176, 0.07), transparent 74%);
   }
 
   .dark .destinations-region-shell::before {
     background-image:
-      radial-gradient(circle at 16% 26%, rgba(255, 255, 255, 0.05), transparent 36%),
-      radial-gradient(circle at 86% 76%, rgba(232, 82, 26, 0.12), transparent 32%),
-      linear-gradient(to right, transparent 0%, rgba(255, 255, 255, 0.03) 50%, transparent 100%);
+      radial-gradient(circle at 16% 26%, rgba(255, 255, 255, 0.025), transparent 36%),
+      radial-gradient(circle at 86% 76%, rgba(232, 82, 26, 0.065), transparent 32%),
+      linear-gradient(to right, transparent 0%, rgba(255, 255, 255, 0.016) 50%, transparent 100%);
   }
 
   .dark .destinations-region-shell--alt::before {
     background-image:
-      radial-gradient(circle at 84% 22%, rgba(255, 255, 255, 0.045), transparent 34%),
-      radial-gradient(circle at 12% 80%, rgba(123, 107, 204, 0.1), transparent 32%),
+      radial-gradient(circle at 84% 22%, rgba(255, 255, 255, 0.022), transparent 34%),
+      radial-gradient(circle at 12% 80%, rgba(123, 107, 204, 0.055), transparent 32%),
       repeating-linear-gradient(
         -45deg,
-        rgba(123, 107, 204, 0.035) 0,
-        rgba(123, 107, 204, 0.035) 1px,
+        rgba(123, 107, 204, 0.015) 0,
+        rgba(123, 107, 204, 0.015) 1px,
         transparent 1px,
         transparent 16px
       );
