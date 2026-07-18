@@ -42,6 +42,7 @@ const baseEntries = [
   { path: '/services', changefreq: 'weekly', priority: '0.8', lastmod: TODAY },
   { path: '/what-we-offer', changefreq: 'weekly', priority: '0.9', lastmod: TODAY },
   { path: '/universities', changefreq: 'weekly', priority: '0.8', lastmod: TODAY },
+  { path: '/destinations', changefreq: 'weekly', priority: '0.8', lastmod: TODAY },
   { path: '/portfolio', changefreq: 'weekly', priority: '0.9', lastmod: TODAY },
   { path: '/gallery', changefreq: 'weekly', priority: '0.8', lastmod: TODAY },
   { path: '/partners', changefreq: 'monthly', priority: '0.7', lastmod: TODAY },
@@ -117,6 +118,11 @@ addImageEntry('/services', '/videos/hero-poster.jpg', 'Education growth services
 addImageEntry('/portfolio', '/universities/icn-business-school-hero.png', 'Partner institutions');
 addImageEntry('/news-blog', '/blogs/affordable-countries-study-abroad.jpg', 'News and blog');
 addImageEntry('/gallery', '/gallery/collections/conferences/conference-events-2026/conference-cover-team-introduction.jpg', 'Gallery collections');
+addImageEntry('/destinations', '/dest-hero-cinematic.jpg', 'Study abroad destinations');
+addImageEntry('/destinations', '/dest-europe.jpg', 'Study destinations in Europe');
+addImageEntry('/destinations', '/dest-northamerica.jpg', 'Study destinations in North America');
+addImageEntry('/destinations', '/dest-middleeast.jpg', 'Study destinations in UAE');
+addImageEntry('/destinations', '/dest-asia.jpg', 'Study destinations in Africa and South East Asia');
 
 newsItems.forEach((item) => {
   if (!item?.slug) return;
