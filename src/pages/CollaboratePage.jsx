@@ -4,7 +4,6 @@ import {
   Building2,
   CheckCircle2,
   Clock3,
-  Globe2,
   Handshake,
   Mail,
   MapPin,
@@ -50,6 +49,26 @@ function formatPhoneHref(phone) {
   return phone.replace(/[^\d+]/g, '');
 }
 
+function buildGmailComposeHref(email) {
+  return 'https://mail.google.com/mail/?view=cm&fs=1&to=' + encodeURIComponent(email);
+}
+
+function buildGoogleMapsHref(address) {
+  return 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(address);
+}
+
+function GlobalAvenuesLogoMark({ className = '' }) {
+  return (
+    <span className={`inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-md bg-white/95 shadow-[0_4px_10px_rgba(20,14,45,0.16)] ${className}`} aria-hidden="true">
+      <span className="relative h-3.5 w-3.5">
+        <span className="absolute bottom-0 left-0 h-1.5 w-1.5 rounded-[1px] bg-brand-orange" />
+        <span className="absolute left-1 top-1 h-1.5 w-1.5 rounded-[1px] border-2 border-brand-orange border-b-0 border-l-0" />
+        <span className="absolute right-0 top-0 h-1.5 w-1.5 rounded-[1px] border-2 border-brand-orange border-b-0 border-l-0" />
+      </span>
+    </span>
+  );
+}
+
 export default function CollaboratePage() {
   const { siteConfig } = useSettings();
   const [formData, setFormData] = useState({
@@ -80,6 +99,7 @@ export default function CollaboratePage() {
   const generalEmail = siteConfig.contact?.email?.general || 'connect@theglobalavenues.com';
   const whatsappLink = siteConfig.social?.whatsapp || '#';
   const fullAddress = formatAddress(siteConfig.contact?.address);
+  const mapHref = buildGoogleMapsHref(fullAddress);
   const brandLogo = siteConfig.company.logo.lightSrc || '/logo-light.png';
 
   const highlightChips = useMemo(
@@ -127,7 +147,8 @@ export default function CollaboratePage() {
         icon: Mail,
         title: 'Email',
         value: generalEmail,
-        href: `mailto:${generalEmail}`,
+        href: buildGmailComposeHref(generalEmail),
+        external: true,
       },
       {
         icon: Phone,
@@ -139,10 +160,11 @@ export default function CollaboratePage() {
         icon: MapPin,
         title: 'Address',
         value: fullAddress,
-        href: null,
+        href: mapHref,
+        external: true,
       },
     ],
-    [fullAddress, generalEmail, primaryPhone, primaryPhoneHref]
+    [fullAddress, generalEmail, mapHref, primaryPhone, primaryPhoneHref]
   );
 
   const handleChange = (event) => {
@@ -230,7 +252,7 @@ export default function CollaboratePage() {
         <div className="mx-auto max-w-7xl">
           <div className="mb-10 text-center">
             <div className="section-kicker-classic mb-4 inline-flex">
-              <Globe2 className="mr-2 h-3.5 w-3.5" />
+              <GlobalAvenuesLogoMark className="mr-2" />
               Our Global Presence
             </div>
             <h2 className="text-xl font-bold leading-tight text-foreground sm:text-4xl">
@@ -267,7 +289,9 @@ export default function CollaboratePage() {
                     {EMAIL_CONTACTS.map((item) => (
                       <a
                         key={item.email}
-                        href={`mailto:${item.email}`}
+                        href={buildGmailComposeHref(item.email)}
+                        target="_blank"
+                        rel="noopener noreferrer"
                         className="group flex min-w-0 items-center justify-between gap-3 rounded-2xl border border-[#E2E8F0] bg-[#F8FAFC] p-4 transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/30 hover:bg-primary/5 hover:shadow-sm dark:border-white/5 dark:bg-white/5 dark:hover:border-primary/30 dark:hover:bg-primary/10"
                       >
                         <span className="min-w-0 flex-1">
@@ -405,7 +429,9 @@ export default function CollaboratePage() {
                   {EMAIL_CONTACTS.map((item) => (
                     <a
                       key={item.email}
-                      href={`mailto:${item.email}`}
+                      href={buildGmailComposeHref(item.email)}
+                      target="_blank"
+                      rel="noopener noreferrer"
                       className="group flex items-center justify-between gap-3 rounded-2xl border border-[#E2E8F0] bg-[#F8FAFC] p-4 transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/30 hover:bg-primary/5 hover:shadow-sm dark:border-white/5 dark:bg-white/5 dark:hover:border-primary/30 dark:hover:bg-primary/10"
                     >
                       <div className="min-w-0 flex-1">
@@ -532,7 +558,9 @@ export default function CollaboratePage() {
                 {EMAIL_CONTACTS.map((item) => (
                   <a
                     key={item.email}
-                    href={`mailto:${item.email}`}
+                    href={buildGmailComposeHref(item.email)}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="group flex min-w-0 items-center justify-between gap-3 rounded-2xl border border-[#E2E8F0] bg-[#F8FAFC] p-4 transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/30 hover:bg-primary/5 hover:shadow-sm dark:border-white/5 dark:bg-white/5 dark:hover:border-primary/30 dark:hover:bg-primary/10"
                   >
                     <span className="min-w-0 flex-1">
@@ -705,6 +733,8 @@ export default function CollaboratePage() {
                       {card.href ? (
                         <a
                           href={card.href}
+                          target={card.external ? '_blank' : undefined}
+                          rel={card.external ? 'noopener noreferrer' : undefined}
                           className="mt-1 inline-block text-base font-semibold text-foreground transition-colors duration-200 hover:text-primary"
                         >
                           {card.value}
@@ -752,7 +782,7 @@ export default function CollaboratePage() {
                       </div>
                       <div className="flex items-start gap-2.5">
                         <Mail className="mt-0.5 h-4 w-4 flex-shrink-0 text-primary" />
-                        <a href={`mailto:${team.email}`} className="break-all hover:text-primary">
+                        <a href={buildGmailComposeHref(team.email)} target="_blank" rel="noopener noreferrer" className="break-all hover:text-primary">
                           {team.email}
                         </a>
                       </div>
