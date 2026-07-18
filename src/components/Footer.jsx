@@ -36,6 +36,14 @@ const SOCIAL_ICON_PATHS = {
 
 const CONTACT_ICON_CLASS = 'h-4 w-4 text-brand-orange';
 
+function buildGmailComposeHref(email) {
+  return 'https://mail.google.com/mail/?view=cm&fs=1&to=' + encodeURIComponent(email);
+}
+
+function buildGoogleMapsHref(address) {
+  return 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(address);
+}
+
 function EnvelopeIcon() {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className={CONTACT_ICON_CLASS}>
@@ -70,6 +78,8 @@ export function Footer() {
   const [firstLinkGroup, secondLinkGroup, thirdLinkGroup] = links;
   const footerLogoSrc = '/logo-footer-white-transparent.png';
   const socialIcons = ['facebook', 'instagram', 'youtube', 'linkedin'];
+  const footerAddress = formatAddress(siteConfig.contact.address);
+  const footerMapHref = buildGoogleMapsHref(footerAddress);
   const partnerLogos = [
     { src: '/21.jpg', top: '8%', left: '4%', rotate: '-12deg', size: 'h-32 w-32', hotspot: 'h-72 w-72' },
     { src: '/22.jpg', top: '14%', left: '78%', rotate: '8deg', size: 'h-36 w-36', hotspot: 'h-80 w-80' },
@@ -261,7 +271,9 @@ export function Footer() {
                 <div>
                   <p className="mb-1 text-sm font-semibold text-white">Email</p>
                   <a
-                    href={`mailto:${siteConfig.contact.email.general}`}
+                    href={buildGmailComposeHref(siteConfig.contact.email.general)}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="break-all text-sm text-white/60 transition-colors duration-150 hover:text-brand-orange"
                   >
                     {siteConfig.contact.email.general}
@@ -290,7 +302,14 @@ export function Footer() {
                 </div>
                 <div>
                   <p className="mb-1 text-sm font-semibold text-white">Location</p>
-                  <p className="break-words text-sm text-white/60">{formatAddress(siteConfig.contact.address)}</p>
+                  <a
+                    href={footerMapHref}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-block break-words text-sm text-white/60 transition-colors duration-150 hover:text-brand-orange"
+                  >
+                    {footerAddress}
+                  </a>
                 </div>
               </div>
 
