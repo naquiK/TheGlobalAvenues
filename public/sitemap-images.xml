@@ -43,6 +43,29 @@
     </image:image>
   </url>
   <url>
+    <loc>https://theglobalavenues.com/destinations</loc>
+    <image:image>
+      <image:loc>https://theglobalavenues.com/dest-hero-cinematic.jpg</image:loc>
+      <image:caption>Study abroad destinations</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://theglobalavenues.com/dest-europe.jpg</image:loc>
+      <image:caption>Study destinations in Europe</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://theglobalavenues.com/dest-northamerica.jpg</image:loc>
+      <image:caption>Study destinations in North America</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://theglobalavenues.com/dest-middleeast.jpg</image:loc>
+      <image:caption>Study destinations in UAE</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://theglobalavenues.com/dest-asia.jpg</image:loc>
+      <image:caption>Study destinations in Africa and South East Asia</image:caption>
+    </image:image>
+  </url>
+  <url>
     <loc>https://theglobalavenues.com/news/scholarships-for-indian-students-planning-to-study-in-south-cyprus</loc>
     <image:image>
       <image:loc>https://theglobalavenues.com/blogs/scholarships-south-cyprus.jpg</image:loc>
