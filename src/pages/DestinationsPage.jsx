@@ -1,7 +1,7 @@
 import { useState, useMemo, useEffect, useRef, useDeferredValue } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
-import { ArrowRight, Search, X, CheckCircle2, Globe2, MapPin } from 'lucide-react';
+import { ArrowRight, Search, X, CheckCircle2, MapPin } from 'lucide-react';
 import Seo from '../components/seo/Seo';
 import DotGrid from '../components/ui/DotGrid';
 import LazySection from '../components/ui/LazySection';
@@ -18,7 +18,7 @@ const ISO = {
   lithuania:'lt',luxembourg:'lu',malta:'mt',netherlands:'nl',norway:'no',poland:'pl',
   portugal:'pt',romania:'ro',slovakia:'sk',slovenia:'si',spain:'es',sweden:'se',
   switzerland:'ch',uk:'gb',ireland:'ie',cyprus:'cy',albania:'al',serbia:'rs',
-  moldova:'md',ukraine:'ua',belarus:'by',turkey:'tr',mauritius:'mu',uae:'ae',
+  moldova:'md',belarus:'by',turkey:'tr',mauritius:'mu',uae:'ae',
   malaysia:'my',singapore:'sg',vietnam:'vn','hong kong':'hk','south korea':'kr',japan:'jp',
   dubai:'ae','abu dhabi':'ae',sharjah:'ae','ras al khaimah':'ae',
 };
@@ -62,7 +62,6 @@ const COUNTRY_IMG = {
   albania:'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Berat_-_Festung_2a_Haupttor.jpg/330px-Berat_-_Festung_2a_Haupttor.jpg',
   serbia:'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/%D0%9A%D0%B0%D0%BB%D0%B5%D0%BC%D0%B5%D0%B3%D0%B4%D0%B0%D0%BD%2C_%D1%81%D0%BF%D0%BE%D0%BC%D0%B5%D0%BD%D0%B8%D0%BA_%D0%9F%D0%BE%D0%B1%D1%98%D0%B5%D0%B4%D0%BD%D0%B8%D0%BA%2C_%D0%91%D0%B8%D0%BE%D0%B3%D1%80%D0%B0%D0%B4.jpg/250px-%D0%9A%D0%B0%D0%BB%D0%B5%D0%BC%D0%B5%D0%B3%D0%B4%D0%B0%D0%BD%2C_%D1%81%D0%BF%D0%BE%D0%BC%D0%B5%D0%BD%D0%B8%D0%BA_%D0%9F%D0%BE%D0%B1%D1%98%D0%B5%D0%B4%D0%BD%D0%B8%D0%BA%2C_%D0%91%D0%B8%D0%BE%D0%B3%D1%80%D0%B0%D0%B4.jpg',
   moldova:'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/Triumphbogen_in_Chi%C8%99in%C4%83u.JPG/250px-Triumphbogen_in_Chi%C8%99in%C4%83u.JPG',
-  ukraine:'https://upload.wikimedia.org/wikipedia/commons/thumb/f/fb/%D0%9B%D0%B0%D0%B2%D1%80%D0%B0.jpg/250px-%D0%9B%D0%B0%D0%B2%D1%80%D0%B0.jpg',
   belarus:'https://upload.wikimedia.org/wikipedia/en/thumb/b/bd/N%C3%A1rodn%C3%AD_knihovna%2C_Minsk_-_panoramio.jpg/250px-N%C3%A1rodn%C3%AD_knihovna%2C_Minsk_-_panoramio.jpg',
   turkey:'https://images.unsplash.com/photo-1524231757912-21f4fe3a7200?w=700&q=80',
   mauritius:'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=700&q=80',
@@ -162,6 +161,80 @@ const REGION_CFG = {
   'africa-south-east-asia':{ img:'/dest-asia.jpg',         tagline:'Emerging Study Destinations',accent:'#10B981', gradient:'from-emerald-500 to-teal-600' },
 };
 
+function GlobalAvenuesLogoMark() {
+  return (
+    <span className="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-white/95 shadow-[0_6px_16px_rgba(0,0,0,0.18)]" aria-hidden="true">
+      <span className="relative h-4 w-4">
+        <span className="absolute bottom-0 left-0 h-2 w-2 rounded-[1px] bg-brand-orange" />
+        <span className="absolute left-1 top-1 h-2 w-2 rounded-[1px] border-[2.5px] border-brand-orange border-b-0 border-l-0" />
+        <span className="absolute right-0 top-0 h-2 w-2 rounded-[1px] border-[2.5px] border-brand-orange border-b-0 border-l-0" />
+      </span>
+    </span>
+  );
+}
+
+
+const DESTINATIONS_SEO_DESCRIPTION =
+  'Compare study abroad destinations across Europe, UAE, North America, Africa and South East Asia with guidance on Schengen and non-Schengen routes, intakes, tuition, work rights and university pathways.';
+
+const DESTINATIONS_SEO_KEYWORDS = [
+  'study abroad destinations',
+  'best countries to study abroad',
+  'study in Europe',
+  'Schengen study visa',
+  'non-Schengen study destinations',
+  'study in UAE',
+  'study in USA',
+  'study in Canada',
+  'overseas education consultants India',
+  'international university pathways',
+];
+
+const DESTINATIONS_JSON_LD = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: 'Home',
+        item: 'https://theglobalavenues.com/',
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: 'Destinations',
+        item: 'https://theglobalavenues.com/destinations',
+      },
+    ],
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: 'Study Abroad Destinations',
+    description: DESTINATIONS_SEO_DESCRIPTION,
+    url: 'https://theglobalavenues.com/destinations',
+    primaryImageOfPage: 'https://theglobalavenues.com/dest-hero-cinematic.jpg',
+    about: [
+      'Study abroad destinations',
+      'Schengen and non-Schengen Europe',
+      'International university pathways',
+      'Student visa and admissions guidance',
+    ],
+    mainEntity: {
+      '@type': 'ItemList',
+      name: 'Destination regions served by The Global Avenues',
+      itemListElement: buildDisplayRegions(destinationRegions).map((region, index) => ({
+        '@type': 'ListItem',
+        position: index + 1,
+        name: region.label,
+        description: region.description,
+        url: `https://theglobalavenues.com/destinations#${region.key}`,
+      })),
+    },
+  },
+];
 /* ═══════════════════════════════════════════════════════
    ANALOG CLOCK + WORLD CLOCK STRIP
 ═══════════════════════════════════════════════════════ */
@@ -316,7 +389,7 @@ function HeroSection() {
             initial={{ opacity:0, y:12 }} animate={{ opacity:1, y:0 }} transition={{ duration:0.5 }}
             className="mb-5 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/8 px-4 py-2 backdrop-blur-md"
           >
-            <Globe2 className="h-3.5 w-3.5 text-brand-orange" />
+            <GlobalAvenuesLogoMark />
             <span className="text-[10px] font-black uppercase tracking-[0.3em] text-white/80">Global Destinations</span>
           </motion.div>
 
@@ -630,6 +703,48 @@ function RegionSection({ region, cfg, index }) {
   );
 }
 
+
+function DestinationRegionSkeleton({ index = 0 }) {
+  const isEven = index % 2 === 0;
+  const cardCount = index === 0 ? 12 : 8;
+
+  return (
+    <section className={`destinations-region-shell py-20 sm:py-28 ${isEven ? 'bg-background/96 dark:bg-background/96' : 'bg-muted/8 dark:bg-white/[0.02]'}`} aria-hidden="true">
+      <div className="mx-auto max-w-7xl px-6 sm:px-8 lg:px-12">
+        <div className={`flex flex-col gap-10 lg:flex-row lg:items-center lg:gap-16 ${isEven ? '' : 'lg:flex-row-reverse'}`}>
+          <div className="w-full lg:w-1/2">
+            <div className="skeleton-media aspect-[16/10] rounded-3xl" />
+          </div>
+          <div className="flex w-full flex-col gap-5 lg:w-1/2">
+            <div className="skeleton-line h-3 w-48 rounded-full" />
+            <div className="skeleton-line h-10 w-2/3 rounded-xl sm:h-12" />
+            <div className="space-y-3">
+              <div className="skeleton-line h-4 w-full max-w-xl rounded-full" />
+              <div className="skeleton-line h-4 w-5/6 max-w-lg rounded-full" />
+              <div className="skeleton-line h-4 w-2/3 max-w-md rounded-full" />
+            </div>
+            <div className="skeleton-card h-11 w-44 rounded-full" />
+          </div>
+        </div>
+
+        <div className="mt-16">
+          <div className="mb-6 flex items-center justify-between border-b border-border/40 pb-5">
+            <div className="skeleton-line h-4 w-56 rounded-full" />
+            <div className="hidden gap-2 sm:flex">
+              <div className="skeleton-card h-7 w-24 rounded-full" />
+              <div className="skeleton-card h-7 w-28 rounded-full" />
+            </div>
+          </div>
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4 xl:grid-cols-6">
+            {Array.from({ length: cardCount }).map((_, itemIndex) => (
+              <div key={`destination-region-skeleton-${index}-${itemIndex}`} className="skeleton-card aspect-[4/3] rounded-xl border border-border/35" />
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
 /* ═══════════════════════════════════════════════════════
    SCHENGEN EXPLAINER
 ═══════════════════════════════════════════════════════ */
@@ -799,9 +914,12 @@ export default function DestinationsPage() {
     <div className="destinations-page-gradient min-h-screen bg-background text-foreground">
       <Seo
         title="Destinations We Cater | The Global Avenues"
-        description="Explore study abroad destinations across North America, Europe, Asia Pacific, and Middle East & Africa with The Global Avenues."
+        description={DESTINATIONS_SEO_DESCRIPTION}
         path="/destinations"
-        keywords={['study abroad','destinations','schengen','study in europe','study in usa','study in canada','overseas education']}
+        image="/dest-hero-cinematic.jpg"
+        keywords={DESTINATIONS_SEO_KEYWORDS}
+        modifiedTime="2026-07-20"
+        jsonLd={DESTINATIONS_JSON_LD}
       />
 
       {/* Page top offset for fixed header */}
@@ -822,11 +940,7 @@ export default function DestinationsPage() {
                 preloadOnIdle
                 idleDelay={0}
                 fallback={
-                  <SectionSkeleton
-                    height="h-[900px]"
-                    cards={6} rows={4}
-                    className="my-0 px-4 sm:px-6 lg:px-16"
-                  />
+                  <DestinationRegionSkeleton index={i} />
                 }
               >
                 <RegionSection
