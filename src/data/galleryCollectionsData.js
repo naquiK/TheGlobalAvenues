@@ -171,8 +171,8 @@ const galleryCollections = [
         caption: 'ICN Business School',
       },
       {
-        src: '/universities/fh-kufstein-tirol-hero.webp',
-        caption: 'FH Kufstein University of Applied Sciences',
+        src: '/universities/hok-kufstein-tirol-hero.webp',
+        caption: 'Hochschule für Angewandte Wissenschaften Kufstein Tirol',
       },
       {
         src: '/universities/euas-hero.jpg',
@@ -236,16 +236,16 @@ const galleryCollections = [
         caption: 'University of Nicosia Main Campus',
       },
       {
-        src: '/gallery/collections/campus-highlights/campus-showcase/fh-kufstein-campus-street-view.jpg',
+        src: '/gallery/collections/campus-highlights/campus-showcase/hok-kufstein-campus-street-view.jpg',
         thumbnail:
-          '/gallery/collections/campus-highlights/campus-showcase/fh-kufstein-campus-street-view-thumb.jpg',
-        caption: 'FH Kufstein Campus Street View',
+          '/gallery/collections/campus-highlights/campus-showcase/hok-kufstein-campus-street-view-thumb.jpg',
+        caption: 'Hochschule für Angewandte Wissenschaften Kufstein Tirol Campus Street View',
       },
       {
-        src: '/gallery/collections/campus-highlights/campus-showcase/fh-kufstein-campus-park-view.jpg',
+        src: '/gallery/collections/campus-highlights/campus-showcase/hok-kufstein-campus-park-view.jpg',
         thumbnail:
-          '/gallery/collections/campus-highlights/campus-showcase/fh-kufstein-campus-park-view-thumb.jpg',
-        caption: 'FH Kufstein Campus Park View',
+          '/gallery/collections/campus-highlights/campus-showcase/hok-kufstein-campus-park-view-thumb.jpg',
+        caption: 'Hochschule für Angewandte Wissenschaften Kufstein Tirol Campus Park View',
       },
       {
         src: '/gallery/collections/campus-highlights/campus-showcase/icn-nancy-campus-architecture.jpg',

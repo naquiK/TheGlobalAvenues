@@ -1,16 +1,16 @@
 export const portfolioData = [
   {
     id: 1,
-    title: 'FH Kufstein Tirol',
-    slug: 'fh-kufstein-tirol',
+    title: 'Hochschule für Angewandte Wissenschaften Kufstein Tirol',
+    slug: 'hok-kufstein-tirol',
     category: 'University of Applied Sciences',
     country: 'Austria',
-    image: '/universities/fh-kufstein-tirol-hero.webp',
-    logo: '/universities/fh-kufstein-tirol-logo.png',
+    image: '/universities/hok-kufstein-tirol-hero.webp',
+    logo: '/universities/hok-kufstein-tirol-logo.svg',
     studentsPlaced: 3000,
     programs: 6,
     successRate: 95,
-    description: 'Austria-based applied sciences university with focused programs in AI, data science, sustainability, business, and event management.',
+    description: 'Austria-based university of applied sciences with focused programs in AI, data science, sustainability, business, and event management.',
     details: {
       founded: 1997,
       location: 'Kufstein, Tirol',
@@ -47,7 +47,7 @@ export const portfolioData = [
         }
       ]
     },
-    longDescription: 'The University of Applied Sciences Kufstein Tirol (FH Kufstein) is a leading institution in Austria, offering internationally recognized degree programs that integrate innovation, sustainability, and global business practices. With state-of-the-art facilities and strong industry connections, FH Kufstein provides students with the skills and knowledge needed to succeed in their careers.',
+    longDescription: 'Hochschule für Angewandte Wissenschaften Kufstein Tirol, University of Applied Sciences, is a leading institution in Austria, offering internationally recognized degree programs that integrate innovation, sustainability, and global business practices. With state-of-the-art facilities and strong industry connections, HOK provides students with the skills and knowledge needed to succeed in their careers.',
     highlights: [
       '215+ partner universities worldwide',
       'English-taught programs available',
@@ -64,8 +64,8 @@ export const portfolioData = [
         includes: ['Tuition Fee', 'German Language Course', 'Student Residence', 'Rental Bike', 'Climate Ticket', 'Food Credits']
       }
     ],
-    contact: 'fh-kufstein@theglobalavenues.com',
-    website: 'https://www.fh-kufstein.ac.at/en/Home'
+    contact: 'hok@theglobalavenues.com',
+    website: 'https://www.hok.ac.at/en/Home'
   },
   {
     id: 3,
