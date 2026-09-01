@@ -8,7 +8,11 @@ const trustItems = [
   { id: 5, label: 'CEFAM International School', href: 'https://www.cefam.fr/en/' },
   { id: 6, label: 'KES College Nicosia', href: 'https://www.kescollege.ac.cy/en/' },
   { id: 7, label: 'International American University', href: 'https://iaula.edu/' },
-  { id: 8, label: 'FH Kufstein Tirol', href: 'https://www.fh-kufstein.ac.at/en/Home' },
+  {
+    id: 8,
+    label: 'Hochschule für Angewandte Wissenschaften Kufstein Tirol',
+    href: 'https://www.hok.ac.at/en/Home',
+  },
   { id: 9, label: 'EUAS', href: 'https://euas.eu/' },
   { id: 10, label: 'MJM Graphic Design', href: 'https://www.mjm-design.com/en' },
   { id: 11, label: 'EIT InnoEnergy', href: 'https://apply.innoenergy.com/' },

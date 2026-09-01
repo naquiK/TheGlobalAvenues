@@ -13,6 +13,7 @@ const cmsPortfolioCache = {
 };
 
 const portfolioCountryOrder = ['Austria', 'Estonia', 'France', 'Cyprus', 'USA'];
+const canonicalKufsteinPortfolio = portfolioData.find((item) => item.slug === 'hok-kufstein-tirol');
 
 const numericOrDefault = (value, fallback = 0) => {
   const parsed = Number(value);
@@ -35,6 +36,14 @@ const isInternationalAmericanUniversity = (item = {}) => {
   const slug = getNormalizedText(item.slug);
   const title = getNormalizedText(item.title || item.name);
   return slug === 'international-american-university' || title === 'international american university';
+};
+
+const isKufsteinTirolPortfolio = (item = {}) => {
+  const combined = [item.slug, item.title, item.name, item.website, item.url, item.link, item.city]
+    .map(getNormalizedText)
+    .join(' ');
+
+  return combined.includes('kufstein');
 };
 
 export const sortPortfoliosForDisplay = (items = []) => {
@@ -69,6 +78,10 @@ export const sortPortfoliosForDisplay = (items = []) => {
 };
 
 const mapCmsPortfolio = (item, index) => {
+  if (canonicalKufsteinPortfolio && isKufsteinTirolPortfolio(item)) {
+    return canonicalKufsteinPortfolio;
+  }
+
   const title = pickText(item, ['name', 'title'], `University ${index + 1}`);
   const slug = pickText(item, ['slug'], '').toLowerCase();
   const country = pickText(item, ['country'], 'Global');
@@ -136,6 +149,9 @@ const mergePortfolioData = (basePortfolio, overridePortfolio) => {
   };
 };
 
+const uniquePortfoliosBySlug = (items = []) =>
+  Array.from(new Map(items.map((item) => [item.slug, item])).values());
+
 const fetchCmsPortfolios = async () => {
   if (cmsPortfolioCache.loaded) {
     return cmsPortfolioCache.data;
@@ -148,8 +164,8 @@ const fetchCmsPortfolios = async () => {
       .filter((item) => item.slug && item.title);
 
     cmsPortfolioCache.loaded = true;
-    cmsPortfolioCache.data = mapped;
-    return mapped;
+    cmsPortfolioCache.data = uniquePortfoliosBySlug(mapped);
+    return cmsPortfolioCache.data;
   } catch (error) {
     cmsPortfolioCache.loaded = true;
     cmsPortfolioCache.data = [];
