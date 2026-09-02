@@ -692,6 +692,10 @@ export default function PortfolioDetailPage() {
   const specializationsTitle = 'Specializations';
   const programmeInfoTitle = 'Program Information';
   const hasScholarshipInfo = typeof portfolio.details?.scholarshipAvailable === 'boolean';
+  const hasProgramsByLevel =
+    Array.isArray(portfolio.details?.programsByLevel) && portfolio.details.programsByLevel.length > 0;
+  const hasTuitionBreakdown =
+    Array.isArray(portfolio.details?.tuitionBreakdown) && portfolio.details.tuitionBreakdown.length > 0;
   const portfolioPath = `/portfolio/${portfolio.slug || portfolio.id || id || ''}`;
   const portfolioDescription = trimDescription(
     portfolio.description ||
@@ -1084,19 +1088,51 @@ export default function PortfolioDetailPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-6 border-t border-border/50">
             <div>
               <h4 className="font-bold text-foreground mb-2">{specializationsTitle}</h4>
-              <ul className="space-y-2">
-                {portfolio.details?.specializations?.map((spec) => (
-                  <li key={spec} className="text-muted-foreground flex items-center gap-2">
-                    <div className="w-2 h-2 bg-primary rounded-full"></div>
-                    {spec}
-                  </li>
-                ))}
-              </ul>
+              {hasProgramsByLevel ? (
+                <div className="space-y-4">
+                  {portfolio.details.programsByLevel.map((group) => (
+                    <div key={group.level}>
+                      <p className="text-sm font-semibold text-primary mb-1.5">{group.level}</p>
+                      <ul className="space-y-2">
+                        {group.items.map((item) => (
+                          <li key={item} className="text-muted-foreground flex items-center gap-2">
+                            <div className="w-2 h-2 bg-primary rounded-full"></div>
+                            {item}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <ul className="space-y-2">
+                  {portfolio.details?.specializations?.map((spec) => (
+                    <li key={spec} className="text-muted-foreground flex items-center gap-2">
+                      <div className="w-2 h-2 bg-primary rounded-full"></div>
+                      {spec}
+                    </li>
+                  ))}
+                </ul>
+              )}
             </div>
             <div>
               <h4 className="font-bold text-foreground mb-2">{programmeInfoTitle}</h4>
               <div className="space-y-2 text-muted-foreground">
-                <p><span className="font-semibold">{tuitionLabel}:</span> {portfolio.details?.avgTuition}</p>
+                {hasTuitionBreakdown ? (
+                  <div>
+                    <p className="font-semibold text-foreground mb-1.5">{tuitionLabel}</p>
+                    <dl className="space-y-1.5 rounded-lg border border-border/50 bg-muted/20 p-3">
+                      {portfolio.details.tuitionBreakdown.map((fee) => (
+                        <div key={fee.label} className="flex items-baseline justify-between gap-4 text-sm">
+                          <dt className="text-muted-foreground">{fee.label}</dt>
+                          <dd className="font-semibold text-foreground text-right whitespace-nowrap">{fee.amount}</dd>
+                        </div>
+                      ))}
+                    </dl>
+                  </div>
+                ) : (
+                  <p><span className="font-semibold">{tuitionLabel}:</span> {portfolio.details?.avgTuition}</p>
+                )}
                 {hasScholarshipInfo && (
                   <p>
                     <span className="font-semibold">Scholarships:</span>{' '}
@@ -1794,21 +1830,46 @@ export default function PortfolioDetailPage() {
           viewport={{ once: true }}
         >
           <h3 className="text-2xl font-bold text-foreground mb-4">{specializationsTitle}</h3>
-          <div className="flex flex-wrap gap-3">
-            {portfolio.details?.specializations?.map((spec, index) => (
-              <motion.div
-                key={spec}
-                className="px-4 py-2 bg-primary/10 text-primary border border-primary/20 rounded-lg font-medium text-sm hover:bg-primary/20 transition-colors"
-                initial={{ opacity: 0, scale: 0.8 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.3, delay: index * 0.05 }}
-                whileHover={{ scale: 1.05 }}
-              >
-                {spec}
-              </motion.div>
-            ))}
-          </div>
+          {hasProgramsByLevel ? (
+            <div className="space-y-6">
+              {portfolio.details.programsByLevel.map((group) => (
+                <div key={group.level}>
+                  <p className="text-sm font-semibold text-primary mb-3">{group.level}</p>
+                  <div className="flex flex-wrap gap-3">
+                    {group.items.map((item, index) => (
+                      <motion.div
+                        key={item}
+                        className="px-4 py-2 bg-primary/10 text-primary border border-primary/20 rounded-lg font-medium text-sm hover:bg-primary/20 transition-colors"
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        whileInView={{ opacity: 1, scale: 1 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.3, delay: index * 0.05 }}
+                        whileHover={{ scale: 1.05 }}
+                      >
+                        {item}
+                      </motion.div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="flex flex-wrap gap-3">
+              {portfolio.details?.specializations?.map((spec, index) => (
+                <motion.div
+                  key={spec}
+                  className="px-4 py-2 bg-primary/10 text-primary border border-primary/20 rounded-lg font-medium text-sm hover:bg-primary/20 transition-colors"
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.3, delay: index * 0.05 }}
+                  whileHover={{ scale: 1.05 }}
+                >
+                  {spec}
+                </motion.div>
+              ))}
+            </div>
+          )}
         </motion.div>
 
         {/* Testimonials Section */}
