@@ -240,12 +240,6 @@ export default function AboutPage() {
         bio: 'Experienced recruitment professional with strong focus on international market mobility and university relations',
       },
       {
-        name: 'Naman Sharma',
-        role: 'Marketing & Promotions',
-        image: '/team/naman-sharma.jpeg',
-        bio: 'Creative marketing professional driving brand presence and institutional visibility in key markets',
-      },
-      {
         name: 'Ambar Johar',
         role: 'Admissions Coordinator',
         image: '/team/ambar-johar.webp',
@@ -256,12 +250,6 @@ export default function AboutPage() {
         role: 'Admissions Coordinator',
         image: '/team/suraj-kumar-soni.webp',
         bio: 'Dedicated professional managing admissions workflows, documentation quality, and partner compliance',
-      },
-      {
-        name: 'Ishita Nagpal',
-        role: 'Admission Coordinator',
-        image: '/team/ishita.jpeg',
-        bio: 'Supports application progress, candidate communication, and detail-oriented admissions coordination across partners.',
       },
     ],
     []
