@@ -29,7 +29,16 @@ const portfolioIconMap = {
   Grenada: 'GD',
 };
 
-const portfolioCountryOrder = ['Austria', 'Estonia', 'France', 'Cyprus', 'USA'];
+const portfolioCountryOrder = ['Austria', 'France', 'Estonia', 'Cyprus', 'USA', 'Europe'];
+
+// Hidden from the navbar "Our Portfolio" dropdown only — these universities
+// remain fully visible on /portfolio, /universities, and their own detail pages.
+const navPortfolioHiddenSlugs = new Set([
+  'elmhurst-university',
+  'benedictine-university',
+  'university-of-nicosia',
+  'icn-business-school',
+]);
 
 const offeringIconMap = {
   '/what-we-offer': LayoutGrid,
@@ -90,6 +99,7 @@ export function Header() {
     };
 
     return portfolioItems
+      .filter((item = {}) => !navPortfolioHiddenSlugs.has(getNormalizedText(item.slug)))
       .map((item, originalIndex) => ({ item, originalIndex }))
       .sort((a, b) => {
         const countryDiff = getCountryRank(a.item) - getCountryRank(b.item);
