@@ -465,9 +465,9 @@ export const portfolioData = [
     category: 'Higher Education Institution',
     country: 'France',
     image: '/universities/skolae-group/skolae-group-hero.jpg',
-    logo: '/universities/skolae-group/skolae-group-logo-white.png',
+    logo: '/universities/skolae-group/skolae-logo-white.svg',
     studentsPlaced: 19000,
-    programs: 5,
+    programs: 26,
     successRate: 97,
     description:
       'One of France\'s largest private higher-education networks, uniting specialised schools in tech, luxury, fashion, design, and digital creation across 37 French cities.',
@@ -484,16 +484,16 @@ export const portfolioData = [
       avgTuition:
         'Varies by school and programme (e.g. EIML International Programs from approx. EUR 9,300/year); connect with our admissions team for the latest fees.',
       intakeWindows: 'September (main intake); selected programmes also offer January intake',
-      programDuration: '3-year Bachelor (Level 6), 2-year Mastère/MSc (Level 7), MBA options',
+      programDuration: '3-year Bachelor (Level 6), 2-year Mastère (Level 7), MBA options',
       campusLocations: ['Paris', 'Lyon', 'Bordeaux', 'Lille', 'Nantes', 'Aix-en-Provence', 'Reims', 'Rennes'],
       eligibility:
-        'Bachelor entry after Class 12; Mastère/MSc entry after a 3-year Bachelor. Admission includes an application review, a written test and an interview, with English-language readiness assessed.'
+        'Bachelor entry after Class 12; Mastère entry after a 3-year Bachelor. Admission includes an application review, a written test and an interview, with English-language readiness assessed.'
     },
     longDescription:
       'SKOLAE brings together the GES and Eductive networks with more than 50 years of teaching expertise. Its specialised schools train over 19,000 students each year through career-focused, State-recognised programmes, backed by 10,000 partner companies and 43,000 active alumni.',
     highlights: [
       '20+ specialised schools across tech, management, art & design, and media',
-      'Campuses in 37 French cities, with the flagship schools in Paris',
+      'Campuses in 37 French cities, including 4 State-recognised schools in Paris',
       'State-recognised professional certifications at RNCP Levels 6 and 7',
       'Network of 10,000 partner companies and 43,000+ active alumni',
       'English-taught international programmes at EIML Paris and MODART International',
