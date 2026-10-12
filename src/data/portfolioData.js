@@ -459,6 +459,51 @@ export const portfolioData = [
     website: 'https://apply.innoenergy.com/'
   },
   {
+    id: 17,
+    title: 'SKOLAE Group',
+    slug: 'skolae-group',
+    category: 'Higher Education Institution',
+    country: 'France',
+    image: '/universities/skolae-group/skolae-group-hero.jpg',
+    logo: '/universities/skolae-group/skolae-group-logo-white.png',
+    studentsPlaced: 19000,
+    programs: 5,
+    successRate: 97,
+    description:
+      'One of France\'s largest private higher-education networks, uniting specialised schools in tech, luxury, fashion, design, and digital creation across 37 French cities.',
+    details: {
+      location: 'Paris and 37 cities across France',
+      ranking: 'State-recognised professional certifications (RNCP Levels 6 & 7)',
+      specializations: [
+        'Computer Science: AI & Big Data, Cybersecurity, Cloud (ESGI)',
+        'International Luxury Marketing & Management (EIML Paris)',
+        'Fashion Design & Fashion Management (MODART International)',
+        'Game Design, UX/UI & AI Design (ICAN)',
+        'Graphic Design, Art Direction & Interior Architecture (EFET)'
+      ],
+      avgTuition:
+        'Varies by school and programme (e.g. EIML International Programs from approx. EUR 9,300/year); connect with our admissions team for the latest fees.',
+      intakeWindows: 'September (main intake); selected programmes also offer January intake',
+      programDuration: '3-year Bachelor (Level 6), 2-year Mastère/MSc (Level 7), MBA options',
+      campusLocations: ['Paris', 'Lyon', 'Bordeaux', 'Lille', 'Nantes', 'Aix-en-Provence', 'Reims', 'Rennes'],
+      eligibility:
+        'Bachelor entry after Class 12; Mastère/MSc entry after a 3-year Bachelor. Admission includes an application review, a written test and an interview, with English-language readiness assessed.'
+    },
+    longDescription:
+      'SKOLAE brings together the GES and Eductive networks with more than 50 years of teaching expertise. Its specialised schools train over 19,000 students each year through career-focused, State-recognised programmes, backed by 10,000 partner companies and 43,000 active alumni.',
+    highlights: [
+      '20+ specialised schools across tech, management, art & design, and media',
+      'Campuses in 37 French cities, with the flagship schools in Paris',
+      'State-recognised professional certifications at RNCP Levels 6 and 7',
+      'Network of 10,000 partner companies and 43,000+ active alumni',
+      'English-taught international programmes at EIML Paris and MODART International',
+      'Semester-abroad options in London, Florence, New York, Milan and California',
+      'Fully remote admission process available for non-EU students'
+    ],
+    contact: 'south.asia@skolae.fr',
+    website: 'https://skolae-online.fr/groupe-skolae'
+  },
+  {
     id: 2,
     title: 'MJM Graphic Design',
     slug: 'mjm-graphic-design',

@@ -21,6 +21,12 @@ import {
   Cpu,
   Briefcase,
   X,
+  Mail,
+  Phone,
+  TrendingUp,
+  Languages,
+  Plane,
+  Sparkles,
 } from 'lucide-react';
 import { getPortfolioById, getPortfolios } from '../services/portfolioService';
 import { getUniversityDetail } from '../services/contentApi';
@@ -421,6 +427,175 @@ const EIT_INNOENERGY_SPOTLIGHT = {
     { name: 'TU/e Eindhoven', logo: '/universities/eit-innoenergy/partners/tue-eindhoven.png' },
   ],
 };
+const SKOLAE_GROUP_SPOTLIGHT = {
+  subtitle: 'SKOLAE Group Profile',
+  heading: 'SKOLAE: A Network of Specialised French Schools',
+  description:
+    'SKOLAE unites specialised schools in technology, luxury, fashion, design and digital creation. Students graduate with State-recognised professional certifications and career-ready experience from a network of 10,000 partner companies.',
+  stats: [
+    { value: '20+', label: 'Specialised schools' },
+    { value: '37', label: 'Cities across France' },
+    { value: '19,000+', label: 'Students each year' },
+    { value: '10,000', label: 'Partner companies' },
+    { value: '43,000+', label: 'Active alumni' },
+  ],
+  schools: [
+    {
+      key: 'esgi',
+      name: 'ESGI',
+      fullName: 'École Supérieure de Génie Informatique',
+      focus: 'Computer Science & Engineering',
+      logos: [{ src: '/universities/skolae-group/schools/esgi.svg', alt: 'ESGI logo' }],
+      cover: '/universities/skolae-group/schools/covers/esgi.jpg',
+      tags: ['Since 1983', 'Paris + 17 cities'],
+      summary:
+        'A 5-year computing pathway with a 3-year Bachelor followed by a 2-year Graduate Program, supported by Apple and Cisco labs.',
+      programs: [
+        { title: 'Artificial Intelligence & Big Data', level: 'Bachelor / Graduate', trending: true },
+        { title: 'IT Security (Cybersecurity)', level: 'Bachelor / Graduate', trending: true },
+        { title: 'Systems, Networks & Cloud Computing', level: 'Bachelor / Graduate', trending: true },
+        { title: 'Software Architecture', level: 'Bachelor / Graduate' },
+        { title: 'Virtual Reality & Video Games Engineering', level: 'Bachelor / Graduate' },
+        { title: 'Blockchain Engineering', level: 'Bachelor / Graduate' },
+      ],
+      website: 'https://www.esgi.fr/international/program.html',
+    },
+    {
+      key: 'eiml',
+      name: 'EIML Paris',
+      fullName: 'International School of Luxury Marketing',
+      focus: 'Luxury Marketing & Management',
+      logos: [{ src: '/universities/skolae-group/schools/eiml.svg', alt: 'EIML Paris logo' }],
+      cover: '/universities/skolae-group/schools/covers/eiml.jpg',
+      tags: ['Taught in English', 'RNCP Level 6 & 7'],
+      summary:
+        'Fully English-taught international programmes with semesters in New York, Milan, London and Florence.',
+      programs: [
+        {
+          title: 'Bachelor International Program in Luxury Marketing',
+          level: '3 years | approx. EUR 9,300-10,020/year',
+          english: true,
+          trending: true,
+        },
+        {
+          title: 'Mastère International Program: International Luxury Marketing Manager',
+          level: '2 years | approx. EUR 9,765-10,460/year',
+          english: true,
+          trending: true,
+        },
+        { title: 'MBA in Luxury Marketing', level: 'MBA' },
+      ],
+      website: 'https://en.eiml-paris.fr/',
+    },
+    {
+      key: 'modart',
+      name: 'MODART International',
+      fullName: 'Paris School of Fashion & Luxury',
+      focus: 'Fashion Design & Management',
+      logos: [{ src: '/universities/skolae-group/schools/modart.png', alt: 'MODART International logo' }],
+      cover: '/universities/skolae-group/schools/covers/modart.jpg',
+      tags: ['English-taught options', 'Paris + 6 cities'],
+      summary:
+        'A Paris fashion school with English-taught fashion design and management pathways and around 30% international students.',
+      programs: [
+        { title: 'Bachelor in Fashion Design', level: 'Bachelor', english: true },
+        { title: 'Bachelor in Fashion Management', level: 'Bachelor' },
+        { title: 'Mastère Digital Fashion Designer', level: 'Mastère', trending: true },
+        { title: 'Mastère Art Direction & Collection Management', level: 'Mastère' },
+        { title: 'MBA Luxury Goods and Fashion Industries', level: 'MBA', english: true, trending: true },
+      ],
+      website: 'https://modart-paris.com/',
+    },
+    {
+      key: 'ican',
+      name: 'ICAN',
+      fullName: 'Institute of Digital Creation & Animation',
+      focus: 'Games, Animation, Web & AI Design',
+      logos: [{ src: '/universities/skolae-group/schools/ican.svg', alt: 'ICAN logo' }],
+      cover: '/universities/skolae-group/schools/covers/ican.jpg',
+      tags: ['Video game industry member', '6 campuses'],
+      summary:
+        'Project-based training across three hubs (video games, animation and web & digital) from Bachelor to Mastère level.',
+      programs: [
+        { title: 'Game Design', level: 'Bachelor / Mastère', trending: true },
+        { title: 'Game Programming', level: 'Bachelor / Mastère' },
+        { title: 'UX/UI Design', level: 'Bachelor / Mastère', trending: true },
+        { title: 'AI Design', level: 'Bachelor / Mastère', trending: true },
+        { title: 'Motion Design', level: 'Bachelor / Mastère' },
+        { title: 'Real-Time 3D Design', level: 'Bachelor / Mastère' },
+      ],
+      website: 'https://www.ican-design.fr/',
+    },
+    {
+      key: 'efet',
+      name: 'EFET',
+      fullName: 'EFET Créa & EFET Photo',
+      focus: 'Graphic Design, Interiors & Photography',
+      logos: [
+        { src: '/universities/skolae-group/schools/efet-crea.svg', alt: 'EFET Créa logo' },
+        { src: '/universities/skolae-group/schools/efet-photo.svg', alt: 'EFET Photo logo' },
+      ],
+      cover: '/universities/skolae-group/schools/covers/efet.jpg',
+      tags: ['50+ years of expertise', 'Award-winning students'],
+      summary:
+        'Creative schools for visual communication, interior architecture and photography, with around 70% hands-on studio time.',
+      programs: [
+        { title: 'Bachelor in Graphic & Digital Design', level: 'Bachelor' },
+        { title: 'Mastère Art Direction', level: 'Mastère', trending: true },
+        { title: 'Interior Design & Architecture', level: 'Bachelor / Mastère', trending: true },
+        { title: 'Bachelor in Photography', level: 'Bachelor' },
+        { title: 'Bachelor in Digital Photography & AI', level: 'Bachelor', trending: true },
+      ],
+      website: 'https://efet-crea.fr/',
+    },
+  ],
+  otherSchools: [
+    'PPA Business School',
+    'EFFICOM',
+    "ESUPCOM'",
+    'ISFJ',
+    'ESIS',
+    'EFAB',
+    'ECITV',
+    'CFPJ',
+    'École W',
+    'ISA',
+    'ENGDE',
+    '2iAcademy',
+  ],
+  trendingPathways: [
+    { field: 'AI & Big Data', school: 'ESGI' },
+    { field: 'Cybersecurity', school: 'ESGI' },
+    { field: 'Cloud Computing', school: 'ESGI' },
+    { field: 'Luxury Brand Management', school: 'EIML Paris' },
+    { field: 'Digital Fashion Design', school: 'MODART' },
+    { field: 'Game Design & UX/UI', school: 'ICAN' },
+    { field: 'AI Design', school: 'ICAN' },
+    { field: 'Art Direction & Interiors', school: 'EFET' },
+  ],
+  advantages: [
+    {
+      title: 'Global classroom',
+      description:
+        'Semester-abroad options with partner institutions in 16 countries, including the UK, USA, Italy, Canada, Singapore and the UAE.',
+    },
+    {
+      title: 'Remote admissions',
+      description:
+        'Non-EU students can complete the full admission process remotely, followed by Campus France and student visa support.',
+    },
+    {
+      title: 'Design Project Program',
+      description:
+        'A one-year creative foundation exploring 8 disciplines before specialising at MODART, ICAN or EFET.',
+    },
+  ],
+  contact: {
+    label: 'SKOLAE South Asia: partnerships & admissions',
+    email: 'south.asia@skolae.fr',
+    website: 'https://skolae-online.fr/groupe-skolae',
+  },
+};
 
 export default function PortfolioDetailPage() {
   const { id } = useParams();
@@ -573,7 +748,8 @@ export default function PortfolioDetailPage() {
     normalizedSlug === 'eit-innoenergy' ||
     normalizedTitle.includes('eit innoenergy') ||
     normalizedTitle.includes('innoenergy masters');
-  const usesDarkLogoBadge = isIcnBusinessSchoolProfile || isEpitechProfile;
+  const isSkolaeGroupProfile = normalizedSlug === 'skolae-group' || normalizedTitle.includes('skolae');
+  const usesDarkLogoBadge = isIcnBusinessSchoolProfile || isEpitechProfile || isSkolaeGroupProfile;
   const catalogDocuments = Array.isArray(portfolio?.details?.catalogs)
     ? portfolio.details.catalogs
         .map((item) => {
@@ -1068,7 +1244,9 @@ export default function PortfolioDetailPage() {
           <h2 className="text-3xl font-bold text-foreground mb-6">
             {isIcnBusinessSchoolProfile
               ? 'Why ICN Business School Stands Out'
-              : 'About This University'}
+              : isSkolaeGroupProfile
+                ? 'About the SKOLAE Network'
+                : 'About This University'}
           </h2>
           <p className="text-lg text-muted-foreground leading-relaxed mb-6">
             {portfolio.description}
@@ -1256,6 +1434,301 @@ export default function PortfolioDetailPage() {
                     ))}
                   </div>
                 </div>
+              </div>
+            </div>
+          </motion.div>
+        )}
+
+        {isSkolaeGroupProfile && (
+          <motion.div
+            className="relative mb-16 overflow-hidden rounded-3xl border border-[#E7DED6] bg-[linear-gradient(125deg,#FBF8F5_0%,#F6F2FF_42%,#FFF5EE_100%)] p-5 shadow-[0_28px_70px_rgba(16,24,40,0.14)] dark:border-[#3A3150] dark:bg-[linear-gradient(125deg,#15121F_0%,#1A1530_46%,#24170F_100%)] sm:p-8"
+            variants={itemVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.05 }}
+          >
+            <div className="pointer-events-none absolute -right-24 -top-24 h-64 w-64 rounded-full bg-[#E8521A]/15 blur-3xl dark:bg-[#E8521A]/20" />
+            <div className="pointer-events-none absolute -bottom-24 -left-24 h-64 w-64 rounded-full bg-[#5340B0]/15 blur-3xl dark:bg-[#7B6BCC]/20" />
+
+            <div className="relative z-10">
+              <div className="mb-5 flex flex-wrap items-center gap-2.5">
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-[#1A1033]/15 bg-white/85 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.14em] text-[#1A1033] shadow-[0_8px_20px_rgba(26,16,51,0.1)] dark:border-white/20 dark:bg-white/10 dark:text-white">
+                  <BadgeCheck className="h-3.5 w-3.5 text-[#E8521A]" />
+                  {SKOLAE_GROUP_SPOTLIGHT.subtitle}
+                </span>
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-border/70 bg-background/80 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-foreground">
+                  <GraduationCap className="h-3.5 w-3.5" />
+                  Study in France
+                </span>
+              </div>
+
+              <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1.15fr_0.85fr] lg:items-end">
+                <div>
+                  <h3 className="text-3xl font-bold leading-tight text-foreground sm:text-4xl">
+                    {SKOLAE_GROUP_SPOTLIGHT.heading}
+                  </h3>
+                  <p className="mt-4 max-w-3xl text-base leading-relaxed text-muted-foreground">
+                    {SKOLAE_GROUP_SPOTLIGHT.description}
+                  </p>
+                </div>
+                <div className="flex items-center justify-start lg:justify-end">
+                  <div className="inline-flex items-center rounded-2xl border border-white/10 bg-[#0D0A1A] px-5 py-3 shadow-[0_16px_34px_rgba(13,10,26,0.28)]">
+                    <img
+                      src="/universities/skolae-group/skolae-group-logo-white.png"
+                      alt="SKOLAE Group logo"
+                      loading="lazy"
+                      decoding="async"
+                      width="307"
+                      height="78"
+                      className="h-9 w-auto object-contain sm:h-10"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <dl className="mt-7 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+                {SKOLAE_GROUP_SPOTLIGHT.stats.map((stat, index) => (
+                  <div
+                    key={stat.label}
+                    className={`rounded-2xl border border-[#1A1033]/10 bg-white/80 px-4 py-3.5 shadow-[0_10px_24px_rgba(26,16,51,0.06)] dark:border-white/10 dark:bg-white/[0.06] ${
+                      index === SKOLAE_GROUP_SPOTLIGHT.stats.length - 1 ? 'col-span-2 sm:col-span-1' : ''
+                    }`}
+                  >
+                    <dd className="text-2xl font-bold text-[#2D1B69] dark:text-white">{stat.value}</dd>
+                    <dt className="mt-0.5 text-xs font-medium text-muted-foreground">{stat.label}</dt>
+                  </div>
+                ))}
+              </dl>
+
+              <div className="mt-10">
+                <div className="mb-4 flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
+                  <div>
+                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                      Featured Schools
+                    </p>
+                    <h4 className="mt-1 text-2xl font-bold text-foreground">Top SKOLAE schools &amp; programmes</h4>
+                  </div>
+                  <p className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground">
+                    <span className="inline-flex items-center gap-1.5">
+                      <TrendingUp className="h-3.5 w-3.5 text-[#E8521A]" />
+                      High-demand pathway
+                    </span>
+                    <span className="inline-flex items-center gap-1.5">
+                      <Languages className="h-3.5 w-3.5 text-[#5340B0] dark:text-[#A899E8]" />
+                      Taught in English
+                    </span>
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
+                  {SKOLAE_GROUP_SPOTLIGHT.schools.map((school) => (
+                    <article
+                      key={school.key}
+                      className="group flex flex-col overflow-hidden rounded-2xl border border-[#1A1033]/10 bg-white/90 shadow-[0_16px_34px_rgba(16,24,40,0.08)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_22px_44px_rgba(16,24,40,0.14)] dark:border-white/10 dark:bg-[#15121F]/85"
+                    >
+                      <div className="relative h-40 overflow-hidden bg-muted">
+                        <img
+                          src={school.cover}
+                          alt={`${school.name} campus and student life`}
+                          loading="lazy"
+                          decoding="async"
+                          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        />
+                        <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(13,10,26,0.55)_0%,rgba(13,10,26,0)_45%,rgba(13,10,26,0.35)_100%)]" />
+                        <p className="absolute left-3 top-3 max-w-[calc(100%-1.5rem)] rounded-full bg-black/50 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-white backdrop-blur-sm">
+                          {school.focus}
+                        </p>
+                      </div>
+
+                      <div className="flex flex-1 flex-col p-5">
+                        <div className="-mt-12 mb-4 flex flex-wrap gap-2">
+                          {school.logos.map((logo) => (
+                            <span
+                              key={logo.src}
+                              className="relative inline-flex h-16 min-w-[6.5rem] items-center justify-center rounded-xl border border-[#1A1033]/10 bg-white px-3 shadow-[0_12px_26px_rgba(16,24,40,0.14)]"
+                            >
+                              <img
+                                src={logo.src}
+                                alt={logo.alt}
+                                loading="lazy"
+                                decoding="async"
+                                className="max-h-10 w-auto max-w-[7.5rem] object-contain"
+                              />
+                            </span>
+                          ))}
+                        </div>
+
+                        <h5 className="text-lg font-bold leading-snug text-foreground">{school.name}</h5>
+                        <p className="text-sm text-muted-foreground">{school.fullName}</p>
+
+                        <div className="mt-3 flex flex-wrap gap-1.5">
+                          {school.tags.map((tag) => (
+                            <span
+                              key={tag}
+                              className="rounded-full border border-[#2D1B69]/15 bg-[#F5F3FF] px-2.5 py-0.5 text-[11px] font-semibold text-[#2D1B69] dark:border-white/15 dark:bg-white/10 dark:text-white/85"
+                            >
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+
+                        <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{school.summary}</p>
+
+                        <ul className="mt-4 space-y-2">
+                          {school.programs.map((program) => (
+                            <li
+                              key={program.title}
+                              className="rounded-xl border border-[#1A1033]/8 bg-[#FBF9FF] px-3 py-2 dark:border-white/10 dark:bg-white/[0.04]"
+                            >
+                              <p className="flex items-start gap-2 text-sm font-semibold leading-snug text-foreground">
+                                <span className="mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-[#E8521A]" />
+                                <span className="min-w-0 flex-1">{program.title}</span>
+                                {program.trending && (
+                                  <TrendingUp
+                                    className="mt-0.5 h-4 w-4 flex-shrink-0 text-[#E8521A]"
+                                    aria-label="High-demand pathway"
+                                  />
+                                )}
+                                {program.english && (
+                                  <Languages
+                                    className="mt-0.5 h-4 w-4 flex-shrink-0 text-[#5340B0] dark:text-[#A899E8]"
+                                    aria-label="Taught in English"
+                                  />
+                                )}
+                              </p>
+                              <p className="mt-0.5 pl-3.5 text-xs text-muted-foreground">{program.level}</p>
+                            </li>
+                          ))}
+                        </ul>
+
+                        <a
+                          href={school.website}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="mt-5 inline-flex items-center gap-1.5 self-start text-sm font-semibold text-[#2D1B69] transition-colors hover:text-[#E8521A] dark:text-[#C9BFFF] dark:hover:text-[#F57C46]"
+                        >
+                          Official website
+                          <ExternalLink className="h-3.5 w-3.5" />
+                        </a>
+                      </div>
+                    </article>
+                  ))}
+                  <article className="flex flex-col justify-between overflow-hidden rounded-2xl bg-[linear-gradient(150deg,#1A1033_0%,#2D1B69_55%,#3B2580_100%)] p-6 text-white shadow-[0_16px_34px_rgba(26,16,51,0.22)]">
+                    <div>
+                      <span className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-white/10">
+                        <Building2 className="h-5 w-5 text-[#F57C46]" />
+                      </span>
+                      <h5 className="mt-4 text-lg font-bold leading-snug">More from the SKOLAE network</h5>
+                      <p className="mt-2 text-sm leading-relaxed text-white/75">
+                        Beyond our featured schools, SKOLAE covers business, communication, journalism, finance,
+                        audiovisual and more across France.
+                      </p>
+                      <div className="mt-4 flex flex-wrap gap-1.5">
+                        {SKOLAE_GROUP_SPOTLIGHT.otherSchools.map((schoolName) => (
+                          <span
+                            key={schoolName}
+                            className="rounded-full border border-white/15 bg-white/10 px-2.5 py-1 text-[11px] font-semibold text-white/90"
+                          >
+                            {schoolName}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                    <Link
+                      to="/collaborate"
+                      className="mt-6 inline-flex items-center gap-1.5 self-start text-sm font-semibold text-[#F57C46] transition-colors hover:text-white"
+                    >
+                      Ask us about any SKOLAE school
+                      <ChevronRight className="h-4 w-4" />
+                    </Link>
+                  </article>
+                </div>
+              </div>
+
+              <div className="mt-10 grid grid-cols-1 gap-5 lg:grid-cols-[1.1fr_0.9fr]">
+                <div className="rounded-2xl border border-[#1A1033]/10 bg-white/85 p-5 shadow-[0_14px_30px_rgba(16,24,40,0.07)] dark:border-white/10 dark:bg-white/[0.05]">
+                  <div className="flex items-center gap-2">
+                    <TrendingUp className="h-4 w-4 text-[#E8521A]" />
+                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                      Most in-demand pathways
+                    </p>
+                  </div>
+                  <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-2">
+                    {SKOLAE_GROUP_SPOTLIGHT.trendingPathways.map((pathway) => (
+                      <div
+                        key={pathway.field}
+                        className="flex items-center justify-between gap-3 rounded-xl border border-[#1A1033]/8 bg-[#FFF8F3] px-3 py-2.5 dark:border-white/10 dark:bg-white/[0.04]"
+                      >
+                        <span className="text-sm font-semibold text-foreground">{pathway.field}</span>
+                        <span className="flex-shrink-0 rounded-full bg-[#2D1B69] px-2.5 py-0.5 text-[11px] font-semibold text-white dark:bg-[#5340B0]">
+                          {pathway.school}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="space-y-3">
+                  {SKOLAE_GROUP_SPOTLIGHT.advantages.map((advantage, index) => {
+                    const AdvantageIcon = [Plane, Globe, Sparkles][index] || Star;
+                    return (
+                      <article
+                        key={advantage.title}
+                        className="flex items-start gap-3 rounded-2xl border border-[#1A1033]/10 bg-white/85 p-4 shadow-[0_12px_26px_rgba(16,24,40,0.06)] dark:border-white/10 dark:bg-white/[0.05]"
+                      >
+                        <span className="inline-flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg bg-[#FEF0E7] dark:bg-[#E8521A]/15">
+                          <AdvantageIcon className="h-4 w-4 text-[#E8521A]" />
+                        </span>
+                        <div>
+                          <p className="text-sm font-semibold text-foreground">{advantage.title}</p>
+                          <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{advantage.description}</p>
+                        </div>
+                      </article>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <div className="mt-8 flex flex-col gap-5 rounded-2xl bg-[linear-gradient(110deg,#1A1033_0%,#2D1B69_58%,#5340B0_100%)] p-5 text-white shadow-[0_20px_44px_rgba(26,16,51,0.3)] sm:p-6 lg:flex-row lg:items-center lg:justify-between">
+                <div className="min-w-0">
+                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-white/70">
+                    {SKOLAE_GROUP_SPOTLIGHT.contact.label}
+                  </p>
+                  <div className="mt-3 flex flex-col gap-2 text-sm sm:flex-row sm:flex-wrap sm:gap-x-6">
+                    <a
+                      href={`mailto:${SKOLAE_GROUP_SPOTLIGHT.contact.email}`}
+                      className="inline-flex min-w-0 items-center gap-2 font-semibold text-white transition-colors hover:text-[#F57C46]"
+                    >
+                      <Mail className="h-4 w-4 flex-shrink-0" />
+                      <span className="break-all">{SKOLAE_GROUP_SPOTLIGHT.contact.email}</span>
+                    </a>
+                    {SITE_CONFIG.contact.phone?.[0] && (
+                      <a
+                        href={`tel:${SITE_CONFIG.contact.phone[0].replace(/\s+/g, '')}`}
+                        className="inline-flex items-center gap-2 font-semibold text-white transition-colors hover:text-[#F57C46]"
+                      >
+                        <Phone className="h-4 w-4 flex-shrink-0" />
+                        {SITE_CONFIG.contact.phone[0]}
+                      </a>
+                    )}
+                    <a
+                      href={SKOLAE_GROUP_SPOTLIGHT.contact.website}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 font-semibold text-white transition-colors hover:text-[#F57C46]"
+                    >
+                      <Globe className="h-4 w-4 flex-shrink-0" />
+                      skolae-online.fr
+                    </a>
+                  </div>
+                </div>
+                <Link
+                  to="/collaborate"
+                  className="inline-flex flex-shrink-0 items-center justify-center gap-2 rounded-xl bg-[#E8521A] px-5 py-3 text-sm font-semibold text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#F57C46]"
+                >
+                  Connect With Our Team
+                  <ChevronRight className="h-4 w-4" />
+                </Link>
               </div>
             </div>
           </motion.div>

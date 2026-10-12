@@ -190,6 +190,10 @@ const galleryCollections = [
         src: '/universities/eit-innoenergy/eit-innoenergy-hero.jpg',
         caption: 'EIT InnoEnergy',
       },
+      {
+        src: '/universities/skolae-group/skolae-group-hero.jpg',
+        caption: 'SKOLAE Group (MODART International studio, Paris)',
+      },
     ],
   },
   {

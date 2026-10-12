@@ -239,7 +239,9 @@ export default function UniversitiesPage() {
               {filtered.map((university) => {
                 const normalizedSlug = String(university.slug || '').toLowerCase();
                 const isLightLogo =
-                  normalizedSlug === 'icn-business-school' || normalizedSlug === 'epitech';
+                  normalizedSlug === 'icn-business-school' ||
+                  normalizedSlug === 'epitech' ||
+                  normalizedSlug === 'skolae-group';
                 const useContainedHeroImage = normalizedSlug === 'epitech';
 
                 return (
