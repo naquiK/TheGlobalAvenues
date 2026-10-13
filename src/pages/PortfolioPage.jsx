@@ -217,7 +217,9 @@ export default function PortfolioPage() {
                 {filteredPortfolios.map((portfolio) => {
                   const normalizedSlug = String(portfolio.slug || '').toLowerCase();
                   const isLightLogo =
-                    normalizedSlug === 'icn-business-school' || normalizedSlug === 'epitech';
+                    normalizedSlug === 'icn-business-school' ||
+                    normalizedSlug === 'epitech' ||
+                    normalizedSlug === 'skolae-group';
                   const useContainedHeroImage = normalizedSlug === 'epitech';
 
                   return (
@@ -246,7 +248,7 @@ export default function PortfolioPage() {
                         <div
                           className={`absolute top-4 left-4 rounded-xl border p-1.5 shadow-md ${
                             isLightLogo
-                              ? 'border-white/30 bg-[#20184A]/88 backdrop-blur-sm'
+                              ? 'border-white/30 bg-[#20184A]/[0.88] backdrop-blur-sm'
                               : 'border-white/35 bg-white/95'
                           }`}
                         >

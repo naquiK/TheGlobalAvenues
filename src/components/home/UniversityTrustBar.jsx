@@ -17,6 +17,7 @@ const trustItems = [
   { id: 10, label: 'MJM Graphic Design', href: 'https://www.mjm-design.com/en' },
   { id: 11, label: 'EIT InnoEnergy', href: 'https://apply.innoenergy.com/' },
   { id: 12, label: "St. George's University", href: 'https://www.sgu.edu/school-of-medicine/' },
+  { id: 13, label: 'SKOLAE Group', href: 'https://skolae-online.fr/groupe-skolae' },
 ];
 
 export default function UniversityTrustBar() {

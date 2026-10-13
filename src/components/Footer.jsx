@@ -129,6 +129,14 @@ export function Footer() {
     },
     { src: '/27.png', top: '38%', left: '84%', rotate: '-10deg', size: 'h-28 w-28', hotspot: 'h-64 w-64' },
     { src: '/28.png', top: '72%', left: '68%', rotate: '12deg', size: 'h-32 w-32', hotspot: 'h-72 w-72' },
+    {
+      src: '/universities/skolae-group/skolae-logo-white.svg',
+      top: '86%',
+      left: '10%',
+      rotate: '-4deg',
+      size: 'h-14 w-40',
+      hotspot: 'h-40 w-56',
+    },
   ];
 
   const scrollToTop = () => {
