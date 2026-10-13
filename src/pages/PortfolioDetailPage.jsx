@@ -27,7 +27,7 @@ import { getUniversityDetail } from '../services/contentApi';
 import { resolveMediaUrl } from '../services/apiClient';
 import useScrollIntentCelebration from '../hooks/useScrollIntentCelebration';
 import BackNavButton from '../components/ui/BackNavButton';
-import SkolaeGroupSpotlight from '../components/portfolio/SkolaeGroupSpotlight';
+import SkolaeGroupProfile from '../components/portfolio/SkolaeGroupProfile';
 
 import { DetailSkeleton } from '../components/ui/SkeletonLayouts';
 
@@ -575,7 +575,7 @@ export default function PortfolioDetailPage() {
     normalizedTitle.includes('eit innoenergy') ||
     normalizedTitle.includes('innoenergy masters');
   const isSkolaeGroupProfile = normalizedSlug === 'skolae-group' || normalizedTitle.includes('skolae');
-  const usesDarkLogoBadge = isIcnBusinessSchoolProfile || isEpitechProfile || isSkolaeGroupProfile;
+  const usesDarkLogoBadge = isIcnBusinessSchoolProfile || isEpitechProfile;
   const catalogDocuments = Array.isArray(portfolio?.details?.catalogs)
     ? portfolio.details.catalogs
         .map((item) => {
@@ -883,6 +883,10 @@ export default function PortfolioDetailPage() {
       </motion.div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        {isSkolaeGroupProfile ? (
+          <SkolaeGroupProfile />
+        ) : (
+        <>
         {/* Main Content */}
         <motion.div
           className={`grid grid-cols-1 lg:grid-cols-3 gap-8 mb-16 ${isIcnBusinessSchoolProfile ? 'lg:items-stretch' : ''}`}
@@ -1070,9 +1074,7 @@ export default function PortfolioDetailPage() {
           <h2 className="text-3xl font-bold text-foreground mb-6">
             {isIcnBusinessSchoolProfile
               ? 'Why ICN Business School Stands Out'
-              : isSkolaeGroupProfile
-                ? 'About the SKOLAE Network'
-                : 'About This University'}
+              : 'About This University'}
           </h2>
           <p className="text-lg text-muted-foreground leading-relaxed mb-6">
             {portfolio.description}
@@ -1264,8 +1266,6 @@ export default function PortfolioDetailPage() {
             </div>
           </motion.div>
         )}
-
-        {isSkolaeGroupProfile && <SkolaeGroupSpotlight />}
 
         {isIcnBusinessSchoolProfile && (
           <motion.div
@@ -1948,6 +1948,9 @@ export default function PortfolioDetailPage() {
             Connect with Our Advisors
           </motion.button>
         </motion.div>
+
+        </>
+        )}
 
         {/* Related Portfolios */}
         {relatedPortfolios.length > 0 && (
