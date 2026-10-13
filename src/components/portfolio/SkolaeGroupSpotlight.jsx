@@ -4,12 +4,15 @@ import { AnimatePresence, animate, motion, useInView, useReducedMotion } from 'f
 import {
   ArrowUpRight,
   BadgeCheck,
+  Briefcase,
   Building2,
   ChevronRight,
+  Clapperboard,
   Globe,
   GraduationCap,
   Languages,
   Mail,
+  Newspaper,
   Phone,
   Plane,
   Sparkles,
@@ -23,6 +26,14 @@ import {
   skolaePathways,
   skolaeSchools,
 } from '../../data/skolaeGroupData';
+
+const OTHER_SCHOOL_GROUP_ICONS = {
+  business: Briefcase,
+  media: Newspaper,
+  film: Clapperboard,
+};
+
+const otherSchoolCount = skolaeOtherSchools.reduce((total, group) => total + group.schools.length, 0);
 
 const HIGHLIGHT_ICONS = {
   global: Plane,
@@ -445,19 +456,60 @@ export default function SkolaeGroupSpotlight() {
             </div>
           </div>
 
-          <div className="mt-5 flex flex-wrap items-center gap-2">
-            <span className="mr-1 inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">
-              <Building2 className="h-3.5 w-3.5" />
-              Also in the network
-            </span>
-            {skolaeOtherSchools.map((schoolName) => (
-              <span
-                key={schoolName}
-                className="rounded-full border border-[#E4DDF5] bg-white px-2.5 py-1 text-[11px] font-semibold text-[#3E316E] dark:border-white/10 dark:bg-white/[0.05] dark:text-white/80"
-              >
-                {schoolName}
-              </span>
-            ))}
+          <div className="mt-8 rounded-3xl border border-[#E4DDF5] bg-white/80 p-5 dark:border-white/10 dark:bg-white/[0.03] sm:p-7">
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <p className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+                  <Building2 className="h-3.5 w-3.5" />
+                  Also in the SKOLAE network
+                </p>
+                <h5 className="mt-1 font-heading text-xl font-bold text-foreground">
+                  {otherSchoolCount} more specialised schools
+                </h5>
+              </div>
+              <p className="max-w-md text-sm leading-relaxed text-muted-foreground sm:text-right">
+                Many run as work-study (alternance) programmes. Ask us whether one suits your plans before applying.
+              </p>
+            </div>
+
+            <div className="mt-6 grid grid-cols-1 gap-x-8 gap-y-6 md:grid-cols-3">
+              {skolaeOtherSchools.map((group) => {
+                const GroupIcon = OTHER_SCHOOL_GROUP_ICONS[group.key] || Building2;
+                return (
+                  <section key={group.key} aria-label={group.title}>
+                    <h6 className="flex items-center gap-2 border-b border-[#E4DDF5] pb-2.5 text-sm font-semibold text-foreground dark:border-white/10">
+                      <span className="inline-flex h-7 w-7 items-center justify-center rounded-lg bg-[#FEF0E7] text-[#E8521A] dark:bg-[#E8521A]/15">
+                        <GroupIcon className="h-3.5 w-3.5" />
+                      </span>
+                      {group.title}
+                    </h6>
+                    <ul>
+                      {group.schools.map((school) => (
+                        <li key={school.name}>
+                          <a
+                            href={school.website}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="group/school flex items-center justify-between gap-3 border-b border-[#F0ECFA] py-2.5 last:border-b-0 dark:border-white/[0.06]"
+                          >
+                            <span className="min-w-0">
+                              <span className="block text-sm font-semibold text-foreground transition-colors group-hover/school:text-[#E8521A]">
+                                {school.name}
+                              </span>
+                              <span className="block text-xs text-muted-foreground">{school.focus}</span>
+                            </span>
+                            <ArrowUpRight
+                              className="h-4 w-4 flex-shrink-0 text-muted-foreground/50 transition-all group-hover/school:-translate-y-0.5 group-hover/school:translate-x-0.5 group-hover/school:text-[#E8521A]"
+                              aria-hidden="true"
+                            />
+                          </a>
+                        </li>
+                      ))}
+                    </ul>
+                  </section>
+                );
+              })}
+            </div>
           </div>
         </div>
 

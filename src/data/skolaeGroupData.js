@@ -217,18 +217,38 @@ export const skolaeHighlights = [
   },
 ];
 
+// Other schools in the group, grouped by field. Focus lines come from each school's
+// official website (checked October 2026).
 export const skolaeOtherSchools = [
-  'PPA Business School',
-  'PPA Sport',
-  'EFFICOM',
-  'ESUPCOM',
-  'ISFJ',
-  'ESIS',
-  'EFAB',
-  'ECITV',
-  'CFPJ',
-  'École W',
-  'ISA',
-  'ENGDE',
-  '2iAcademy',
+  {
+    key: 'business',
+    title: 'Business & management',
+    schools: [
+      { name: 'PPA Business School', focus: 'Business school, Bac to Bac+5', website: 'https://www.ppa.fr/' },
+      { name: 'PPA Sport', focus: 'Sports business school', website: 'https://www.ppa-sport.fr/' },
+      { name: 'EFFICOM', focus: 'Business, HR, design and IT', website: 'https://www.efficom.fr/' },
+      { name: 'ENGDE', focus: 'Accounting and management', website: 'https://www.engde.fr/' },
+      { name: 'EFAB', focus: 'Real estate careers', website: 'https://www.efab.fr/' },
+    ],
+  },
+  {
+    key: 'media',
+    title: 'Communication & journalism',
+    schools: [
+      { name: "ESUPCOM'", focus: 'Communication', website: 'https://www.esupcom.com/' },
+      { name: 'ISFJ', focus: 'Journalism and media', website: 'https://www.isfj.fr/' },
+      { name: 'École W', focus: 'Journalism, communication and fiction', website: 'https://www.ecolew.com/' },
+      { name: 'CFPJ', focus: 'Journalism', website: 'https://www.cfpj-ecole.fr/' },
+    ],
+  },
+  {
+    key: 'film',
+    title: 'Film, audiovisual & digital',
+    schools: [
+      { name: 'ESIS', focus: 'Cinema, sound, music and VFX', website: 'https://www.esis-paris.fr/' },
+      { name: 'ISA', focus: 'Audiovisual production', website: 'https://isa-paris.com/' },
+      { name: 'ECITV', focus: 'Digital and audiovisual', website: 'https://www.ecitv.fr/' },
+      { name: '2iAcademy', focus: 'Digital and IT careers', website: 'https://2iacademy.com/' },
+    ],
+  },
 ];
