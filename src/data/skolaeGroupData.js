@@ -31,6 +31,7 @@ export const skolaeSchools = [
   {
     key: 'esgi',
     shortName: 'ESGI',
+    railLabel: 'Computer science',
     name: 'ESGI',
     fullName: 'École Supérieure de Génie Informatique',
     focus: 'Computer Science & Engineering',
@@ -54,6 +55,7 @@ export const skolaeSchools = [
   {
     key: 'eiml',
     shortName: 'EIML',
+    railLabel: 'Luxury marketing',
     name: 'EIML Paris',
     fullName: 'École Internationale de Marketing du Luxe',
     focus: 'Luxury Marketing & Management',
@@ -86,6 +88,7 @@ export const skolaeSchools = [
   {
     key: 'modart',
     shortName: 'MODART',
+    railLabel: 'Fashion',
     name: 'MODART International',
     fullName: 'La Grande École de Mode · Paris',
     focus: 'Fashion Design & Luxury',
@@ -127,6 +130,7 @@ export const skolaeSchools = [
   {
     key: 'ican',
     shortName: 'ICAN',
+    railLabel: 'Games & digital design',
     name: 'ICAN',
     fullName: "Institut de Création et d'Animation Numériques",
     focus: 'Games, Animation, Web & AI Design',
@@ -150,6 +154,7 @@ export const skolaeSchools = [
   {
     key: 'efet',
     shortName: 'EFET',
+    railLabel: 'Graphic & interior design',
     name: 'EFET',
     fullName: 'EFET Créa & EFET Photo',
     focus: 'Graphic Design, Interiors & Photography',

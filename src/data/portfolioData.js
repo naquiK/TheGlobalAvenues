@@ -481,8 +481,7 @@ export const portfolioData = [
         'Game Design, UX/UI & AI Design (ICAN)',
         'Graphic Design, Art Direction & Interior Architecture (EFET)'
       ],
-      avgTuition:
-        'Varies by school and programme (e.g. EIML International Programs from approx. EUR 9,300/year); connect with our admissions team for the latest fees.',
+      avgTuition: 'Varies by school and programme',
       intakeWindows: 'September (main intake); selected programmes also offer January intake',
       programDuration: '3-year Bachelor (Level 6), 2-year Mastère (Level 7), MBA options',
       campusLocations: ['Paris', 'Lyon', 'Bordeaux', 'Lille', 'Nantes', 'Aix-en-Provence', 'Reims', 'Rennes'],

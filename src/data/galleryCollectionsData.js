@@ -192,7 +192,7 @@ const galleryCollections = [
       },
       {
         src: '/universities/skolae-group/skolae-group-hero.jpg',
-        caption: 'SKOLAE Group (MODART International studio, Paris)',
+        caption: 'SKOLAE Group students in Paris',
       },
     ],
   },

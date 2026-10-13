@@ -76,6 +76,41 @@ function SchoolLogoChip({ src, alt, className = '' }) {
   );
 }
 
+// Optical sizing so wide wordmarks and stacked logos carry the same visual weight.
+const RAIL_LOGO_SIZES = {
+  esgi: 'h-11',
+  eiml: 'h-10',
+  modart: 'h-6',
+  ican: 'h-12',
+  'efet-crea': 'h-7',
+  'efet-photo': 'h-7',
+};
+
+const getLogoKey = (src = '') => src.split('/').pop().replace(/\.[a-z]+$/i, '');
+
+function LogoRailTile({ logo, isDuplicate = false, onSelect }) {
+  return (
+    <button
+      type="button"
+      onClick={onSelect}
+      aria-hidden={isDuplicate || undefined}
+      tabIndex={isDuplicate ? -1 : undefined}
+      aria-label={isDuplicate ? undefined : `View ${logo.alt.replace(/ logo$/, '')} programmes`}
+      className="group/logo relative mx-2 flex h-24 w-44 flex-shrink-0 flex-col items-center justify-center rounded-2xl border border-[#1A1033]/[0.07] bg-white px-5 transition-all duration-300 hover:-translate-y-1 hover:border-[#E8521A]/35 hover:shadow-[0_18px_34px_rgba(45,27,105,0.14)] focus:outline-none focus-visible:-translate-y-1 focus-visible:border-[#E8521A]/50 focus-visible:ring-2 focus-visible:ring-[#E8521A]/30 dark:border-white/10"
+    >
+      <img
+        src={logo.src}
+        alt=""
+        decoding="async"
+        className={`${RAIL_LOGO_SIZES[getLogoKey(logo.src)] || 'h-10'} w-auto max-w-full object-contain transition-transform duration-300 group-hover/logo:-translate-y-2 group-hover/logo:scale-105 group-focus-visible/logo:-translate-y-2`}
+      />
+      <span className="pointer-events-none absolute inset-x-2 bottom-2 truncate text-center text-[10px] font-semibold uppercase tracking-[0.12em] text-[#E8521A] opacity-0 transition-all duration-300 group-hover/logo:opacity-100 group-focus-visible/logo:opacity-100">
+        {logo.label}
+      </span>
+    </button>
+  );
+}
+
 function SpotlightTile({ children, className = '', ...props }) {
   const handlePointerMove = (event) => {
     const rect = event.currentTarget.getBoundingClientRect();
@@ -109,20 +144,24 @@ export default function SkolaeGroupSpotlight() {
   const tabRefs = useRef({});
   const prefersReducedMotion = useReducedMotion();
   const activeSchool = skolaeSchools.find((school) => school.key === activeKey) || skolaeSchools[0];
-  const marqueeLogos = skolaeSchools.flatMap((school) => [
-    { src: school.logo, alt: `${school.name} logo` },
-    ...(school.secondaryLogo ? [{ src: school.secondaryLogo, alt: 'EFET Photo logo' }] : []),
+  const railLogos = skolaeSchools.flatMap((school) => [
+    { src: school.logo, alt: `${school.name} logo`, schoolKey: school.key, label: school.railLabel },
+    ...(school.secondaryLogo
+      ? [{ src: school.secondaryLogo, alt: 'EFET Photo logo', schoolKey: school.key, label: 'Photography' }]
+      : []),
   ]);
+  // Each half of the track holds the set twice so the loop always covers wide screens.
+  const railHalf = [...railLogos, ...railLogos];
   const phone = SITE_CONFIG.contact.phone?.[0];
 
   const selectSchool = (key, { scroll = false, focus = false } = {}) => {
     setActiveKey(key);
     if (focus) tabRefs.current[key]?.focus();
-    if (scroll) {
-      explorerRef.current?.scrollIntoView({
-        behavior: prefersReducedMotion ? 'auto' : 'smooth',
-        block: 'start',
-      });
+    if (scroll && explorerRef.current) {
+      // Scroll the window directly (the rounded section clips overflow) and clear the sticky header bars.
+      const stickyOffset = 140;
+      const top = explorerRef.current.getBoundingClientRect().top + window.scrollY - stickyOffset;
+      window.scrollTo({ top, behavior: prefersReducedMotion ? 'auto' : 'smooth' });
     }
   };
 
@@ -233,16 +272,33 @@ export default function SkolaeGroupSpotlight() {
         </div>
       </div>
 
-      {/* Official logo marquee */}
-      <div className="border-b border-[#E4DDF5] bg-white/70 py-4 dark:border-white/10 dark:bg-white/[0.03]">
-        <div className="overflow-hidden [mask-image:linear-gradient(90deg,transparent,black_8%,black_92%,transparent)]">
-          <div className="flex w-max gap-4 hover:[animation-play-state:paused] motion-safe:animate-[skolaeMarquee_32s_linear_infinite]">
-            {[...marqueeLogos, ...marqueeLogos].map((logo, index) => (
-              <SchoolLogoChip
-                key={`${logo.src}-${index}`}
-                src={logo.src}
-                alt={index < marqueeLogos.length ? logo.alt : ''}
-                className="h-14 w-36 flex-shrink-0 px-4 py-2.5"
+      {/* Featured school logos */}
+      <div className="border-b border-[#E4DDF5] bg-[#F7F5FC] dark:border-white/10 dark:bg-white/[0.03]">
+        <div className="flex flex-col gap-2 pt-6 lg:flex-row lg:items-center lg:gap-0 lg:py-2">
+          <div className="px-5 sm:px-8 lg:w-60 lg:flex-shrink-0 lg:border-r lg:border-[#E4DDF5] lg:pl-10 lg:pr-6 dark:lg:border-white/10">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#E8521A]">Featured schools</p>
+            <p className="mt-1 text-sm leading-snug text-muted-foreground">Tap a logo to see its programmes.</p>
+          </div>
+
+          <div className="min-w-0 flex-1 overflow-hidden [mask-image:linear-gradient(90deg,transparent,black_6%,black_94%,transparent)] motion-reduce:hidden">
+            <div className="flex w-max pb-6 pt-4 hover:[animation-play-state:paused] focus-within:[animation-play-state:paused] motion-safe:animate-[skolaeMarquee_45s_linear_infinite]">
+              {[...railHalf, ...railHalf].map((logo, index) => (
+                <LogoRailTile
+                  key={`${logo.src}-${index}`}
+                  logo={logo}
+                  isDuplicate={index >= railLogos.length}
+                  onSelect={() => selectSchool(logo.schoolKey, { scroll: true })}
+                />
+              ))}
+            </div>
+          </div>
+
+          <div className="hidden flex-wrap justify-center gap-y-3 px-5 pb-6 pt-4 motion-reduce:flex sm:px-8 lg:flex-1">
+            {railLogos.map((logo) => (
+              <LogoRailTile
+                key={logo.src}
+                logo={logo}
+                onSelect={() => selectSchool(logo.schoolKey, { scroll: true })}
               />
             ))}
           </div>
