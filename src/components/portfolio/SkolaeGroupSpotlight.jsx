@@ -319,13 +319,13 @@ export default function SkolaeGroupSpotlight() {
               <div className="mt-auto hidden rounded-2xl border border-dashed border-[#5340B0]/30 bg-[#F5F3FF]/70 p-4 dark:border-white/15 dark:bg-white/[0.03] lg:block">
                 <p className="text-sm font-semibold text-foreground">Not sure which school fits?</p>
                 <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-                  Our counsellors match your academic profile and career goals to the right SKOLAE programme.
+                  Share your marks and career goals with our team and we&apos;ll help you shortlist the right SKOLAE programme.
                 </p>
                 <Link
                   to="/collaborate"
                   className="mt-3 inline-flex items-center gap-1 text-xs font-bold text-[#E8521A] hover:text-[#2D1B69] dark:hover:text-white"
                 >
-                  Get a free profile review
+                  Talk to our team
                   <ChevronRight className="h-3.5 w-3.5" />
                 </Link>
               </div>
@@ -553,17 +553,8 @@ export default function SkolaeGroupSpotlight() {
                     className="inline-flex min-w-0 items-center gap-2 font-semibold transition-colors hover:text-[#F57C46]"
                   >
                     <Mail className="h-4 w-4 flex-shrink-0" />
-                    <span className="break-all">{skolaeGroup.contact.email}</span>
+                    <span className="[overflow-wrap:anywhere]">{skolaeGroup.contact.email}</span>
                   </a>
-                  {phone && (
-                    <a
-                      href={`tel:${phone.replace(/\s+/g, '')}`}
-                      className="inline-flex items-center gap-2 font-semibold transition-colors hover:text-[#F57C46]"
-                    >
-                      <Phone className="h-4 w-4 flex-shrink-0" />
-                      {phone}
-                    </a>
-                  )}
                   <a
                     href={skolaeGroup.contact.website}
                     target="_blank"
@@ -574,6 +565,20 @@ export default function SkolaeGroupSpotlight() {
                     {skolaeGroup.contact.websiteLabel}
                   </a>
                 </div>
+                {phone && (
+                  <>
+                    <p className="mt-4 text-xs font-semibold uppercase tracking-[0.16em] text-white/60">
+                      The Global Avenues: application support
+                    </p>
+                    <a
+                      href={`tel:${phone.replace(/\s+/g, '')}`}
+                      className="mt-2 inline-flex items-center gap-2 text-sm font-semibold transition-colors hover:text-[#F57C46]"
+                    >
+                      <Phone className="h-4 w-4 flex-shrink-0" />
+                      {phone}
+                    </a>
+                  </>
+                )}
               </div>
             </div>
             <Link

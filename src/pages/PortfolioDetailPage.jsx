@@ -1793,7 +1793,7 @@ export default function PortfolioDetailPage() {
           )}
 
         {/* Highlights Section */}
-        {portfolio.highlights && portfolio.highlights.length > 0 && (
+        {!isSkolaeGroupProfile && portfolio.highlights && portfolio.highlights.length > 0 && (
           <motion.div
             className="mb-16"
             initial="hidden"
@@ -1828,55 +1828,57 @@ export default function PortfolioDetailPage() {
         )}
 
         {/* Specializations Tags */}
-        <motion.div
-          className="mb-16"
-          variants={itemVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-        >
-          <h3 className="text-2xl font-bold text-foreground mb-4">{specializationsTitle}</h3>
-          {hasProgramsByLevel ? (
-            <div className="space-y-6">
-              {portfolio.details.programsByLevel.map((group) => (
-                <div key={group.level}>
-                  <p className="text-sm font-semibold text-primary mb-3">{group.level}</p>
-                  <div className="flex flex-wrap gap-3">
-                    {group.items.map((item, index) => (
-                      <motion.div
-                        key={item}
-                        className="px-4 py-2 bg-primary/10 text-primary border border-primary/20 rounded-lg font-medium text-sm hover:bg-primary/20 transition-colors"
-                        initial={{ opacity: 0, scale: 0.8 }}
-                        whileInView={{ opacity: 1, scale: 1 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.3, delay: index * 0.05 }}
-                        whileHover={{ scale: 1.05 }}
-                      >
-                        {item}
-                      </motion.div>
-                    ))}
+        {!isSkolaeGroupProfile && (
+          <motion.div
+            className="mb-16"
+            variants={itemVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+          >
+            <h3 className="text-2xl font-bold text-foreground mb-4">{specializationsTitle}</h3>
+            {hasProgramsByLevel ? (
+              <div className="space-y-6">
+                {portfolio.details.programsByLevel.map((group) => (
+                  <div key={group.level}>
+                    <p className="text-sm font-semibold text-primary mb-3">{group.level}</p>
+                    <div className="flex flex-wrap gap-3">
+                      {group.items.map((item, index) => (
+                        <motion.div
+                          key={item}
+                          className="px-4 py-2 bg-primary/10 text-primary border border-primary/20 rounded-lg font-medium text-sm hover:bg-primary/20 transition-colors"
+                          initial={{ opacity: 0, scale: 0.8 }}
+                          whileInView={{ opacity: 1, scale: 1 }}
+                          viewport={{ once: true }}
+                          transition={{ duration: 0.3, delay: index * 0.05 }}
+                          whileHover={{ scale: 1.05 }}
+                        >
+                          {item}
+                        </motion.div>
+                      ))}
+                    </div>
                   </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="flex flex-wrap gap-3">
-              {portfolio.details?.specializations?.map((spec, index) => (
-                <motion.div
-                  key={spec}
-                  className="px-4 py-2 bg-primary/10 text-primary border border-primary/20 rounded-lg font-medium text-sm hover:bg-primary/20 transition-colors"
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.3, delay: index * 0.05 }}
-                  whileHover={{ scale: 1.05 }}
-                >
-                  {spec}
-                </motion.div>
-              ))}
-            </div>
-          )}
-        </motion.div>
+                ))}
+              </div>
+            ) : (
+              <div className="flex flex-wrap gap-3">
+                {portfolio.details?.specializations?.map((spec, index) => (
+                  <motion.div
+                    key={spec}
+                    className="px-4 py-2 bg-primary/10 text-primary border border-primary/20 rounded-lg font-medium text-sm hover:bg-primary/20 transition-colors"
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.3, delay: index * 0.05 }}
+                    whileHover={{ scale: 1.05 }}
+                  >
+                    {spec}
+                  </motion.div>
+                ))}
+              </div>
+            )}
+          </motion.div>
+        )}
 
         {/* Testimonials Section */}
         {portfolio.details?.studentTestimonials && portfolio.details.studentTestimonials.length > 0 && (
@@ -1924,30 +1926,32 @@ export default function PortfolioDetailPage() {
           </motion.div>
         )}
 
-        {/* CTA Section */}
-        <motion.div
-          className="bg-gradient-to-r from-primary/10 to-secondary/10 border border-primary/30 rounded-2xl p-8 mb-16 text-center"
-          variants={itemVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-        >
-          <h3 className="text-2xl font-bold text-foreground mb-4">
-            Ready to Partner with {portfolio.title}?
-          </h3>
-          <p className="text-muted-foreground mb-6 max-w-2xl mx-auto">
-            Partner with us to strengthen your visibility and recruitment outcomes for institutions like {portfolio.title} across key markets.
-          </p>
-          <motion.button
-            className="px-8 py-3 bg-primary text-primary-foreground rounded-lg font-semibold hover:bg-secondary transition-all duration-300"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => navigate('/collaborate')}
-            type="button"
+        {/* CTA Section (SKOLAE has its own contact block) */}
+        {!isSkolaeGroupProfile && (
+          <motion.div
+            className="bg-gradient-to-r from-primary/10 to-secondary/10 border border-primary/30 rounded-2xl p-8 mb-16 text-center"
+            variants={itemVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
           >
-            Connect with Our Advisors
-          </motion.button>
-        </motion.div>
+            <h3 className="text-2xl font-bold text-foreground mb-4">
+              Ready to Partner with {portfolio.title}?
+            </h3>
+            <p className="text-muted-foreground mb-6 max-w-2xl mx-auto">
+              Partner with us to strengthen your visibility and recruitment outcomes for institutions like {portfolio.title} across key markets.
+            </p>
+            <motion.button
+              className="px-8 py-3 bg-primary text-primary-foreground rounded-lg font-semibold hover:bg-secondary transition-all duration-300"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => navigate('/collaborate')}
+              type="button"
+            >
+              Connect with Our Advisors
+            </motion.button>
+          </motion.div>
+        )}
 
         {/* Related Portfolios */}
         {relatedPortfolios.length > 0 && (

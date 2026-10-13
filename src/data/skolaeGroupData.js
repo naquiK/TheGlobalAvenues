@@ -157,9 +157,9 @@ export const skolaeSchools = [
     secondaryLogo: `${SKOLAE_ASSET_BASE}/schools/efet-photo.svg`,
     cover: `${SKOLAE_ASSET_BASE}/schools/covers/efet.jpg`,
     coverAlt: 'An EFET Photo student presenting her photography series to the jury',
-    facts: ['50+ years of creative training', 'CFAI-recognised interior design Mastère', 'D&AD New Blood 2026 winner'],
+    facts: ['50+ years of creative training', 'CFAI-recognised interior design Mastère', 'D&AD New Blood 2026 Graphite Pencil'],
     summary:
-      'Creative schools for visual communication, interior architecture and photography, where around 70% of time on site is hands-on project work.',
+      'Creative schools for visual communication, interior architecture and photography, built around studio and project work. At EFET Photo, around 70% of time on site is hands-on practice.',
     programs: [
       {
         title: 'Bachelor in Graphic & Digital Design',
@@ -225,7 +225,7 @@ export const skolaeAdmissionSteps = [
   },
   {
     title: 'Test & interview',
-    description: 'Schools assess applicants through a written test and an interview, held in English for international programmes.',
+    description: 'Schools typically assess applicants through a written test and an interview, held in English for international programmes.',
   },
   {
     title: 'Confirm enrolment',
