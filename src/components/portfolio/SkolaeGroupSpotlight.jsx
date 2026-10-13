@@ -5,7 +5,6 @@ import {
   ArrowUpRight,
   BadgeCheck,
   Building2,
-  CalendarDays,
   ChevronRight,
   Globe,
   GraduationCap,
@@ -18,10 +17,8 @@ import {
 } from 'lucide-react';
 import { SITE_CONFIG } from '../../config';
 import {
-  skolaeAdmissionSteps,
   skolaeGroup,
   skolaeHighlights,
-  skolaeIntakeNote,
   skolaeOtherSchools,
   skolaePathways,
   skolaeSchools,
@@ -509,33 +506,6 @@ export default function SkolaeGroupSpotlight() {
               );
             })}
           </div>
-        </div>
-
-        {/* Admission route */}
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#E8521A]">03 · Your route to France</p>
-          <h4 className="mt-1 font-heading text-2xl font-bold text-foreground">How admission works for Indian students</h4>
-          <ol className="relative mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5 lg:gap-3">
-            <span
-              aria-hidden="true"
-              className="pointer-events-none absolute left-5 right-[calc(20%-0.25rem)] top-5 hidden h-px bg-[linear-gradient(90deg,#E8521A,#5340B0)] lg:block"
-            />
-            {skolaeAdmissionSteps.map((step, index) => (
-              <li key={step.title} className="relative flex gap-3 lg:flex-col">
-                <span className="relative z-10 inline-flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full border-4 border-[#FBFAFF] bg-[#2D1B69] font-heading text-sm font-bold text-white dark:border-[#110D1F]">
-                  {index + 1}
-                </span>
-                <div>
-                  <p className="font-semibold text-foreground">{step.title}</p>
-                  <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{step.description}</p>
-                </div>
-              </li>
-            ))}
-          </ol>
-          <p className="mt-5 inline-flex items-start gap-2 rounded-xl bg-[#F5F3FF] px-4 py-2.5 text-xs font-medium text-[#3E316E] dark:bg-white/[0.06] dark:text-white/80">
-            <CalendarDays className="mt-0.5 h-3.5 w-3.5 flex-shrink-0 text-[#E8521A]" aria-hidden="true" />
-            {skolaeIntakeNote}
-          </p>
         </div>
 
         {/* Contact */}

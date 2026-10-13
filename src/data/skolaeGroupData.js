@@ -217,33 +217,6 @@ export const skolaeHighlights = [
   },
 ];
 
-// Admission route for non-EU students, as published by ESGI and SKOLAE.
-export const skolaeAdmissionSteps = [
-  {
-    title: 'Apply online',
-    description: 'Non-EU students can complete the full admission process remotely.',
-  },
-  {
-    title: 'Test & interview',
-    description: 'Schools typically assess applicants through a written test and an interview, held in English for international programmes.',
-  },
-  {
-    title: 'Confirm enrolment',
-    description: 'Tuition is paid to finalise registration, then the school issues your enrolment documents.',
-  },
-  {
-    title: 'Campus France',
-    description: 'Complete the "Études en France" procedure to get the pre-approval needed for your visa.',
-  },
-  {
-    title: 'Student visa',
-    description: 'Apply for the long-stay student visa (VLS-TS) and validate it online within 3 months of arrival.',
-  },
-];
-
-export const skolaeIntakeNote =
-  'ESGI deadlines for non-EU students: apply by 1 July for the September/October intake, or by 1 November for January (where offered). Deadlines vary by school.';
-
 export const skolaeOtherSchools = [
   'PPA Business School',
   'PPA Sport',
