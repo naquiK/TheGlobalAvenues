@@ -154,7 +154,7 @@ export const skolaeSchools = [
   {
     key: 'efet',
     shortName: 'EFET',
-    railLabel: 'Graphic & interior design',
+    railLabel: 'Design & interiors',
     name: 'EFET',
     fullName: 'EFET Créa & EFET Photo',
     focus: 'Graphic Design, Interiors & Photography',

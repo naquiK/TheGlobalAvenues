@@ -40,9 +40,6 @@ const navPortfolioHiddenSlugs = new Set([
   'icn-business-school',
 ]);
 
-// Listed after the other institutions of the same country in the "Our Portfolio" dropdown.
-const navPortfolioLastSlugs = new Set(['skolae-group']);
-
 const offeringIconMap = {
   '/what-we-offer': LayoutGrid,
 };
@@ -114,13 +111,6 @@ export function Header() {
         const bPriority = isInternationalAmericanUniversity(b.item) ? 0 : 1;
         if (aPriority !== bPriority) {
           return aPriority - bPriority;
-        }
-
-        // Keep SKOLAE Group at the end of its country group in the dropdown.
-        const aIsLast = navPortfolioLastSlugs.has(getNormalizedText(a.item.slug)) ? 1 : 0;
-        const bIsLast = navPortfolioLastSlugs.has(getNormalizedText(b.item.slug)) ? 1 : 0;
-        if (aIsLast !== bIsLast) {
-          return aIsLast - bIsLast;
         }
 
         return a.originalIndex - b.originalIndex;

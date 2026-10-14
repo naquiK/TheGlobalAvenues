@@ -96,15 +96,15 @@ function LogoRailTile({ logo, isDuplicate = false, onSelect }) {
       aria-hidden={isDuplicate || undefined}
       tabIndex={isDuplicate ? -1 : undefined}
       aria-label={isDuplicate ? undefined : `View ${logo.alt.replace(/ logo$/, '')} programmes`}
-      className="group/logo relative mx-2 flex h-24 w-44 flex-shrink-0 flex-col items-center justify-center rounded-2xl border border-[#1A1033]/[0.07] bg-white px-5 transition-all duration-300 hover:-translate-y-1 hover:border-[#E8521A]/35 hover:shadow-[0_18px_34px_rgba(45,27,105,0.14)] focus:outline-none focus-visible:-translate-y-1 focus-visible:border-[#E8521A]/50 focus-visible:ring-2 focus-visible:ring-[#E8521A]/30 dark:border-white/10"
+      className="group/logo relative mx-2 flex h-24 w-44 flex-shrink-0 flex-col items-center justify-center rounded-2xl border border-[#1A1033]/[0.07] bg-white px-5 transition-all duration-300 focus:outline-none focus-visible:-translate-y-1 focus-visible:border-[#E8521A]/50 focus-visible:ring-2 focus-visible:ring-[#E8521A]/30 dark:border-white/10 [@media(hover:hover)]:hover:-translate-y-1 [@media(hover:hover)]:hover:border-[#E8521A]/35 [@media(hover:hover)]:hover:shadow-[0_18px_34px_rgba(45,27,105,0.14)]"
     >
       <img
         src={logo.src}
         alt=""
         decoding="async"
-        className={`${RAIL_LOGO_SIZES[getLogoKey(logo.src)] || 'h-10'} w-auto max-w-full object-contain transition-transform duration-300 group-hover/logo:-translate-y-2 group-hover/logo:scale-105 group-focus-visible/logo:-translate-y-2`}
+        className={`${RAIL_LOGO_SIZES[getLogoKey(logo.src)] || 'h-10'} w-auto max-w-full object-contain transition-transform duration-300 group-focus-visible/logo:-translate-y-2 [@media(hover:hover)]:group-hover/logo:-translate-y-2 [@media(hover:hover)]:group-hover/logo:scale-105`}
       />
-      <span className="pointer-events-none absolute inset-x-2 bottom-2 truncate text-center text-[10px] font-semibold uppercase tracking-[0.12em] text-[#E8521A] opacity-0 transition-all duration-300 group-hover/logo:opacity-100 group-focus-visible/logo:opacity-100">
+      <span className="pointer-events-none absolute inset-x-2 bottom-2 truncate text-center text-[10px] font-semibold uppercase tracking-[0.12em] text-[#E8521A] opacity-0 transition-all duration-300 group-focus-visible/logo:opacity-100 [@media(hover:hover)]:group-hover/logo:opacity-100">
         {logo.label}
       </span>
     </button>
@@ -281,7 +281,7 @@ export default function SkolaeGroupSpotlight() {
           </div>
 
           <div className="min-w-0 flex-1 overflow-hidden [mask-image:linear-gradient(90deg,transparent,black_6%,black_94%,transparent)] motion-reduce:hidden">
-            <div className="flex w-max pb-6 pt-4 hover:[animation-play-state:paused] focus-within:[animation-play-state:paused] motion-safe:animate-[skolaeMarquee_45s_linear_infinite]">
+            <div className="flex w-max pb-6 pt-4 motion-safe:animate-[skolaeMarquee_45s_linear_infinite] has-[:focus-visible]:[animation-play-state:paused] [@media(hover:hover)]:hover:[animation-play-state:paused]">
               {[...railHalf, ...railHalf].map((logo, index) => (
                 <LogoRailTile
                   key={`${logo.src}-${index}`}
@@ -374,8 +374,8 @@ export default function SkolaeGroupSpotlight() {
                     </span>
                     <SchoolLogoChip src={school.logo} alt="" className="relative h-11 w-16 flex-shrink-0 p-1.5" />
                     <span className="relative min-w-0">
-                      <span className="block truncate text-sm font-bold text-foreground">{school.name}</span>
-                      <span className="block truncate text-xs text-muted-foreground">{school.focus}</span>
+                      <span className="block text-sm font-bold leading-snug text-foreground">{school.name}</span>
+                      <span className="mt-0.5 line-clamp-2 block text-xs leading-snug text-muted-foreground">{school.focus}</span>
                     </span>
                   </button>
                 );
@@ -432,18 +432,18 @@ export default function SkolaeGroupSpotlight() {
                       <SchoolLogoChip
                         src={activeSchool.logo}
                         alt={`${activeSchool.name} logo`}
-                        className="h-14 w-24 flex-shrink-0 p-2 sm:h-16 sm:w-28"
+                        className="h-12 w-[4.5rem] flex-shrink-0 p-1.5 sm:h-16 sm:w-28 sm:p-2"
                       />
                       {activeSchool.secondaryLogo && (
                         <SchoolLogoChip
                           src={activeSchool.secondaryLogo}
                           alt="EFET Photo logo"
-                          className="h-14 w-24 flex-shrink-0 p-2 sm:h-16 sm:w-28"
+                          className="hidden h-12 w-[4.5rem] flex-shrink-0 p-1.5 sm:inline-flex sm:h-16 sm:w-28 sm:p-2"
                         />
                       )}
                       <div className="min-w-0 pb-0.5 text-white">
-                        <p className="truncate font-heading text-xl font-bold sm:text-2xl">{activeSchool.name}</p>
-                        <p className="truncate text-xs text-white/80 sm:text-sm">{activeSchool.fullName}</p>
+                        <p className="line-clamp-2 font-heading text-xl font-bold leading-tight sm:text-2xl">{activeSchool.name}</p>
+                        <p className="mt-0.5 line-clamp-3 text-xs leading-snug text-white/80 sm:line-clamp-2 sm:text-sm">{activeSchool.fullName}</p>
                       </div>
                     </div>
                   </div>

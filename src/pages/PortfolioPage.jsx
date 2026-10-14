@@ -20,7 +20,8 @@ export default function PortfolioPage() {
     setIsLoading(true);
     setLoadError('');
     try {
-      const result = await getPortfolios();
+      // No pagination controls on this page, so load every institution.
+      const result = await getPortfolios({}, 1, 300);
       const cats = await getCategories();
       setPortfolios(result.data || result);
       setFilteredPortfolios(result.data || result);
