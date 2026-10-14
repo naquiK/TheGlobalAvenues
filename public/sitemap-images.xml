@@ -66,6 +66,13 @@
     </image:image>
   </url>
   <url>
+    <loc>https://theglobalavenues.com/news/skolae-group-joins-our-portfolio</loc>
+    <image:image>
+      <image:loc>https://theglobalavenues.com/universities/skolae-group/skolae-group-hero.jpg</image:loc>
+      <image:caption>SKOLAE Group Joins Our Portfolio: Five French Schools for Indian Students</image:caption>
+    </image:image>
+  </url>
+  <url>
     <loc>https://theglobalavenues.com/news/scholarships-for-indian-students-planning-to-study-in-south-cyprus</loc>
     <image:image>
       <image:loc>https://theglobalavenues.com/blogs/scholarships-south-cyprus.jpg</image:loc>
@@ -174,17 +181,6 @@
     </image:image>
   </url>
   <url>
-    <loc>https://theglobalavenues.com/portfolio/skolae-group</loc>
-    <image:image>
-      <image:loc>https://theglobalavenues.com/universities/skolae-group/skolae-group-hero.jpg</image:loc>
-      <image:caption>SKOLAE Group</image:caption>
-    </image:image>
-    <image:image>
-      <image:loc>https://theglobalavenues.com/universities/skolae-group/skolae-logo-white.svg</image:loc>
-      <image:caption>SKOLAE Group logo</image:caption>
-    </image:image>
-  </url>
-  <url>
     <loc>https://theglobalavenues.com/portfolio/mjm-graphic-design</loc>
     <image:image>
       <image:loc>https://theglobalavenues.com/universities/mjm-graphic-design/summer-school/mjm-summer-school-cover.jpg</image:loc>
@@ -281,6 +277,17 @@
     <image:image>
       <image:loc>https://theglobalavenues.com/universities/ifh-institut-francais-de-l-hotellerie/ifh-logo-official.svg</image:loc>
       <image:caption>IFH - Institut Francais de l&apos;Hotellerie logo</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://theglobalavenues.com/portfolio/skolae-group</loc>
+    <image:image>
+      <image:loc>https://theglobalavenues.com/universities/skolae-group/skolae-group-hero.jpg</image:loc>
+      <image:caption>SKOLAE Group</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://theglobalavenues.com/universities/skolae-group/skolae-logo-white.svg</image:loc>
+      <image:caption>SKOLAE Group logo</image:caption>
     </image:image>
   </url>
   <url>
@@ -501,7 +508,7 @@
     </image:image>
     <image:image>
       <image:loc>https://theglobalavenues.com/universities/skolae-group/skolae-group-hero.jpg</image:loc>
-      <image:caption>SKOLAE Group (MODART International studio, Paris)</image:caption>
+      <image:caption>SKOLAE Group students in Paris</image:caption>
     </image:image>
   </url>
   <url>
@@ -755,6 +762,33 @@
     <image:image>
       <image:loc>https://theglobalavenues.com/gallery/collections/icn/icn-creative-campus-life/icn-campus-life-22-thumb.jpg</image:loc>
       <image:caption>ICN Signature Color Architecture</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://theglobalavenues.com/gallery/collection/skolae-group-schools</loc>
+    <image:image>
+      <image:loc>https://theglobalavenues.com/universities/skolae-group/skolae-group-hero.jpg</image:loc>
+      <image:caption>SKOLAE Group students in Paris</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://theglobalavenues.com/universities/skolae-group/schools/covers/esgi.jpg</image:loc>
+      <image:caption>ESGI campus, Paris</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://theglobalavenues.com/universities/skolae-group/schools/covers/eiml.jpg</image:loc>
+      <image:caption>EIML Paris lecture</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://theglobalavenues.com/universities/skolae-group/schools/covers/modart.jpg</image:loc>
+      <image:caption>Student designs at MODART International</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://theglobalavenues.com/universities/skolae-group/schools/covers/ican.jpg</image:loc>
+      <image:caption>ICAN students at work</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://theglobalavenues.com/universities/skolae-group/schools/covers/efet.jpg</image:loc>
+      <image:caption>EFET Photo final jury exhibition</image:caption>
     </image:image>
   </url>
 </urlset>

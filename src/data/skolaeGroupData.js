@@ -31,6 +31,7 @@ export const skolaeSchools = [
   {
     key: 'esgi',
     shortName: 'ESGI',
+    railLabel: 'Computer science',
     name: 'ESGI',
     fullName: 'École Supérieure de Génie Informatique',
     focus: 'Computer Science & Engineering',
@@ -54,6 +55,7 @@ export const skolaeSchools = [
   {
     key: 'eiml',
     shortName: 'EIML',
+    railLabel: 'Luxury marketing',
     name: 'EIML Paris',
     fullName: 'École Internationale de Marketing du Luxe',
     focus: 'Luxury Marketing & Management',
@@ -86,6 +88,7 @@ export const skolaeSchools = [
   {
     key: 'modart',
     shortName: 'MODART',
+    railLabel: 'Fashion',
     name: 'MODART International',
     fullName: 'La Grande École de Mode · Paris',
     focus: 'Fashion Design & Luxury',
@@ -127,6 +130,7 @@ export const skolaeSchools = [
   {
     key: 'ican',
     shortName: 'ICAN',
+    railLabel: 'Games & digital design',
     name: 'ICAN',
     fullName: "Institut de Création et d'Animation Numériques",
     focus: 'Games, Animation, Web & AI Design',
@@ -150,6 +154,7 @@ export const skolaeSchools = [
   {
     key: 'efet',
     shortName: 'EFET',
+    railLabel: 'Design & interiors',
     name: 'EFET',
     fullName: 'EFET Créa & EFET Photo',
     focus: 'Graphic Design, Interiors & Photography',
@@ -217,45 +222,38 @@ export const skolaeHighlights = [
   },
 ];
 
-// Admission route for non-EU students, as published by ESGI and SKOLAE.
-export const skolaeAdmissionSteps = [
-  {
-    title: 'Apply online',
-    description: 'Non-EU students can complete the full admission process remotely.',
-  },
-  {
-    title: 'Test & interview',
-    description: 'Schools typically assess applicants through a written test and an interview, held in English for international programmes.',
-  },
-  {
-    title: 'Confirm enrolment',
-    description: 'Tuition is paid to finalise registration, then the school issues your enrolment documents.',
-  },
-  {
-    title: 'Campus France',
-    description: 'Complete the "Études en France" procedure to get the pre-approval needed for your visa.',
-  },
-  {
-    title: 'Student visa',
-    description: 'Apply for the long-stay student visa (VLS-TS) and validate it online within 3 months of arrival.',
-  },
-];
-
-export const skolaeIntakeNote =
-  'ESGI deadlines for non-EU students: apply by 1 July for the September/October intake, or by 1 November for January (where offered). Deadlines vary by school.';
-
+// Other schools in the group, grouped by field. Focus lines come from each school's
+// official website (checked October 2026).
 export const skolaeOtherSchools = [
-  'PPA Business School',
-  'PPA Sport',
-  'EFFICOM',
-  'ESUPCOM',
-  'ISFJ',
-  'ESIS',
-  'EFAB',
-  'ECITV',
-  'CFPJ',
-  'École W',
-  'ISA',
-  'ENGDE',
-  '2iAcademy',
+  {
+    key: 'business',
+    title: 'Business & management',
+    schools: [
+      { name: 'PPA Business School', focus: 'Business school, Bac to Bac+5', website: 'https://www.ppa.fr/' },
+      { name: 'PPA Sport', focus: 'Sports business school', website: 'https://www.ppa-sport.fr/' },
+      { name: 'EFFICOM', focus: 'Business, HR, design and IT', website: 'https://www.efficom.fr/' },
+      { name: 'ENGDE', focus: 'Accounting and management', website: 'https://www.engde.fr/' },
+      { name: 'EFAB', focus: 'Real estate careers', website: 'https://www.efab.fr/' },
+    ],
+  },
+  {
+    key: 'media',
+    title: 'Communication & journalism',
+    schools: [
+      { name: "ESUPCOM'", focus: 'Communication', website: 'https://www.esupcom.com/' },
+      { name: 'ISFJ', focus: 'Journalism and media', website: 'https://www.isfj.fr/' },
+      { name: 'École W', focus: 'Journalism, communication and fiction', website: 'https://www.ecolew.com/' },
+      { name: 'CFPJ', focus: 'Journalism', website: 'https://www.cfpj-ecole.fr/' },
+    ],
+  },
+  {
+    key: 'film',
+    title: 'Film, audiovisual & digital',
+    schools: [
+      { name: 'ESIS', focus: 'Cinema, sound, music and VFX', website: 'https://www.esis-paris.fr/' },
+      { name: 'ISA', focus: 'Audiovisual production', website: 'https://isa-paris.com/' },
+      { name: 'ECITV', focus: 'Digital and audiovisual', website: 'https://www.ecitv.fr/' },
+      { name: '2iAcademy', focus: 'Digital and IT careers', website: 'https://2iacademy.com/' },
+    ],
+  },
 ];

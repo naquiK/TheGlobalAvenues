@@ -532,7 +532,7 @@ export default function PortfolioDetailPage() {
 
         if (isActive) {
           setPortfolio(merged || apiPortfolio || localData);
-          const all = await getPortfolios();
+          const all = await getPortfolios({}, 1, 300);
           setAllPortfolios(all.data || all);
         }
       } catch (error) {

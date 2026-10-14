@@ -4,13 +4,15 @@ import { AnimatePresence, animate, motion, useInView, useReducedMotion } from 'f
 import {
   ArrowUpRight,
   BadgeCheck,
+  Briefcase,
   Building2,
-  CalendarDays,
   ChevronRight,
+  Clapperboard,
   Globe,
   GraduationCap,
   Languages,
   Mail,
+  Newspaper,
   Phone,
   Plane,
   Sparkles,
@@ -18,14 +20,20 @@ import {
 } from 'lucide-react';
 import { SITE_CONFIG } from '../../config';
 import {
-  skolaeAdmissionSteps,
   skolaeGroup,
   skolaeHighlights,
-  skolaeIntakeNote,
   skolaeOtherSchools,
   skolaePathways,
   skolaeSchools,
 } from '../../data/skolaeGroupData';
+
+const OTHER_SCHOOL_GROUP_ICONS = {
+  business: Briefcase,
+  media: Newspaper,
+  film: Clapperboard,
+};
+
+const otherSchoolCount = skolaeOtherSchools.reduce((total, group) => total + group.schools.length, 0);
 
 const HIGHLIGHT_ICONS = {
   global: Plane,
@@ -68,6 +76,41 @@ function SchoolLogoChip({ src, alt, className = '' }) {
   );
 }
 
+// Optical sizing so wide wordmarks and stacked logos carry the same visual weight.
+const RAIL_LOGO_SIZES = {
+  esgi: 'h-11',
+  eiml: 'h-10',
+  modart: 'h-6',
+  ican: 'h-12',
+  'efet-crea': 'h-7',
+  'efet-photo': 'h-7',
+};
+
+const getLogoKey = (src = '') => src.split('/').pop().replace(/\.[a-z]+$/i, '');
+
+function LogoRailTile({ logo, isDuplicate = false, onSelect }) {
+  return (
+    <button
+      type="button"
+      onClick={onSelect}
+      aria-hidden={isDuplicate || undefined}
+      tabIndex={isDuplicate ? -1 : undefined}
+      aria-label={isDuplicate ? undefined : `View ${logo.alt.replace(/ logo$/, '')} programmes`}
+      className="group/logo relative mx-2 flex h-24 w-44 flex-shrink-0 flex-col items-center justify-center rounded-2xl border border-[#1A1033]/[0.07] bg-white px-5 transition-all duration-300 focus:outline-none focus-visible:-translate-y-1 focus-visible:border-[#E8521A]/50 focus-visible:ring-2 focus-visible:ring-[#E8521A]/30 dark:border-white/10 [@media(hover:hover)]:hover:-translate-y-1 [@media(hover:hover)]:hover:border-[#E8521A]/35 [@media(hover:hover)]:hover:shadow-[0_18px_34px_rgba(45,27,105,0.14)]"
+    >
+      <img
+        src={logo.src}
+        alt=""
+        decoding="async"
+        className={`${RAIL_LOGO_SIZES[getLogoKey(logo.src)] || 'h-10'} w-auto max-w-full object-contain transition-transform duration-300 group-focus-visible/logo:-translate-y-2 [@media(hover:hover)]:group-hover/logo:-translate-y-2 [@media(hover:hover)]:group-hover/logo:scale-105`}
+      />
+      <span className="pointer-events-none absolute inset-x-2 bottom-2 truncate text-center text-[10px] font-semibold uppercase tracking-[0.12em] text-[#E8521A] opacity-0 transition-all duration-300 group-focus-visible/logo:opacity-100 [@media(hover:hover)]:group-hover/logo:opacity-100">
+        {logo.label}
+      </span>
+    </button>
+  );
+}
+
 function SpotlightTile({ children, className = '', ...props }) {
   const handlePointerMove = (event) => {
     const rect = event.currentTarget.getBoundingClientRect();
@@ -101,20 +144,24 @@ export default function SkolaeGroupSpotlight() {
   const tabRefs = useRef({});
   const prefersReducedMotion = useReducedMotion();
   const activeSchool = skolaeSchools.find((school) => school.key === activeKey) || skolaeSchools[0];
-  const marqueeLogos = skolaeSchools.flatMap((school) => [
-    { src: school.logo, alt: `${school.name} logo` },
-    ...(school.secondaryLogo ? [{ src: school.secondaryLogo, alt: 'EFET Photo logo' }] : []),
+  const railLogos = skolaeSchools.flatMap((school) => [
+    { src: school.logo, alt: `${school.name} logo`, schoolKey: school.key, label: school.railLabel },
+    ...(school.secondaryLogo
+      ? [{ src: school.secondaryLogo, alt: 'EFET Photo logo', schoolKey: school.key, label: 'Photography' }]
+      : []),
   ]);
+  // Each half of the track holds the set twice so the loop always covers wide screens.
+  const railHalf = [...railLogos, ...railLogos];
   const phone = SITE_CONFIG.contact.phone?.[0];
 
   const selectSchool = (key, { scroll = false, focus = false } = {}) => {
     setActiveKey(key);
     if (focus) tabRefs.current[key]?.focus();
-    if (scroll) {
-      explorerRef.current?.scrollIntoView({
-        behavior: prefersReducedMotion ? 'auto' : 'smooth',
-        block: 'start',
-      });
+    if (scroll && explorerRef.current) {
+      // Scroll the window directly (the rounded section clips overflow) and clear the sticky header bars.
+      const stickyOffset = 140;
+      const top = explorerRef.current.getBoundingClientRect().top + window.scrollY - stickyOffset;
+      window.scrollTo({ top, behavior: prefersReducedMotion ? 'auto' : 'smooth' });
     }
   };
 
@@ -225,16 +272,33 @@ export default function SkolaeGroupSpotlight() {
         </div>
       </div>
 
-      {/* Official logo marquee */}
-      <div className="border-b border-[#E4DDF5] bg-white/70 py-4 dark:border-white/10 dark:bg-white/[0.03]">
-        <div className="overflow-hidden [mask-image:linear-gradient(90deg,transparent,black_8%,black_92%,transparent)]">
-          <div className="flex w-max gap-4 hover:[animation-play-state:paused] motion-safe:animate-[skolaeMarquee_32s_linear_infinite]">
-            {[...marqueeLogos, ...marqueeLogos].map((logo, index) => (
-              <SchoolLogoChip
-                key={`${logo.src}-${index}`}
-                src={logo.src}
-                alt={index < marqueeLogos.length ? logo.alt : ''}
-                className="h-14 w-36 flex-shrink-0 px-4 py-2.5"
+      {/* Featured school logos */}
+      <div className="border-b border-[#E4DDF5] bg-[#F7F5FC] dark:border-white/10 dark:bg-white/[0.03]">
+        <div className="flex flex-col gap-2 pt-6 lg:flex-row lg:items-center lg:gap-0 lg:py-2">
+          <div className="px-5 sm:px-8 lg:w-60 lg:flex-shrink-0 lg:border-r lg:border-[#E4DDF5] lg:pl-10 lg:pr-6 dark:lg:border-white/10">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#E8521A]">Featured schools</p>
+            <p className="mt-1 text-sm leading-snug text-muted-foreground">Tap a logo to see its programmes.</p>
+          </div>
+
+          <div className="min-w-0 flex-1 overflow-hidden [mask-image:linear-gradient(90deg,transparent,black_6%,black_94%,transparent)] motion-reduce:hidden">
+            <div className="flex w-max pb-6 pt-4 motion-safe:animate-[skolaeMarquee_45s_linear_infinite] has-[:focus-visible]:[animation-play-state:paused] [@media(hover:hover)]:hover:[animation-play-state:paused]">
+              {[...railHalf, ...railHalf].map((logo, index) => (
+                <LogoRailTile
+                  key={`${logo.src}-${index}`}
+                  logo={logo}
+                  isDuplicate={index >= railLogos.length}
+                  onSelect={() => selectSchool(logo.schoolKey, { scroll: true })}
+                />
+              ))}
+            </div>
+          </div>
+
+          <div className="hidden flex-wrap justify-center gap-y-3 px-5 pb-6 pt-4 motion-reduce:flex sm:px-8 lg:flex-1">
+            {railLogos.map((logo) => (
+              <LogoRailTile
+                key={logo.src}
+                logo={logo}
+                onSelect={() => selectSchool(logo.schoolKey, { scroll: true })}
               />
             ))}
           </div>
@@ -310,8 +374,8 @@ export default function SkolaeGroupSpotlight() {
                     </span>
                     <SchoolLogoChip src={school.logo} alt="" className="relative h-11 w-16 flex-shrink-0 p-1.5" />
                     <span className="relative min-w-0">
-                      <span className="block truncate text-sm font-bold text-foreground">{school.name}</span>
-                      <span className="block truncate text-xs text-muted-foreground">{school.focus}</span>
+                      <span className="block text-sm font-bold leading-snug text-foreground">{school.name}</span>
+                      <span className="mt-0.5 line-clamp-2 block text-xs leading-snug text-muted-foreground">{school.focus}</span>
                     </span>
                   </button>
                 );
@@ -368,18 +432,18 @@ export default function SkolaeGroupSpotlight() {
                       <SchoolLogoChip
                         src={activeSchool.logo}
                         alt={`${activeSchool.name} logo`}
-                        className="h-14 w-24 flex-shrink-0 p-2 sm:h-16 sm:w-28"
+                        className="h-12 w-[4.5rem] flex-shrink-0 p-1.5 sm:h-16 sm:w-28 sm:p-2"
                       />
                       {activeSchool.secondaryLogo && (
                         <SchoolLogoChip
                           src={activeSchool.secondaryLogo}
                           alt="EFET Photo logo"
-                          className="h-14 w-24 flex-shrink-0 p-2 sm:h-16 sm:w-28"
+                          className="hidden h-12 w-[4.5rem] flex-shrink-0 p-1.5 sm:inline-flex sm:h-16 sm:w-28 sm:p-2"
                         />
                       )}
                       <div className="min-w-0 pb-0.5 text-white">
-                        <p className="truncate font-heading text-xl font-bold sm:text-2xl">{activeSchool.name}</p>
-                        <p className="truncate text-xs text-white/80 sm:text-sm">{activeSchool.fullName}</p>
+                        <p className="line-clamp-2 font-heading text-xl font-bold leading-tight sm:text-2xl">{activeSchool.name}</p>
+                        <p className="mt-0.5 line-clamp-3 text-xs leading-snug text-white/80 sm:line-clamp-2 sm:text-sm">{activeSchool.fullName}</p>
                       </div>
                     </div>
                   </div>
@@ -448,19 +512,60 @@ export default function SkolaeGroupSpotlight() {
             </div>
           </div>
 
-          <div className="mt-5 flex flex-wrap items-center gap-2">
-            <span className="mr-1 inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">
-              <Building2 className="h-3.5 w-3.5" />
-              Also in the network
-            </span>
-            {skolaeOtherSchools.map((schoolName) => (
-              <span
-                key={schoolName}
-                className="rounded-full border border-[#E4DDF5] bg-white px-2.5 py-1 text-[11px] font-semibold text-[#3E316E] dark:border-white/10 dark:bg-white/[0.05] dark:text-white/80"
-              >
-                {schoolName}
-              </span>
-            ))}
+          <div className="mt-8 rounded-3xl border border-[#E4DDF5] bg-white/80 p-5 dark:border-white/10 dark:bg-white/[0.03] sm:p-7">
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <p className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+                  <Building2 className="h-3.5 w-3.5" />
+                  Also in the SKOLAE network
+                </p>
+                <h5 className="mt-1 font-heading text-xl font-bold text-foreground">
+                  {otherSchoolCount} more specialised schools
+                </h5>
+              </div>
+              <p className="max-w-md text-sm leading-relaxed text-muted-foreground sm:text-right">
+                Many run as work-study (alternance) programmes. Ask us whether one suits your plans before applying.
+              </p>
+            </div>
+
+            <div className="mt-6 grid grid-cols-1 gap-x-8 gap-y-6 md:grid-cols-3">
+              {skolaeOtherSchools.map((group) => {
+                const GroupIcon = OTHER_SCHOOL_GROUP_ICONS[group.key] || Building2;
+                return (
+                  <section key={group.key} aria-label={group.title}>
+                    <h6 className="flex items-center gap-2 border-b border-[#E4DDF5] pb-2.5 text-sm font-semibold text-foreground dark:border-white/10">
+                      <span className="inline-flex h-7 w-7 items-center justify-center rounded-lg bg-[#FEF0E7] text-[#E8521A] dark:bg-[#E8521A]/15">
+                        <GroupIcon className="h-3.5 w-3.5" />
+                      </span>
+                      {group.title}
+                    </h6>
+                    <ul>
+                      {group.schools.map((school) => (
+                        <li key={school.name}>
+                          <a
+                            href={school.website}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="group/school flex items-center justify-between gap-3 border-b border-[#F0ECFA] py-2.5 last:border-b-0 dark:border-white/[0.06]"
+                          >
+                            <span className="min-w-0">
+                              <span className="block text-sm font-semibold text-foreground transition-colors group-hover/school:text-[#E8521A]">
+                                {school.name}
+                              </span>
+                              <span className="block text-xs text-muted-foreground">{school.focus}</span>
+                            </span>
+                            <ArrowUpRight
+                              className="h-4 w-4 flex-shrink-0 text-muted-foreground/50 transition-all group-hover/school:-translate-y-0.5 group-hover/school:translate-x-0.5 group-hover/school:text-[#E8521A]"
+                              aria-hidden="true"
+                            />
+                          </a>
+                        </li>
+                      ))}
+                    </ul>
+                  </section>
+                );
+              })}
+            </div>
           </div>
         </div>
 
@@ -509,33 +614,6 @@ export default function SkolaeGroupSpotlight() {
               );
             })}
           </div>
-        </div>
-
-        {/* Admission route */}
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#E8521A]">03 · Your route to France</p>
-          <h4 className="mt-1 font-heading text-2xl font-bold text-foreground">How admission works for Indian students</h4>
-          <ol className="relative mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5 lg:gap-3">
-            <span
-              aria-hidden="true"
-              className="pointer-events-none absolute left-5 right-[calc(20%-0.25rem)] top-5 hidden h-px bg-[linear-gradient(90deg,#E8521A,#5340B0)] lg:block"
-            />
-            {skolaeAdmissionSteps.map((step, index) => (
-              <li key={step.title} className="relative flex gap-3 lg:flex-col">
-                <span className="relative z-10 inline-flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full border-4 border-[#FBFAFF] bg-[#2D1B69] font-heading text-sm font-bold text-white dark:border-[#110D1F]">
-                  {index + 1}
-                </span>
-                <div>
-                  <p className="font-semibold text-foreground">{step.title}</p>
-                  <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{step.description}</p>
-                </div>
-              </li>
-            ))}
-          </ol>
-          <p className="mt-5 inline-flex items-start gap-2 rounded-xl bg-[#F5F3FF] px-4 py-2.5 text-xs font-medium text-[#3E316E] dark:bg-white/[0.06] dark:text-white/80">
-            <CalendarDays className="mt-0.5 h-3.5 w-3.5 flex-shrink-0 text-[#E8521A]" aria-hidden="true" />
-            {skolaeIntakeNote}
-          </p>
         </div>
 
         {/* Contact */}
