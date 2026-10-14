@@ -391,6 +391,41 @@ const galleryCollections = [
       },
     ],
   },
+  {
+    id: 'skolae-group-schools',
+    slug: 'skolae-group-schools',
+    title: 'SKOLAE Group Collection',
+    category: 'Partner Universities',
+    categorySlug: 'partner-universities',
+    description:
+      'Official photos from SKOLAE Group and its schools in France: ESGI, EIML Paris, MODART International, ICAN and EFET.',
+    photos: [
+      {
+        src: '/universities/skolae-group/skolae-group-hero.jpg',
+        caption: 'SKOLAE Group students in Paris',
+      },
+      {
+        src: '/universities/skolae-group/schools/covers/esgi.jpg',
+        caption: 'ESGI campus, Paris',
+      },
+      {
+        src: '/universities/skolae-group/schools/covers/eiml.jpg',
+        caption: 'EIML Paris lecture',
+      },
+      {
+        src: '/universities/skolae-group/schools/covers/modart.jpg',
+        caption: 'Student designs at MODART International',
+      },
+      {
+        src: '/universities/skolae-group/schools/covers/ican.jpg',
+        caption: 'ICAN students at work',
+      },
+      {
+        src: '/universities/skolae-group/schools/covers/efet.jpg',
+        caption: 'EFET Photo final jury exhibition',
+      },
+    ],
+  },
 ];
 
 const galleryCategories = Array.from(

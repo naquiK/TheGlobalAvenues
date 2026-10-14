@@ -1,5 +1,54 @@
 export const newsItems = [
   {
+    id: 9,
+    slug: 'skolae-group-joins-our-portfolio',
+    type: 'news',
+    title: 'SKOLAE Group Joins Our Portfolio: Five French Schools for Indian Students',
+    excerpt:
+      'SKOLAE Group is now part of The Global Avenues portfolio, bringing five specialised French schools in tech, luxury marketing, fashion, games and design.',
+    content: `SKOLAE Group is now part of The Global Avenues portfolio. SKOLAE is one of France's largest private higher-education networks, with specialised schools in 37 French cities, more than 19,000 students each year and a network of 10,000 partner companies.
+
+We work with five SKOLAE schools that match what Indian students most often ask us about.
+
+ESGI: Computer Science
+
+Founded in 1983, ESGI runs a three-year Bachelor's Program followed by a two-year Graduate Program. Majors include Artificial Intelligence and Big Data, IT Security, and Systems, Networks and Cloud Computing.
+
+EIML Paris: Luxury Marketing
+
+EIML's Bachelor and Mastère International Programs are taught entirely in English, with semesters at partner institutions in New York or Milan, London and Florence.
+
+MODART International: Fashion
+
+Based in Paris, MODART offers a Bachelor in Fashion Design that can be taken in French or English, and an MBA in Luxury Goods and Fashion Industries with an English track.
+
+ICAN: Games and Digital Design
+
+ICAN trains students through projects in video games, animation, and web and digital design, with programmes such as Game Design, UX/UI Design and AI Design.
+
+EFET: Graphic Design, Interiors and Photography
+
+Through EFET Créa and EFET Photo, students can study graphic and digital design, art direction, interior design and architecture, and photography.
+
+What Students Should Know
+
+Most SKOLAE programmes lead to French State-recognised professional certifications: RNCP Level 6 for a Bachelor and Level 7 for a Mastère. Not every programme is taught in English, so we confirm the teaching language for each programme before you apply.
+
+Non-EU students can complete the admission process remotely, followed by the Campus France procedure and a long-stay student visa.
+
+How The Global Avenues Can Help
+
+Our team helps you shortlist the right SKOLAE school and programme, prepare your application and plan your visa process. You can explore all five schools and their programmes on our SKOLAE Group portfolio page.`,
+    image: '/universities/skolae-group/skolae-group-hero.jpg',
+    thumbnail: '/universities/skolae-group/skolae-group-hero.jpg',
+    date: '2026-10-14',
+    author: 'The Global Avenues',
+    category: 'Partnership News',
+    featured: false,
+    views: 0,
+    readTime: '3 min read',
+  },
+  {
     id: 8,
     slug: 'scholarships-for-indian-students-planning-to-study-in-south-cyprus',
     type: 'blog',
